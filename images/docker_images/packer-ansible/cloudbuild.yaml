@@ -1,0 +1,18 @@
+steps:
+- name: 'gcr.io/cloud-builders/wget'
+  args: ["https://releases.hashicorp.com/packer/${_PACKER_VERSION}/packer_${_PACKER_VERSION}_linux_amd64.zip"]
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['build', '-t', 'gcr.io/$PROJECT_ID/packer:${_PACKER_VERSION}',
+        '-t', 'gcr.io/$PROJECT_ID/packer',
+        '--build-arg', 'PACKER_VERSION=${_PACKER_VERSION}',
+        '--build-arg', 'PACKER_VERSION_SHA256SUM=${_PACKER_VERSION_SHA256SUM}',
+        '--build-arg', 'ANSIBLE_VERSION=${_ANSIBLE_VERSION}',
+        '.']
+substitutions:
+  _PACKER_VERSION: 1.5.4
+  _PACKER_VERSION_SHA256SUM: c7277f64d217c7d9ccfd936373fe352ea935454837363293f8668f9e42d8d99d
+  _ANSIBLE_VERSION: 2.9.4
+
+images:
+- 'gcr.io/$PROJECT_ID/packer:latest'
+- 'gcr.io/$PROJECT_ID/packer:$_PACKER_VERSION'

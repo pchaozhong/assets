@@ -1,9 +1,9 @@
 variable "image-name" {
   type    = string
-  default = "img-name"
+  default = "nginx-demo"
 }
 
 variable "project-id" {
   type    = string
-  default = "pj-id"
+  default = ""
 }

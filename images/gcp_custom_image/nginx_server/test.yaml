@@ -12,7 +12,7 @@ steps:
       - --machine-type
       - f1-micro
       - --metadata=ssh-keys=test:${_SSH_KEY}
-      - --address=demo
+      - --address=${_STATIC_ADDRESS}
       - ${_GCE_NAME}
 
   - id: "gcloud kms decrypt"
@@ -51,8 +51,9 @@ steps:
 
 substitutions:
   _ADDRESS: 35.243.65.113
+  _STATIC_ADDRESS: demo
   _IMG_NAME: nginx-demo
-  _GCE_NAME: nginx-demo
+  _GCE_NAME: test-gce
   _KEY: projects/ca-kitano-study-sandbox/locations/global/keyRings/demo_kitano/cryptoKeys/ssh-key
   _KEY_RING: projects/ca-kitano-study-sandbox/locations/global/keyRings/demo_kitano
   _SSH_EN_PV_KEY: ./files/inspec_rsa.enc

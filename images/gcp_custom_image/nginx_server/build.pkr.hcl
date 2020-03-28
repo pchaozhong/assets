@@ -9,6 +9,9 @@ build {
   }
   provisioner "inspec" {
     profile = "./test"
-    extra_arguments = ["--sudo"]
+    extra_arguments = [
+      "--sudo",
+      "--chef-license=accept"
+    ]
   }
 }

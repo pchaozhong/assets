@@ -9,5 +9,6 @@ build {
   }
   provisioner "inspec" {
     profile = "./test"
+    extra_arguments = ["--sudo"]
   }
 }

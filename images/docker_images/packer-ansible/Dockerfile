@@ -13,8 +13,14 @@ ARG ANSIBLE_VERSION
 RUN apt-get -y update && \
   apt-get -y install \
   ca-certificates \
+  ruby \
+  ruby-dev \
+  gcc \
+  g++ \
+  make \
   python3-pip  &&\
   pip3 install paramiko ansible==${ANSIBLE_VERSION} &&\
+  gem install inspec-bin inspec &&\
   rm -rf /var/lib/apt/lists/*
 COPY --from=0 packer /usr/bin/packer
 ENTRYPOINT ["/usr/bin/packer"]

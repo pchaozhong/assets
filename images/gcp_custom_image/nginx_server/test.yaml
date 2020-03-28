@@ -1,0 +1,46 @@
+steps:
+  - id: "gcloud compute instances create"
+    name: 'gcr.io/cloud-builders/gcloud'
+    args:
+      - compute
+      - instances
+      - create
+      - --zone
+      - asia-northeast1-b
+      - --image
+      - ${_IMG_NAME}
+      - --machine-type
+      - f1-micro
+      - --metadata=ssh-keys=test:${_SSH_KEY}
+      - --address=demo
+      - ${_GCE_NAME}
+
+  - id: "inspec exec"
+    name: 'gcr.io/$PROJECT_ID/inspec'
+    args:
+      - exec
+      - test
+      - -t
+      - ssh://test@${_ADDRESS}:22
+      - -i
+      - ./files/inspec_rsa
+      - --sudo
+      - --chef-license=accept
+
+  - id: "gcloud compute instances delete"
+    name: 'gcr.io/cloud-builders/gcloud'
+    args:
+      - compute
+      - instances
+      - delete
+      - ${_GCE_NAME}
+      - --quiet
+      - --zone
+      - asia-northeast1-b
+
+substitutions:
+  _ADDRESS: 35.243.65.113
+  _IMG_NAME: nginx-demo
+  _GCE_NAME: nginx-demo
+  _SSH_KEY: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC+6gSIM1Duj+RNlma6kcW2xwsBHAs2wFqtC4Tv59lT/1phwZlFJ86FUiL/03+uCNoMIklsvrF/zw5OFw6aQrO7yyU+OOsNSoKK2TUDLTzsNOJ56fD512sjMlSiB2A1wuBlstRwIlYhn/4Tf3vLo1TDFGRaEX4QMqGMCMBcbkthXazpM4lM23ErkHdTPWGm89XRHXVv53Km6FPd4JpReUnFrZ/gr6ZtbWvGicKSES9X/xhPJ1rBwiggcOaE8G/fObBE8/RZM1QN6JBfWtMT69lSzyTeME/48PhQSxAszPVxQ36K693GnpuFh7RjjuiY94zoZ1XDlGvwOay0XDn+cMsPmddsJee+SqUzmdHWMDOxtBe20cEBtqq9++9VZBqDuxt46wzfU/cVjVbIAEc//CeprU0LBNsax1Kog6Xwy57MOdUoe5G8zopGcsA4/tAj9g7Dn6I+oFg0kMx2vqI4rOYwIVpysazMVE1QnKCyDiXaSLd4bO+zy8dD9lS7Srmb4zE=
+

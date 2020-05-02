@@ -12,8 +12,19 @@ steps:
       - --machine-type
       - f1-micro
       - --metadata=ssh-keys=test:${_SSH_KEY}
-      - --address=demo
+      - --address=${_STATIC_ADDRESS}
       - ${_GCE_NAME}
+
+  - id: "gcloud kms decrypt"
+    name: 'gcr.io/cloud-builders/gcloud'
+    args:
+      - kms
+      - decrypt
+      - --location=global
+      - --keyring=${_KEY_RING}
+      - --key=${_KEY}
+      - --ciphertext-file=${_SSH_EN_PV_KEY}
+      - --plaintext-file=${_SSH_PV_KEY}
 
   - id: "inspec exec"
     name: 'gcr.io/$PROJECT_ID/inspec'
@@ -23,7 +34,7 @@ steps:
       - -t
       - ssh://test@${_ADDRESS}:22
       - -i
-      - ./files/inspec_rsa
+      - ${_SSH_PV_KEY}
       - --sudo
       - --chef-license=accept
 
@@ -40,7 +51,11 @@ steps:
 
 substitutions:
   _ADDRESS: 35.243.65.113
+  _STATIC_ADDRESS: demo
   _IMG_NAME: nginx-demo
-  _GCE_NAME: nginx-demo
-  _SSH_KEY: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC+6gSIM1Duj+RNlma6kcW2xwsBHAs2wFqtC4Tv59lT/1phwZlFJ86FUiL/03+uCNoMIklsvrF/zw5OFw6aQrO7yyU+OOsNSoKK2TUDLTzsNOJ56fD512sjMlSiB2A1wuBlstRwIlYhn/4Tf3vLo1TDFGRaEX4QMqGMCMBcbkthXazpM4lM23ErkHdTPWGm89XRHXVv53Km6FPd4JpReUnFrZ/gr6ZtbWvGicKSES9X/xhPJ1rBwiggcOaE8G/fObBE8/RZM1QN6JBfWtMT69lSzyTeME/48PhQSxAszPVxQ36K693GnpuFh7RjjuiY94zoZ1XDlGvwOay0XDn+cMsPmddsJee+SqUzmdHWMDOxtBe20cEBtqq9++9VZBqDuxt46wzfU/cVjVbIAEc//CeprU0LBNsax1Kog6Xwy57MOdUoe5G8zopGcsA4/tAj9g7Dn6I+oFg0kMx2vqI4rOYwIVpysazMVE1QnKCyDiXaSLd4bO+zy8dD9lS7Srmb4zE=
-
+  _GCE_NAME: test-gce
+  _KEY: projects/ca-kitano-study-sandbox/locations/global/keyRings/demo_kitano/cryptoKeys/ssh-key
+  _KEY_RING: projects/ca-kitano-study-sandbox/locations/global/keyRings/demo_kitano
+  _SSH_EN_PV_KEY: ./files/inspec_rsa.enc
+  _SSH_PV_KEY: ./files/private.dec
+  _SSH_KEY: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDP3AcIIxmIoh/gAI5uLYlLoSBc+bjW5jsMbnYx4ClLzS5rawguVEwn9T7iKWdQW+dV9EcW0ReQ7dmAzWLaTz3y99PlWLtYYrovuX6zXVcOvZXT/0q8snOMD6QJCBEqN2TTNxfxCIguaec1LkcnxGMCUkPMn6WmHyvWOjEg2HHfNAmdQZMTldRCLgC47RWSXTrZi8QDl38rg+b4zoS7XIE6v4aPedyaT9zDK4fvY0MTVcP+aYZW7EAs1xvsZ8ljj4h0FHGvJI/1sMBHxLdAvs2nVzqaleJUDo3CCpPzUmCsDHc++6AFE4tUdtUqdvvxg6ftNTjHsVYiaP2aY5oBjak2cvIxftjYTqZNRfev+QL3MN83LLIFR2xRoA6tyemPNoSsGUEc7QZdsZywDDdcdpjKQuj7pT759HEGN2whr5FoLcuTT/rli62fviMeEiAX/GsgSBIlXQQjHDx1SLc+rziVHmowTHCfXAmM9jdOTVlPVrsNn5vAz17f7GElBXdIbHE=

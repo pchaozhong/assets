@@ -1,14 +1,14 @@
 build {
   sources = [
-    "source.googlecompute.nginx"
+    "source.googlecompute.nested"
   ]
   provisioner "ansible" {
-    playbook_file   = "./scripts/ansible-playbook.yaml"
-    user            = "packer"
+    playbook_file   = "./packer/scripts/ansible-playbook.yaml"
+    user            = local.user
     extra_arguments = ["-vvvv"]
   }
   provisioner "inspec" {
-    profile = "./test"
+    profile         = "./packer/test"
     extra_arguments = [
       "--sudo",
       "--chef-license=accept"

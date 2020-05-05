@@ -1,6 +1,7 @@
 locals {
   location = "asia-northeast1-b"
   machine_type = "n1-standard-1"
+  node_count = 1
 }
 
 resource "google_container_cluster" "primary" {
@@ -15,7 +16,7 @@ resource "google_container_node_pool" "primary_preemptible_node" {
   name = "demo"
   location = local.location
   cluster = google_container_cluster.primary.name
-  node_count = 1
+  node_count = local.node_count
 
   node_config {
     preemptible = true

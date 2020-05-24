@@ -3,3 +3,4 @@
 .DS_Store
 .terraform
 terraform.tfstate.d
+inspec_rsa*

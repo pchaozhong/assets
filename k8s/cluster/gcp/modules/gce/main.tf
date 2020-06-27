@@ -23,6 +23,15 @@ resource "google_compute_instance" "main" {
     device_name = each.value["boot_disk_device_name"]
     source      = google_compute_disk.boot_disk[each.value["name"]].self_link
   }
+
+  dynamic "scheduling" {
+    for_each = { for conf in each.value["scheduling_conf"] : conf["scheduling"] => conf if each.value["scheduling_conf_enabled"] }
+    content {
+      preemptible       = scheduling.value["preemptible"]
+      automatic_restart = scheduling.value["automatic_restart"]
+    }
+  }
+
 }
 
 resource "google_compute_disk" "boot_disk" {

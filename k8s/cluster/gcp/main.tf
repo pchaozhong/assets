@@ -62,3 +62,27 @@ module "gke" {
     }
   ]
 }
+
+module "gce" {
+  source = "./modules/gce"
+
+  gce_confs = [
+    {
+      name                  = "bastion"
+      machine_type          = "f1-micro"
+      zone                  = "asia-northeast1-b"
+      subnetwork            = module.network.subnetwork_self_link
+      tags                  = null
+      boot_disk_auto_delete = true
+      boot_disk_device_name = "batsion-boot"
+      boot_disk_type        = "pd-ssd"
+      boot_disk_img         = "ubuntu-os-cloud/ubuntu-2004-lts"
+      boot_disk_size        = 10
+      access_config_enabled = false
+      access_config =  [{
+        conf = "global"
+        nat_ip = null
+      }]
+    }
+  ]
+}

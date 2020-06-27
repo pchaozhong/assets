@@ -15,9 +15,9 @@ variable "gce_confs" {
     boot_disk_type        = string
     boot_disk_img         = string
     boot_disk_size        = number
-    access_config_enabled   = bool
+    access_config_enabled = bool
     access_config = list(object({
-      conf = string
+      conf   = string
       nat_ip = string
     }))
   }))

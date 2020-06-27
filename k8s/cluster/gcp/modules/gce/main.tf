@@ -1,9 +1,9 @@
 resource "google_compute_instance" "main" {
-  for_each = { for conf in var.gce_confs : conf["name"] =>conf if var.gce_enabled }
+  for_each = { for conf in var.gce_confs : conf["name"] => conf if var.gce_enabled }
 
-  name = each.value["name"]
+  name         = each.value["name"]
   machine_type = each.value["machine_type"]
-  zone = each.value["zone"]
+  zone         = each.value["zone"]
 
   tags = each.value["tags"]
 
@@ -21,16 +21,16 @@ resource "google_compute_instance" "main" {
   boot_disk {
     auto_delete = each.value["boot_disk_auto_delete"]
     device_name = each.value["boot_disk_device_name"]
-    source = google_compute_disk.boot_disk[each.value["name"]].self_link
+    source      = google_compute_disk.boot_disk[each.value["name"]].self_link
   }
 }
 
 resource "google_compute_disk" "boot_disk" {
   for_each = { for conf in var.gce_confs : conf["name"] => conf if var.gce_enabled }
 
-  name = "${each.value["name"]}-boot-disk"
-  type = each.value["boot_disk_type"]
-  zone = each.value["zone"]
+  name  = "${each.value["name"]}-boot-disk"
+  type  = each.value["boot_disk_type"]
+  zone  = each.value["zone"]
   image = each.value["boot_disk_img"]
-  size = each.value["boot_disk_size"]
+  size  = each.value["boot_disk_size"]
 }

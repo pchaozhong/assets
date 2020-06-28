@@ -3,5 +3,5 @@ output "network_self_link" {
 }
 
 output "subnetwork_self_links" {
-  value = var.vpc_enabled ? { for v in google_compute_subnetwork.main[*] : keys(v)[0] => values(v)[0]["self_link"] } : null
+  value = var.vpc_enabled ? { for k, v in google_compute_subnetwork.main : k => v["self_link"] } : null
 }

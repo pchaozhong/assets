@@ -35,33 +35,33 @@ module "network" {
   ]
 }
 
-# module "gke" {
-#   source = "./modules/gke"
+module "gke" {
+  source = "./modules/gke"
 
-#   gke_config = {
-#     name                      = "demo"
-#     location                  = local.location
-#     remove_default_node_pool  = true
-#     cluster_ip                = "172.16.0.0/16"
-#     service_ip                = "10.10.0.0/16"
-#     network                   = module.network.network_self_link
-#     subnetwork                = module.network.subnetwork_self_link
-#     initial_node_count        = 1
-#     oauth_scopes              = local.oauth_scopes
-#     default_max_pods_per_node = null
-#   }
+  gke_config = {
+    name                      = "demo"
+    location                  = local.location
+    remove_default_node_pool  = true
+    cluster_ip                = "172.16.0.0/16"
+    service_ip                = "10.10.0.0/16"
+    network                   = module.network.network_self_link
+    subnetwork                = module.network.subnetwork_self_link
+    initial_node_count        = 1
+    oauth_scopes              = local.oauth_scopes
+    default_max_pods_per_node = null
+  }
 
-#   node_pool_configs = [
-#     {
-#       name         = "demo"
-#       location     = local.location
-#       node_count   = local.node_count
-#       preemptible  = true
-#       machine_type = local.machine_type
-#       oauth_scopes = local.oauth_scopes
-#     }
-#   ]
-# }
+  node_pool_configs = [
+    {
+      name         = "demo"
+      location     = local.location
+      node_count   = local.node_count
+      preemptible  = true
+      machine_type = local.machine_type
+      oauth_scopes = local.oauth_scopes
+    }
+  ]
+}
 
 module "gce" {
   source = "./modules/gce"

@@ -48,7 +48,7 @@ module "gke" {
     cluster_ip                = "172.16.0.0/16"
     service_ip                = "10.10.0.0/16"
     network                   = module.network.network_self_link
-    subnetwork                = module.network.subnetwork_self_link[0]["gke-subnet"].self_link
+    subnetwork                = module.network.subnetwork_self_links["gke-subnet"]
     initial_node_count        = 1
     oauth_scopes              = local.oauth_scopes
     default_max_pods_per_node = null
@@ -74,7 +74,7 @@ module "gce" {
       name                    = "bastion"
       machine_type            = "f1-micro"
       zone                    = "asia-northeast1-b"
-      subnetwork              = module.network.subnetwork_self_link[0]["gke-subnet"].self_link
+      subnetwork              = module.network.subnetwork_self_links["gke-subnet"]
       tags                    = null
       boot_disk_auto_delete   = true
       boot_disk_device_name   = "batsion-boot"

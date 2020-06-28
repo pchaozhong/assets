@@ -10,7 +10,7 @@ resource "google_compute_instance" "main" {
   network_interface {
     subnetwork = each.value["subnetwork"]
     dynamic "access_config" {
-      for_each = { for conf in each.value["access_config"] : conf["conf"] => conf if each.value["access_config_enabled"] }
+      for_each = { for k, v in each.value["access_config"] : k => v if each.value["access_config_enabled"] }
 
       content {
         nat_ip = access_config.value["nat_ip"]
@@ -25,7 +25,8 @@ resource "google_compute_instance" "main" {
   }
 
   dynamic "scheduling" {
-    for_each = { for conf in each.value["scheduling_conf"] : conf["scheduling"] => conf if each.value["scheduling_conf_enabled"] }
+    for_each = { for k, v in each.value["scheduling_conf"] : k => v if each.value["scheduling_conf_enabled"] }
+
     content {
       preemptible       = scheduling.value["preemptible"]
       automatic_restart = scheduling.value["automatic_restart"]

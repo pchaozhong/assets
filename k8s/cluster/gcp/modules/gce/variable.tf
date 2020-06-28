@@ -18,11 +18,9 @@ variable "gce_confs" {
     access_config_enabled   = bool
     scheduling_conf_enabled = bool
     access_config = list(object({
-      conf   = string
       nat_ip = string
     }))
     scheduling_conf = list(object({
-      scheduling        = string
       preemptible       = bool
       automatic_restart = bool
     }))

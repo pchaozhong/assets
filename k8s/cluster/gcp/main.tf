@@ -84,11 +84,9 @@ module "gce" {
       scheduling_conf_enabled = true
       access_config_enabled   = true
       access_config = [{
-        conf   = "global"
         nat_ip = null
       }]
       scheduling_conf = [{
-        scheduling        = "scheduling"
         preemptible       = true
         automatic_restart = false
       }]

@@ -6,12 +6,12 @@ resource "google_compute_network" "main" {
 }
 
 resource "google_compute_subnetwork" "main" {
-  count = var.subnetwork_enabled ? 1 : 0
+  for_each = { for conf in var.subnet_configs : conf["name"] => conf if var.subnetwork_enabled }
 
-  name          = var.subnetwork_config["name"]
+  name          = each.value["name"]
   network       = google_compute_network.main[0].self_link
-  ip_cidr_range = var.subnetwork_config["ip_range"]
-  region        = var.subnetwork_config["region"]
+  ip_cidr_range = each.value["ip_range"]
+  region        = each.value["region"]
 }
 
 resource "google_compute_firewall" "main" {

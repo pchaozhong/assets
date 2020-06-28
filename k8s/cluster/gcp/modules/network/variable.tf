@@ -22,12 +22,12 @@ variable "auto_create_subnetworks" {
   default = false
 }
 
-variable "subnetwork_config" {
-  type = object({
+variable "subnet_configs" {
+  type = list(object({
     name     = string
     ip_range = string
     region   = string
-  })
+  }))
 }
 
 variable "fw_configs" {

@@ -2,6 +2,7 @@ locals {
   machine_type = "n1-standard-1"
   node_count   = 1
   location     = "asia-northeast1"
+  vpc_name     = "gke"
   oauth_scopes = [
     "https://www.googleapis.com/auth/cloud-platform",
   ]
@@ -10,12 +11,14 @@ locals {
 module "network" {
   source = "./modules/network"
 
-  vpc_nw_name = "gke"
-  subnetwork_config = {
-    name     = "gke-subnet"
-    ip_range = "192.168.0.0/24"
-    region   = "asia-northeast1"
-  }
+  vpc_nw_name = local.vpc_name
+  subnet_configs = [
+    {
+      name     = "gke-subnet"
+      ip_range = "192.168.0.0/24"
+      region   = "asia-northeast1"
+    }
+  ]
 
   fw_configs = [
     {
@@ -45,7 +48,7 @@ module "gke" {
     cluster_ip                = "172.16.0.0/16"
     service_ip                = "10.10.0.0/16"
     network                   = module.network.network_self_link
-    subnetwork                = module.network.subnetwork_self_link
+    subnetwork                = module.network.subnetwork_self_link[0]["gke-subnet"].self_link
     initial_node_count        = 1
     oauth_scopes              = local.oauth_scopes
     default_max_pods_per_node = null
@@ -71,7 +74,7 @@ module "gce" {
       name                    = "bastion"
       machine_type            = "f1-micro"
       zone                    = "asia-northeast1-b"
-      subnetwork              = module.network.subnetwork_self_link
+      subnetwork              = module.network.subnetwork_self_link[0]["gke-subnet"].self_link
       tags                    = null
       boot_disk_auto_delete   = true
       boot_disk_device_name   = "batsion-boot"

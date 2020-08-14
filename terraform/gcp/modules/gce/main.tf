@@ -5,6 +5,7 @@ resource "google_compute_instance" "main" {
   machine_type = each.value.machine_type
   zone         = each.value.zone
   tags         = each.value.tags
+
   boot_disk {
     auto_delete = each.value.disk_auto_delete
     source      = google_compute_disk.main[each.value.name].self_link
@@ -18,6 +19,15 @@ resource "google_compute_instance" "main" {
       content {
 
       }
+    }
+  }
+
+  dynamic "scheduling" {
+    for_each = each.value.scheduling
+    content {
+      preemptible         = scheduling.value.preemptible
+      on_host_maintenance = scheduling.value.on_host_maintenance
+      automatic_restart   = scheduling.value.automatic_restart
     }
   }
 }

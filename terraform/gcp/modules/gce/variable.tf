@@ -8,6 +8,11 @@ variable "gce_conf" {
     access_config    = list(object({
       enable = bool
     }))
+    scheduling = list(object({
+      preemptible = bool
+      on_host_maintenance = string
+      automatic_restart = bool
+    }))
     disk_size        = number
     disk_type        = string
     disk_image       = string

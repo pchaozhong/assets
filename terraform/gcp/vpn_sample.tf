@@ -14,39 +14,35 @@ locals {
 module "vpn_network" {
   source = "./modules/network"
 
-  vpc_network_conf = [
+  network_conf = [
     {
-      name                    = local.vpn.hub
-      auto_create_subnetworks = false
-    },
-    {
-      name                    = local.vpn.spoke
-      auto_create_subnetworks = false
-    }
-  ]
-
-  subnetwork_conf = [
-    {
-      name        = local.vpn.hub
       vpc_network = local.vpn.hub
-      cidr        = "192.168.10.0/24"
-      region      = local.region
+      auto_create_subnetworks = false
+      subnetwork = [
+        {
+          name = local.vpn.hub
+          cidr = "192.168.10.0/24"
+          region = local.region
+        }
+      ]
+      firewall_ingress_conf = []
+      firewall_egress_conf = []
+      route_conf = []
     },
     {
-      name        = local.vpn.spoke
       vpc_network = local.vpn.spoke
-      cidr        = "192.168.20.0/24"
-      region      = local.region
+      auto_create_subnetworks = false
+      subnetwork = [
+        {
+          name = local.vpn.spoke
+          cidr = "192.168.20.0/24"
+          region = local.region
+        }
+      ]
+      firewall_ingress_conf = []
+      firewall_egress_conf = []
+      route_conf = []
     }
-  ]
-  firewall_ingress_conf = [
-
-  ]
-  firewall_egress_conf = [
-
-  ]
-  route_conf = [
-
   ]
 }
 

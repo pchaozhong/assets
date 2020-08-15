@@ -11,18 +11,6 @@ locals {
   ])
 }
 
-variable "network_conf" {
-  type = list(object({
-    vpc_network = string
-    auto_create_subnetworks = bool
-    subnetwork = list(object({
-      name = string
-      cidr = string
-      region = string
-    }))
-  }))
-}
-
 resource "google_compute_network" "main" {
   for_each = { for v in var.network_conf : v.vpc_network => v }
 

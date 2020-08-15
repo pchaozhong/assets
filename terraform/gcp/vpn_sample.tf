@@ -57,18 +57,30 @@ module "ha_vpn_hub" {
       region      = local.region
       interface = [
         {
-          interface_name = local.vpn.hub
+          interface_name = join("-", [local.vpn.hub, 1])
           ip_range       = "169.254.0.2/30"
-          vpn_tunnel     = local.vpn.hub
+          vpn_tunnel     = "hub-1"
+        },
+        {
+          interface_name = join("-", [local.vpn.hub, 2])
+          ip_range       = "169.254.1.2/30"
+          vpn_tunnel     = "hub-2"
         }
       ]
       peer = [
         {
-          peer_name                 = local.vpn.hub
+          peer_name                 = join("-", [local.vpn.hub, 1])
           peer_asn                  = 64516
-          interface                 = local.vpn.hub
+          interface                 = join("-", [local.vpn.hub, 1])
           peer_ip_address           = "169.254.0.1"
           advertised_route_priority = 2000
+        },
+        {
+          peer_name                 = join("-", [local.vpn.hub, 2])
+          peer_asn                  = 64516
+          interface                 = join("-", [local.vpn.hub, 2])
+          peer_ip_address           = "169.254.1.1"
+          advertised_route_priority = 2001
         }
       ]
     }
@@ -81,9 +93,15 @@ module "ha_vpn_hub" {
       network = module.vpn_network.network_self_link[local.vpn.hub]
       tunnel = [
         {
-          tunnel_name           = local.vpn.hub
+          tunnel_name           = join("-", [local.vpn.hub, 1])
           crypto_key            = local.vpn.secret.crypto_key
           vpn_gateway_interface = 0
+          router                = local.vpn.hub
+        },
+        {
+          tunnel_name           = join("-", [local.vpn.hub, 2])
+          crypto_key            = local.vpn.secret.crypto_key
+          vpn_gateway_interface = 1
           router                = local.vpn.hub
         }
       ]
@@ -92,7 +110,11 @@ module "ha_vpn_hub" {
   peer_vpn = [
     {
       peer_gcp_gw = module.ha_vpn_spoke.ha_vpn_gateway_self_link[local.vpn.spoke]
-      tunnel_name = local.vpn.hub
+      tunnel_name = join("-", [local.vpn.hub, 1])
+    },
+    {
+      peer_gcp_gw = module.ha_vpn_spoke.ha_vpn_gateway_self_link[local.vpn.spoke]
+      tunnel_name = join("-", [local.vpn.hub, 2])
     }
   ]
 
@@ -117,18 +139,30 @@ module "ha_vpn_spoke" {
       region      = local.region
       interface = [
         {
-          interface_name = local.vpn.spoke
+          interface_name = join("-",[local.vpn.spoke,1])
           ip_range       = "169.254.0.1/30"
-          vpn_tunnel     = local.vpn.spoke
+          vpn_tunnel     = join("-",[local.vpn.spoke,1])
+        },
+        {
+          interface_name = join("-",[local.vpn.spoke,2])
+          ip_range       = "169.254.1.1/30"
+          vpn_tunnel     = join("-",[local.vpn.spoke,2])
         }
       ]
       peer = [
         {
-          peer_name                 = local.vpn.spoke
+          peer_name                 = join("-",[local.vpn.spoke,1])
           peer_asn                  = 64515
-          interface                 = local.vpn.spoke
+          interface                 = join("-",[local.vpn.spoke,1])
           peer_ip_address           = "169.254.0.2"
           advertised_route_priority = 2000
+        },
+        {
+          peer_name                 = join("-",[local.vpn.spoke,2])
+          peer_asn                  = 64515
+          interface                 = join("-",[local.vpn.spoke,2])
+          peer_ip_address           = "169.254.1.2"
+          advertised_route_priority = 2001
         }
       ]
     }
@@ -141,18 +175,28 @@ module "ha_vpn_spoke" {
       network = module.vpn_network.network_self_link[local.vpn.spoke]
       tunnel = [
         {
-          tunnel_name           = local.vpn.spoke
+          tunnel_name           = join("-",[local.vpn.spoke,1])
           crypto_key            = local.vpn.secret.crypto_key
           vpn_gateway_interface = 0
           router                = local.vpn.spoke
-        }
+        },
+        {
+          tunnel_name           = join("-",[local.vpn.spoke,2])
+          crypto_key            = local.vpn.secret.crypto_key
+          vpn_gateway_interface = 1
+          router                = local.vpn.spoke
+        },
       ]
     }
   ]
   peer_vpn = [
     {
       peer_gcp_gw = module.ha_vpn_hub.ha_vpn_gateway_self_link[local.vpn.hub]
-      tunnel_name = local.vpn.spoke
+      tunnel_name = join("-",[local.vpn.spoke,1])
+    },
+    {
+      peer_gcp_gw = module.ha_vpn_hub.ha_vpn_gateway_self_link[local.vpn.hub]
+      tunnel_name = join("-",[local.vpn.spoke,2])
     }
   ]
   secret = [

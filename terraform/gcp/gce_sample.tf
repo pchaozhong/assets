@@ -8,10 +8,12 @@ module "gce" {
       zone             = local.zone
       tags             = ["test"]
       network          = module.network.subnetwork_self_link.test
-      disk_size        = 10
-      disk_image       = "ubuntu-2004-lts"
-      disk_type        = "pd-ssd"
-      disk_auto_delete = true
+      boot_disk = {
+        size = 10
+        image = "ubuntu-2004-lts"
+        type = "pd-ssd"
+        auto_delete = true
+      }
       access_config = [
         { enable = true }
       ]

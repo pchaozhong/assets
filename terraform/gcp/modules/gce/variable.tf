@@ -13,9 +13,11 @@ variable "gce_conf" {
       on_host_maintenance = string
       automatic_restart = bool
     }))
-    disk_size        = number
-    disk_type        = string
-    disk_image       = string
-    disk_auto_delete = bool
+    boot_disk = object({
+      size = number
+      type = string
+      image = string
+      auto_delete = bool
+    })
   }))
 }

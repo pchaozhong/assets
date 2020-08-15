@@ -14,7 +14,7 @@ locals {
 
   _vpn_tunnel_conf_list = flatten([
     for conf in local._vpn_tunnel_conf_tmp : [
-      for peer in var.peer_vpn : conf.name == peer.tunnel_name ? merge(conf, peer) : null
+      for peer in var.peer_vpn :  merge(conf, peer) if conf.name == peer.tunnel_name
     ]
   ])
 }

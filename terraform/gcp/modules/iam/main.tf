@@ -2,7 +2,7 @@ locals {
   _iam_member_conf = flatten([
     for _conf in var.iam_member_conf : [
       for _role in _conf.role : {
-        id     = join("-", [split("@", _conf.member)[0], _role])
+        id     = join("-", [split("@", _conf.member)[0], split("/", _role)[1]])
         member = join(":", [_conf.member_type, _conf.member])
         role   = _role
       }

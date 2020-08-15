@@ -57,7 +57,7 @@ module "ha_vpn_hub" {
     {
       router_name = local.vpn.hub
       network     = module.vpn_network.network_self_link[local.vpn.hub]
-      asn         = 64516
+      asn         = 64515
       region      = local.region
       interface = [
         {
@@ -69,7 +69,7 @@ module "ha_vpn_hub" {
       peer = [
         {
           peer_name                 = local.vpn.hub
-          peer_asn                  = 64515
+          peer_asn                  = 64516
           interface                 = local.vpn.hub
           peer_ip_address           = "169.254.0.1"
           advertised_route_priority = 2000
@@ -129,7 +129,7 @@ module "ha_vpn_spoke" {
       peer = [
         {
           peer_name                 = local.vpn.spoke
-          peer_asn                  = 64516
+          peer_asn                  = 64515
           interface                 = local.vpn.spoke
           peer_ip_address           = "169.254.0.2"
           advertised_route_priority = 2000

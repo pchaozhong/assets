@@ -26,27 +26,6 @@ locals {
   ])
 }
 
-variable "router_conf" {
-  type = list(object({
-    router_name = string
-    network     = string
-    asn         = number
-    region      = string
-    interface = list(object({
-      interface_name = string
-      ip_range       = string
-      vpn_tunnel     = string
-    }))
-    peer = list(object({
-      peer_name                 = string
-      peer_asn                  = number
-      interface                 = string
-      peer_ip_address           = string
-      advertised_route_priority = number
-    }))
-  }))
-}
-
 resource "google_compute_router" "main" {
   for_each = { for v in var.router_conf : v.router_name => v }
   provider = google-beta

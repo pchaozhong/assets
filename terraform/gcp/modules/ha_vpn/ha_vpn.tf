@@ -19,27 +19,6 @@ locals {
   ])
 }
 
-variable "ha_vpn_conf" {
-  type = list(object({
-    gw_name = string
-    region  = string
-    network = string
-    tunnel = list(object({
-      tunnel_name           = string
-      crypto_key            = string
-      router                = string
-      vpn_gateway_interface = number
-    }))
-  }))
-}
-
-variable "peer_vpn" {
-  type = list(object({
-    peer_gcp_gw = string
-    tunnel_name = string
-  }))
-}
-
 resource "google_compute_ha_vpn_gateway" "main" {
   for_each = { for v in var.ha_vpn_conf : v.gw_name => v }
   provider = google-beta

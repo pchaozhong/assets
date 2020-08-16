@@ -1,5 +1,8 @@
 variable "gke_conf" {
   type = list(object({
+    cluster_enable   = bool
+    node_pool_enable = bool
+
     cluster_name = string
 
     cluster = list(object({

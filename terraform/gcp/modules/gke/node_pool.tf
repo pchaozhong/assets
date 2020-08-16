@@ -8,7 +8,7 @@ locals {
         node_count  = _node_pool.node_count
         node_config = _node_pool.node_config
       }
-    ]
+    ] if _conf.node_pool_enable && _conf.cluster_enable
   ])
 }
 

@@ -12,7 +12,7 @@ locals {
         remove_default_node_pool  = _cluster.remove_default_node_pool
         default_max_pods_per_node = _cluster.default_max_pods_per_node
       }
-    ]
+    ] if _conf.cluster_enable
   ])
 }
 

@@ -1,6 +1,6 @@
 variable "dns_conf" {
   type = list(object({
-    dns_zone_enable = bool
+    dns_zone_enable   = bool
     record_set_enable = bool
 
     zone_name = string
@@ -18,11 +18,16 @@ variable "dns_conf" {
     }))
 
     record_set = list(object({
-      id           = string
-      name         = string
-      type         = string
-      ttl          = number
-      rrdatas      = list(string)
+      id      = string
+      name    = string
+      type    = string
+      ttl     = number
+      rrdatas = list(string)
     }))
   }))
+}
+
+variable "api_enable" {
+  type    = bool
+  default = false
 }

@@ -5,9 +5,9 @@ module "network" {
     {
       vpc_network_enable      = false
       subnetwork_enable       = false
-      firewall_ingress_enable = true
-      firewall_egress_enable  = true
-      route_enable            = true
+      firewall_ingress_enable = false
+      firewall_egress_enable  = false
+      route_enable            = false
 
       vpc_network_conf = {
         name             = "test"
@@ -28,10 +28,10 @@ module "network" {
     },
     {
       vpc_network_enable      = false
-      subnetwork_enable       = true
-      firewall_ingress_enable = true
-      firewall_egress_enable  = true
-      route_enable            = true
+      subnetwork_enable       = false
+      firewall_ingress_enable = false
+      firewall_egress_enable  = false
+      route_enable            = false
 
       vpc_network_conf = {
         name             = "test2"

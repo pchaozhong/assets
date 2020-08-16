@@ -1,4 +1,17 @@
 locals {
+  _instance_conf_list = flatten([
+    for _conf in var.gce_conf : {
+      name = _conf.name
+      machine_type = _conf.machine_type
+      zone = _conf.zone
+      tags = _conf.tags
+      network = _conf.network
+      boot_disk = _conf.boot_disk
+      access_config = [ for _acc in _conf.access_config : _acc if _acc.access_config_enable ]
+      scheduling = [ for _sc in _conf.scheduling : _sc if _sc.scheduling_enable ]
+    } if _conf.gce_enable
+  ])
+
   _boot_disk_conf_list = flatten([
     for _conf in var.gce_conf : {
       gce_name = _conf.name
@@ -7,12 +20,12 @@ locals {
       type     = _conf.boot_disk.type
       image    = _conf.boot_disk.image
       zone     = _conf.zone
-    }
+    } if _conf.gce_enable
   ])
 }
 
 resource "google_compute_instance" "main" {
-  for_each = { for v in var.gce_conf : v.name => v }
+  for_each = { for v in local._instance_conf_list : v.name => v }
 
   name         = each.value.name
   machine_type = each.value.machine_type

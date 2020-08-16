@@ -24,7 +24,7 @@ locals {
         versioned_expr = _conf.default_rule.versioned_expr
         src_ip_ranges  = _conf.default_rule.src_ip_ranges
       }
-    }
+    } if _conf.armor_enable
   ])
 }
 

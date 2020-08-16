@@ -10,6 +10,7 @@ variable "files_rule" {
 
 variable "armor_conf" {
   type = list(object({
+    armor_enable = bool
     name = string
     default_rule = object({
       action         = string

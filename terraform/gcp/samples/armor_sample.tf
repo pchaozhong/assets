@@ -11,7 +11,8 @@ module "armor" {
 
   armor_conf = [
     {
-      name = "monitoring"
+      armor_enable = false
+      name         = "monitoring"
       default_rule = {
         action         = "deny(403)"
         priority       = 2147483647

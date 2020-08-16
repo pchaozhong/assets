@@ -1,19 +1,15 @@
 locals {
-  _route_conf_list_tmp = flatten([
-    for _conf in var.network_conf : _conf.route_conf if _conf.route_enable
-  ])
-
   _route_conf_list = flatten([
-    for _net in local._nw_conf : [
-      for _route_conf in local._route_conf_list_tmp : {
+    for _conf in var.network_conf : [
+      for _route_conf in _conf.route_conf : {
         name             = _route_conf.name
-        network          = _net.name
+        network          = _conf.vpc_network_conf.name
         dest_range       = _route_conf.dest_range
         priority         = _route_conf.priority
         tags             = _route_conf.tags
         next_hop_gateway = _route_conf.next_hop_gateway
       }
-    ]
+    ] if _conf.route_enable && _conf.vpc_network_enable
   ])
 }
 

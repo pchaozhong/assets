@@ -1,17 +1,9 @@
 locals {
-  _fw_egress_tmp_list = flatten([
-    for _conf in var.network_conf : _conf.firewall_egress_conf if _conf.firewall_egress_enable
-  ])
-
-  _fw_ingress_tmp_list = flatten([
-    for _conf in var.network_conf : _conf.firewall_ingress_conf if _conf.firewall_ingress_enable
-  ])
-
   _fw_egress_list = flatten([
-    for _net in local._nw_conf : [
-      for _fw_conf in local._fw_egress_tmp_list : {
+    for _conf in var.network_conf : [
+      for _fw_conf in _conf.firewall_egress_conf : {
         name               = _fw_conf.name
-        network            = _net.name
+        network            = _conf.vpc_network_conf.name
         priority           = _fw_conf.priority
         enable_logging     = _fw_conf.enable_logging
         destination_ranges = _fw_conf.destination_ranges
@@ -19,14 +11,14 @@ locals {
         allow_rules        = _fw_conf.allow_rules
         deny_rules         = _fw_conf.deny_rules
       }
-    ]
+    ] if _conf.firewall_egress_enable && _conf.vpc_network_enable
   ])
 
   _fw_ingress_list = flatten([
-    for _net in local._nw_conf : [
-      for _fw_conf in local._fw_ingress_tmp_list : {
+    for _conf in var.network_conf : [
+      for _fw_conf in _conf.firewall_ingress_conf : {
         name           = _fw_conf.name
-        network        = _net.name
+        network        = _conf.vpc_network_conf.name
         priority       = _fw_conf.priority
         enable_logging = _fw_conf.enable_logging
         source_ranges  = _fw_conf.source_ranges
@@ -34,7 +26,7 @@ locals {
         allow_rules    = _fw_conf.allow_rules
         deny_rules     = _fw_conf.deny_rules
       }
-    ]
+    ] if _conf.firewall_ingress_enable && _conf.vpc_network_enable
   ])
 }
 

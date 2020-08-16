@@ -6,7 +6,7 @@ locals {
         member = join(":", [_conf.member_type, _conf.member])
         role   = _role
       }
-    ]
+    ] if _conf.iam_enable
   ])
 }
 
@@ -14,6 +14,7 @@ variable "iam_member_conf" {
   type = list(object({
     role        = list(string)
     member      = string
+    iam_enable  = bool
     member_type = string
   }))
 }

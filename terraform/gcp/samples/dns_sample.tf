@@ -42,8 +42,16 @@ module "network_dns" {
 
   network_conf = [
     {
-      vpc_network = "dns-test"
-      auto_create_subnetworks = false
+      vpc_network_enable      = true
+      subnetwork_enable       = false
+      firewall_ingress_enable = false
+      firewall_egress_enable  = false
+      route_enable            = false
+
+      vpc_network_conf = {
+        name             = "dns-test"
+        auto_create_subnetworks = false
+      }
       subnetwork = [
         {
           name = "dns-test"

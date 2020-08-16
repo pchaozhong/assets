@@ -1,30 +1,38 @@
 locals {
+  _fw_egress_tmp_list = flatten([
+    for _conf in var.network_conf : _conf.firewall_egress_conf if _conf.firewall_egress_enable
+  ])
+
+  _fw_ingress_tmp_list = flatten([
+    for _conf in var.network_conf : _conf.firewall_ingress_conf if _conf.firewall_ingress_enable
+  ])
+
   _fw_egress_list = flatten([
-    for net_conf in var.network_conf : [
-      for fw_conf in net_conf.firewall_egress_conf : {
-        name = fw_conf.name
-        network = net_conf.vpc_network
-        priority = fw_conf.priority
-        enable_logging = fw_conf.enable_logging
-        destination_ranges = fw_conf.destination_ranges
-        target_tags = fw_conf.target_tags
-        allow_rules = fw_conf.allow_rules
-        deny_rules = fw_conf.deny_rules
+    for _net in local._nw_conf : [
+      for _fw_conf in local._fw_egress_tmp_list : {
+        name               = _fw_conf.name
+        network            = _net.name
+        priority           = _fw_conf.priority
+        enable_logging     = _fw_conf.enable_logging
+        destination_ranges = _fw_conf.destination_ranges
+        target_tags        = _fw_conf.target_tags
+        allow_rules        = _fw_conf.allow_rules
+        deny_rules         = _fw_conf.deny_rules
       }
     ]
   ])
 
   _fw_ingress_list = flatten([
-    for net_conf in var.network_conf : [
-      for fw_conf in net_conf.firewall_ingress_conf : {
-        name = fw_conf.name
-        network = net_conf.vpc_network
-        priority = fw_conf.priority
-        enable_logging = fw_conf.enable_logging
-        source_ranges = fw_conf.source_ranges
-        target_tags = fw_conf.target_tags
-        allow_rules = fw_conf.allow_rules
-        deny_rules = fw_conf.deny_rules
+    for _net in local._nw_conf : [
+      for _fw_conf in local._fw_ingress_tmp_list : {
+        name           = _fw_conf.name
+        network        = _net.name
+        priority       = _fw_conf.priority
+        enable_logging = _fw_conf.enable_logging
+        source_ranges  = _fw_conf.source_ranges
+        target_tags    = _fw_conf.target_tags
+        allow_rules    = _fw_conf.allow_rules
+        deny_rules     = _fw_conf.deny_rules
       }
     ]
   ])

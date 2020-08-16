@@ -1,7 +1,16 @@
 variable "network_conf" {
   type = list(object({
-    vpc_network             = string
-    auto_create_subnetworks = bool
+    vpc_network_enable      = bool
+    subnetwork_enable       = bool
+    firewall_ingress_enable = bool
+    firewall_egress_enable  = bool
+    route_enable            = bool
+
+    vpc_network_conf = object({
+      name                    = string
+      auto_create_subnetworks = bool
+    })
+
     subnetwork = list(object({
       name   = string
       cidr   = string

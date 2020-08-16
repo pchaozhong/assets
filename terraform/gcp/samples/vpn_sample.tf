@@ -12,7 +12,7 @@ locals {
 }
 
 module "vpn_network" {
-  source = "./modules/network"
+  source = "../modules/network"
 
   network_conf = [
     {
@@ -47,7 +47,7 @@ module "vpn_network" {
 }
 
 module "ha_vpn_hub" {
-  source = "./modules/ha_vpn"
+  source = "../modules/ha_vpn"
 
   router_conf = [
     {
@@ -129,7 +129,7 @@ module "ha_vpn_hub" {
 }
 
 module "ha_vpn_spoke" {
-  source = "./modules/ha_vpn"
+  source = "../modules/ha_vpn"
 
   router_conf = [
     {

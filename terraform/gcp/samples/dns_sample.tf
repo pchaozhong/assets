@@ -1,5 +1,5 @@
 module "dns" {
-  source = "./modules/dns"
+  source = "../modules/dns"
 
   dns_conf = [
     {
@@ -10,7 +10,7 @@ module "dns" {
           visibility = "private"
           private_visibility_config = [
             {
-              network_url = module.network.network_self_link.dns-test
+              network_url = module.network_dns.network_self_link.dns-test
             }
           ]
           forwarding_config = []
@@ -37,8 +37,8 @@ module "dns" {
   ]
 }
 
-module "network" {
-  source = "./modules/network"
+module "network_dns" {
+  source = "../modules/network"
 
   network_conf = [
     {

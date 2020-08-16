@@ -1,5 +1,5 @@
 module "sql" {
-  source = "./modules/sql"
+  source = "../modules/sql"
 
   sql_conf = [
     {

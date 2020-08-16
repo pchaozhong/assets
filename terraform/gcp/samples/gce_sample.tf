@@ -1,5 +1,5 @@
 module "gce" {
-  source = "./modules/gce"
+  source = "../modules/gce"
 
   gce_conf = [
     {

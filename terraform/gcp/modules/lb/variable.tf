@@ -1,25 +1,26 @@
 variable "lb_conf" {
   type = list(object({
-    instance_template = string
-    url_map   = string
-    zone = string
+    instance_template      = string
+    instance_group_manager = string
+    https_proxy            = string
+    url_map                = string
+    zone                   = string
+
     bk_service = list(object({
-      name                   = string
-      health_checks          = list(string)
-      protocol               = string
-      timeout_sec            = number
-      instance_group_manager = string
+      name          = string
+      health_checks = list(string)
+      protocol      = string
+      timeout_sec   = number
     }))
 
     forwarding_rule = list(object({
-      name = string
-      target = string
+      name       = string
+      target     = string
       port_range = string
       ip_address = string
     }))
 
     grp_mng = list(object({
-      name               = string
       base_instance_name = string
       target_size        = number
     }))
@@ -28,25 +29,24 @@ variable "lb_conf" {
       name = string
       http_health_check = list(object({
         request_path = string
-        port = string
+        port         = string
       }))
       https_health_check = list(object({
         request_path = string
-        port = string
+        port         = string
       }))
     }))
 
     tgt_https_proxy = list(object({
-      name      = string
       ssl_certs = list(string)
     }))
 
     instance_template = list(object({
       machine_type = string
-      tags = list(string)
+      tags         = list(string)
       source_image = string
-      auto_delete = bool
-      subnetwork = string
+      auto_delete  = bool
+      subnetwork   = string
       access_config = list(object({
         enable = bool
       }))
@@ -54,7 +54,7 @@ variable "lb_conf" {
     }))
 
     mng_ssl_cert = list(object({
-      name = string
+      name    = string
       domains = string
     }))
 

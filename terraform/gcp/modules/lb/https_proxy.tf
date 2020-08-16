@@ -2,7 +2,7 @@ locals {
   _thp_conf = flatten([
     for _conf in var.lb_conf : [
       for _thp in _conf.tgt_https_proxy : {
-        name             = _thp.name
+        name             = _conf.https_proxy
         url_map          = _conf.url_map
         ssl_certificates = _thp.ssl_certificates
       }

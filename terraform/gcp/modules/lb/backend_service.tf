@@ -6,7 +6,7 @@ locals {
         health_checks          = _bk_conf.health_checks
         protocol               = _bk_conf.protocol
         timeout_sec            = _bk_conf.timeout_sec
-        instance_group_manager = _bk_conf.instance_group_manager
+        instance_group_manager = _conf.instance_group_manager
       }
     ]
   ])

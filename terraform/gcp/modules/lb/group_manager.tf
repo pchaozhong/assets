@@ -2,7 +2,7 @@ locals {
   _igm_conf = flatten([
     for _conf in var.lb_conf : [
       for _img in _conf.grp_mng : {
-        name               = _img.name
+        name               = _conf.instance_group_manager
         zone               = _conf.zone
         target_size        = _img.target_size
         instance_template  = _conf.instance_template

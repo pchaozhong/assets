@@ -3,6 +3,7 @@ variable "files_rule" {
     action         = string
     versioned_expr = string
     file_path      = string
+    file_type      = string
     priority_base  = number
   })
 }

@@ -5,6 +5,7 @@ module "armor" {
     action         = "allow"
     versioned_expr = "SRC_IPS_V1"
     file_path      = "../files/monitoring_ip_list.json"
+    file_type      = "json"
     priority_base  = 1000
   }
 

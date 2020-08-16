@@ -1,5 +1,7 @@
 variable "build_conf" {
   type = list(object({
+    build_enable = bool
+
     name           = string
     disabled       = bool
 

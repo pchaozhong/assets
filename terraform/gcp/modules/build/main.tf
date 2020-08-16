@@ -1,5 +1,11 @@
+locals {
+  _build_conf = flatten([
+    for _conf in var.build_conf : _conf if _conf.build_enable
+  ])
+}
+
 resource "google_cloudbuild_trigger" "main" {
-  for_each = { for v in var.build_conf : v.name => v }
+  for_each = { for v in local._build_conf : v.name => v }
   provider   = "google-beta"
 
   name           = each.value.name

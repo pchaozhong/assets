@@ -3,20 +3,22 @@ module "sql" {
 
   sql_conf = [
     {
-      name = "test-db"
-      instance_name = "demo-psgre-proxy"
-    }
-  ]
+      database_instance_name = "demo-psgre-proxy"
 
-  db_instance_conf = [
-    {
-      name = "demo-psgre-proxy"
-      db_version = "POSTGRES_11"
-      setting = [
+      db_conf = [
         {
-          tier = "db-f1-micro"
-          availability_type = "ZONAL"
-          disk_type = "PD_HDD"
+          name = "test-db"
+        }
+      ]
+
+      db_instance_conf = [
+        {
+          db_version = "POSTGRES_11"
+          settings = {
+            tier              = "db-f1-micro"
+            availability_type = "ZONAL"
+            disk_type         = "PD_HDD"
+          }
         }
       ]
     }

@@ -1,18 +1,18 @@
 variable "sql_conf" {
   type = list(object({
-    name          = string
-    instance_name = string
-  }))
-}
+    database_instance_name = string
 
-variable "db_instance_conf" {
-  type = list(object({
-    name       = string
-    db_version = string
-    setting = list(object({
-      tier              = string
-      availability_type = string
-      disk_type         = string
+    db_conf = list(object({
+      name = string
+    }))
+
+    db_instance_conf = list(object({
+      db_version = string
+      settings = object({
+        tier              = string
+        disk_type         = string
+        availability_type = string
+      })
     }))
   }))
 }

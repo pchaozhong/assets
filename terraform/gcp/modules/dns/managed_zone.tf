@@ -7,7 +7,7 @@ locals {
         visibility                = _zone_conf.visibility
         private_visibility_config = _zone_conf.private_visibility_config
         forwarding_config         = _zone_conf.forwarding_config
-      }
+      } if _conf.dns_zone_enable
     ]
   ])
 }

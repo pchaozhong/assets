@@ -1,5 +1,8 @@
 variable "dns_conf" {
   type = list(object({
+    dns_zone_enable = bool
+    record_set_enable = bool
+
     zone_name = string
     mng_zone = list(object({
       dns_name   = string

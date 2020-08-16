@@ -9,7 +9,7 @@ locals {
         managed_zone = _conf.zone_name
         rrdatas      = _record.rrdatas
       }
-    ]
+    ] if _conf.record_set_enable && _conf.dns_zone_enable
   ])
 }
 

@@ -1,16 +1,22 @@
-# module "kms" {
-#   key_ring = [
-#     {
-#       name = ""
-#       location = local.location
-#     }
-#   ]
+module "kms" {
+  source = "../modules/kms"
 
-#   crypto_key = [
-#     {
-#       name = ""
-#       keyring = ""
-#       prevent_destroy = false
-#     }
-#   ]
-# }
+  kms_conf = [
+    {
+      kms_enable    = false
+      crypto_enable = false
+
+      key_ring_conf = {
+        name     = "test"
+        location = "global"
+      }
+
+      crypto_key = [
+        {
+          name            = "test"
+          prevent_destroy = false
+        }
+      ]
+    }
+  ]
+}

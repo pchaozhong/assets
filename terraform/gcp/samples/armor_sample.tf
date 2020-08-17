@@ -7,12 +7,12 @@ module "armor" {
     file_path      = "../files/monitoring_ip_list.json"
     file_type      = "json"
     priority_base  = 1000
-    ip_prefix = "ipAddress"
+    ip_prefix      = "ipAddress"
   }
 
   armor_conf = [
     {
-      armor_enable = true
+      armor_enable = false
       name         = "monitoring"
       default_rule = {
         action         = "deny(403)"

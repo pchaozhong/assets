@@ -14,6 +14,7 @@ locals {
 }
 
 module "gke" {
+  depends_on = [ module.network ]
   source = "../modules/gke"
 
   gke_conf = [

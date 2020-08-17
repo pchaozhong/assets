@@ -1,9 +1,12 @@
 module "iam" {
+  depends_on = [ module.service_account ]
   source = "../modules/iam"
 
   iam_member_conf = [
     {
-      member = module.service_account.service_accout_email.module-sample
+      iam_enable = true
+
+      member = "module-sample"
       member_type = "serviceAccount"
       role = [
         "roles/editor"
@@ -18,7 +21,8 @@ module "service_account" {
 
   service_account_conf = [
     {
-      account_id = "module-sample"
+      service_account_enable = true
+      account_id             = "module-sample"
     }
   ]
 }

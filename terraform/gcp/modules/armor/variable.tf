@@ -5,13 +5,14 @@ variable "files_rule" {
     file_path      = string
     file_type      = string
     priority_base  = number
+    ip_prefix      = string
   })
 }
 
 variable "armor_conf" {
   type = list(object({
     armor_enable = bool
-    name = string
+    name         = string
     default_rule = object({
       action         = string
       priority       = number

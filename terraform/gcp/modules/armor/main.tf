@@ -2,7 +2,7 @@ locals {
   ips_map = var.files_rule.file_type == "json" ? jsondecode(file(var.files_rule.file_path)) : var.files_rule.file_type == "yaml" ? yamldecode(file(var.files_rule.file_path)) : csvdecode(file(var.files_rule.file_path))
 
   _ips_list = chunklist(flatten([
-    for v in local.ips_map : v.ipAddress
+    for v in local.ips_map : v[var.files_rule.ip_prefix]
   ]), 10)
 
   _req_list = flatten([

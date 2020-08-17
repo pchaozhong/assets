@@ -3,11 +3,20 @@ Armor Module
 
 # 使い方
 
-1. filesフォルダにアクセス制御するIPアドレスのリストファイル(json形式)を格納する
+1. filesフォルダにアクセス制御するIPアドレスのリストファイルを格納する
 
-# ファイルの内容
+## IPアドレス管理ファイルの形式
 
-json形式でのIPアドレス管理は、ipAddressをkeyとする。
+IPアドレスを管理するファイルの形式を下記のいずれかとする
+
+- json
+- yaml
+- csv
+
+### IPアドレス管理ファイルの内容
+
+key、アドレスで管理し、var.files_rule.ip_prefixにkey値を記入する。
+var.files_rule.ip_prefix= "ipAddress"ならば下記のように管理する。
 
 ```
 [

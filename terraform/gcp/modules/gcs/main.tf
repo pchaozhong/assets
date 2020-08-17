@@ -20,7 +20,7 @@ variable "storage_bucket" {
 }
 
 resource "google_storage_bucket" "main" {
-  for_each = { for v in var.storage_bucket : v.name => v }
+  for_each = { for v in local._gcs_conf : v.name => v }
 
   name          = each.value.name
   location      = each.value.location

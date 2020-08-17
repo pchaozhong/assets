@@ -1,5 +1,13 @@
+locals {
+  _gcs_conf = flatten([
+    for _conf in var.storage_bucket : _conf if _conf.gcs_enable
+  ])
+}
+
 variable "storage_bucket" {
   type = list(object({
+    gcs_enable = bool
+
     name               = string
     location           = string
     force_destroy      = bool

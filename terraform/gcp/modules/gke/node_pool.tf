@@ -21,7 +21,7 @@ resource "google_container_node_pool" "main" {
   node_count = each.value.node_count
 
   node_config {
-    preemptible  = each.value.node_config.preemptible
+    preemptible  = var.preemptible_enable
     machine_type = each.value.node_config.machine_type
 
     oauth_scopes = each.value.node_config.oauth_scopes

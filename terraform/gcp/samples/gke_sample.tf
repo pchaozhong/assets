@@ -17,10 +17,11 @@ module "gke" {
   depends_on = [ module.network ]
   source = "../modules/gke"
 
+  preemptible_enable = true
   gke_conf = [
     {
-      cluster_enable   = false
-      node_pool_enable = false
+      cluster_enable   = true
+      node_pool_enable = true
 
       cluster_name = "test"
       cluster = [
@@ -46,7 +47,6 @@ module "gke" {
           location   = local.region
           node_count = local.gke.node_count
           node_config = {
-            preemptible  = true
             machine_type = local.gke.node_pool.machine_type
             oauth_scopes = local.gke.oauth_scopes
           }

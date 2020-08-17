@@ -28,11 +28,15 @@ variable "gke_conf" {
       location   = string
       node_count = number
       node_config = object({
-        preemptible  = bool
         machine_type = string
         oauth_scopes = list(string)
       })
     }))
 
   }))
+}
+
+variable "preemptible_enable" {
+  type = bool
+  default = false
 }

@@ -20,9 +20,9 @@ resource "google_container_cluster" "main" {
   for_each = { for v in local._cluster_conf : v.name => v }
 
   name                      = each.value.name
-  network                   = each.value.network
+  network                   = data.google_compute_network.main[each.value.network]
   location                  = each.value.location
-  subnetwork                = each.value.subnetwork
+  subnetwork                = data.google_compute_subnetwork.main[each.value.subnetwork]
   initial_node_count        = each.value.initial_node_count
   remove_default_node_pool  = each.value.remove_default_node_pool
   default_max_pods_per_node = each.value.default_max_pods_per_node

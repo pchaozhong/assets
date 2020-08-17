@@ -4,7 +4,7 @@ module "iam" {
 
   iam_member_conf = [
     {
-      iam_enable = true
+      iam_enable = false
 
       member = "module-sample"
       member_type = "serviceAccount"
@@ -21,7 +21,7 @@ module "service_account" {
 
   service_account_conf = [
     {
-      service_account_enable = true
+      service_account_enable = false
       account_id             = "module-sample"
     }
   ]

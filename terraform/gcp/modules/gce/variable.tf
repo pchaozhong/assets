@@ -4,6 +4,7 @@ variable "gce_conf" {
     name         = string
     machine_type = string
     zone         = string
+    region       = string
     tags         = list(string)
     network      = string
     access_config = list(object({

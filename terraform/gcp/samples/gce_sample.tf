@@ -8,8 +8,9 @@ module "gce" {
       name         = "test"
       machine_type = "f1-micro"
       zone         = local.zone
+      region       = local.region
       tags         = ["test"]
-      network      = module.network.subnetwork_self_link.test
+      network      = "test"
       boot_disk = {
         size        = 10
         image       = "ubuntu-2004-lts"

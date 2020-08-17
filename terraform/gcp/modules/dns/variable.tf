@@ -9,7 +9,7 @@ variable "dns_conf" {
       visibility = string
 
       private_visibility_config = list(object({
-        network_url = string
+        network = string
       }))
 
       forwarding_config = list(object({

@@ -1,14 +1,14 @@
 locals {
   _instance_conf_list = flatten([
     for _conf in var.gce_conf : {
-      name = _conf.name
-      machine_type = _conf.machine_type
-      zone = _conf.zone
-      tags = _conf.tags
-      network = _conf.network
-      boot_disk = _conf.boot_disk
-      access_config = [ for _acc in _conf.access_config : _acc if _acc.access_config_enable ]
-      scheduling = [ for _sc in _conf.scheduling : _sc if _sc.scheduling_enable ]
+      name          = _conf.name
+      machine_type  = _conf.machine_type
+      zone          = _conf.zone
+      tags          = _conf.tags
+      network       = _conf.network
+      boot_disk     = _conf.boot_disk
+      access_config = [for _acc in _conf.access_config : _acc if _acc.access_config_enable]
+      scheduling    = [for _sc in _conf.scheduling : _sc if _sc.scheduling_enable]
     } if _conf.gce_enable
   ])
 
@@ -20,6 +20,13 @@ locals {
       type     = _conf.boot_disk.type
       image    = _conf.boot_disk.image
       zone     = _conf.zone
+    } if _conf.gce_enable
+  ])
+
+  _nw_list = flatten([
+    for _conf in var.gce_conf : {
+      name = _conf.network
+      region = _conf.region
     } if _conf.gce_enable
   ])
 }
@@ -38,7 +45,7 @@ resource "google_compute_instance" "main" {
   }
 
   network_interface {
-    subnetwork = each.value.network
+    subnetwork = data.google_compute_subnetwork.main[each.value.network].self_link
 
     dynamic "access_config" {
       for_each = each.value.access_config

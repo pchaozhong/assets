@@ -26,7 +26,7 @@ resource "google_dns_managed_zone" "main" {
     for_each = each.value.private_visibility_config
     content {
       networks {
-        network_url = private_visibility_config.value.network_url
+        network_url = data.google_compute_network.main[private_visibility_config.value.network].self_link
       }
     }
   }

@@ -20,8 +20,8 @@ module "gke" {
   preemptible_enable = true
   gke_conf = [
     {
-      cluster_enable   = true
-      node_pool_enable = true
+      cluster_enable   = false
+      node_pool_enable = false
 
       cluster_name = "test"
       cluster = [

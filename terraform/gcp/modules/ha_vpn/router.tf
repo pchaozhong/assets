@@ -8,7 +8,7 @@ locals {
         region     = _router_conf.region
         router     = _router_conf.router_name
       }
-    ]
+    ] if var.vpn_enable
   ])
 
   _router_peer_list = flatten([
@@ -22,15 +22,23 @@ locals {
         peer_ip_address           = _peer_conf.peer_ip_address
         advertised_route_priority = _peer_conf.advertised_route_priority
       }
-    ]
+    ] if var.vpn_enable
+  ])
+
+  _router_conf = flatten([
+    for _conf in var.router_conf : {
+      name    = _conf.router_name
+      network = data.google_compute_network.router_main[_conf.nw_name].self_link
+      asn     = _conf.asn
+    } if var.vpn_enable
   ])
 }
 
 resource "google_compute_router" "main" {
-  for_each = { for v in var.router_conf : v.router_name => v }
+  for_each = { for v in local._router_conf : v.name => v }
   provider = google-beta
 
-  name    = each.value.router_name
+  name    = each.value.name
   network = each.value.network
   bgp {
     asn = each.value.asn

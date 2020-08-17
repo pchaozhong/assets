@@ -9,21 +9,29 @@ locals {
         crypto_key            = _tunnel_conf.crypto_key
         vpn_gateway_interface = _tunnel_conf.vpn_gateway_interface
       }
-    ]
+    ] if var.vpn_enable
   ])
 
   _vpn_tunnel_conf_list = flatten([
     for conf in local._vpn_tunnel_conf_tmp : [
-      for peer in var.peer_vpn :  merge(conf, peer) if conf.name == peer.tunnel_name
-    ]
+      for peer in var.peer_vpn : merge(conf, peer) if conf.name == peer.tunnel_name
+    ] if var.vpn_enable
+  ])
+
+  _vpn_gw_conf = flatten([
+    for _conf in var.ha_vpn_conf : {
+      name    = _conf.gw_name
+      network = data.google_compute_network.vpn_main[_conf.nw_name].self_link
+      region  = _conf.region
+    } if var.vpn_enable
   ])
 }
 
 resource "google_compute_ha_vpn_gateway" "main" {
-  for_each = { for v in var.ha_vpn_conf : v.gw_name => v }
+  for_each = { for v in local._vpn_gw_conf : v.name => v }
   provider = google-beta
 
-  name    = each.value.gw_name
+  name    = each.value.name
   region  = each.value.region
   network = each.value.network
 }

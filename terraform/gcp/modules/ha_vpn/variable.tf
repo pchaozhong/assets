@@ -1,8 +1,14 @@
+variable "vpn_enable" {
+  type = bool
+  default = false
+}
+
 variable "ha_vpn_conf" {
   type = list(object({
     gw_name = string
     region  = string
-    network = string
+    # network = string
+    nw_name = string
     tunnel = list(object({
       tunnel_name           = string
       crypto_key            = string
@@ -22,7 +28,8 @@ variable "peer_vpn" {
 variable "router_conf" {
   type = list(object({
     router_name = string
-    network     = string
+    # network     = string
+    nw_name = string
     asn         = number
     region      = string
     interface = list(object({

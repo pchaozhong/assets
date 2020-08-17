@@ -12,10 +12,10 @@ locals {
 
 variable "iam_member_conf" {
   type = list(object({
-    role        = list(string)
-    member      = string
     iam_enable  = bool
+    member      = string
     member_type = string
+    role        = list(string)
   }))
 }
 

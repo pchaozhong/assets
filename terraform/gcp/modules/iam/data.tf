@@ -2,7 +2,7 @@ locals {
   _sa_list = flatten([
     for _conf in var.iam_member_conf : {
       id = _conf.member
-    } if _conf.member_type == "serviceAccount"
+    } if _conf.member_type == "serviceAccount" && _conf.iam_enable
   ])
 }
 

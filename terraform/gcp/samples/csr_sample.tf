@@ -3,7 +3,9 @@ module "csr" {
 
   csr_conf = [
     {
-      name = "test"
+      csr_enable = false
+
+      name           = "test"
       pubsub_configs = []
     }
   ]

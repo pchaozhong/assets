@@ -1,5 +1,12 @@
+locals {
+  _csr_conf = flatten([
+    for _conf in var.csr_conf : _conf if _conf.csr_enable
+  ])
+}
+
 variable "csr_conf" {
   type = list(object({
+    csr_enable = bool
     name = string
     pubsub_configs = list(object({
       topic                 = string
@@ -10,7 +17,7 @@ variable "csr_conf" {
 }
 
 resource "google_sourcerepo_repository" "main" {
-  for_each = { for v in var.csr_conf : v.name => v }
+  for_each = { for v in local._csr_conf : v.name => v }
 
   name = each.value.name
   dynamic "pubsub_configs"{

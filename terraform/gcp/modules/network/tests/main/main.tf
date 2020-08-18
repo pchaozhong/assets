@@ -1,0 +1,40 @@
+locals {
+  region = "asia-northeast1"
+  zone = "asia-northeast1-b"
+  network = "test"
+  subnetwork = {
+    name = "test"
+    cidr = "192.168.0.0/29"
+  }
+}
+
+module "network" {
+  source = "../../"
+
+  network_conf = [
+    {
+      vpc_network_enable      = true
+      subnetwork_enable       = true
+      firewall_ingress_enable = false
+      firewall_egress_enable  = false
+      route_enable            = false
+
+      vpc_network_conf = {
+        name             = local.network
+        auto_create_subnetworks = false
+      }
+      subnetwork = [
+        {
+          name   = local.subnetwork.name
+          cidr   = local.subnetwork.cidr
+          region = local.region
+        }
+      ]
+      firewall_ingress_conf = [
+      ]
+      firewall_egress_conf = []
+      route_conf = [
+      ]
+    }
+  ]
+}

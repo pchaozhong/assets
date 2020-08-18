@@ -1,8 +1,10 @@
 module "gce" {
+  depends_on = [ module.network ]
   source = "../modules/gce"
 
   gce_conf = [
     {
+      preemptible_enable = true
       gce_enable = false
 
       name         = "test"
@@ -10,27 +12,17 @@ module "gce" {
       zone         = local.zone
       region       = local.region
       tags         = ["test"]
-      network      = "test"
+      network      = local.subnetwork.name
+      access_config = {
+        nat_ip = null
+      }
+
       boot_disk = {
         size        = 10
         image       = "ubuntu-2004-lts"
         type        = "pd-ssd"
         auto_delete = true
       }
-      access_config = [
-        {
-          access_config_enable = true
-          nat_ip               = null
-        }
-      ]
-      scheduling = [
-        {
-          scheduling_enable   = true
-          preemptible         = true
-          on_host_maintenance = "TERMINATE"
-          automatic_restart   = false
-        }
-      ]
     }
   ]
 }

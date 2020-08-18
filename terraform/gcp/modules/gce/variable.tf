@@ -1,5 +1,6 @@
 variable "gce_conf" {
   type = list(object({
+    preemptible_enable = bool
     gce_enable   = bool
     name         = string
     machine_type = string
@@ -7,16 +8,9 @@ variable "gce_conf" {
     region       = string
     tags         = list(string)
     network      = string
-    access_config = list(object({
-      access_config_enable = bool
+    access_config = object({
       nat_ip               = string
-    }))
-    scheduling = list(object({
-      scheduling_enable   = bool
-      preemptible         = bool
-      on_host_maintenance = string
-      automatic_restart   = bool
-    }))
+    })
     boot_disk = object({
       size        = number
       type        = string
@@ -24,4 +18,24 @@ variable "gce_conf" {
       auto_delete = bool
     })
   }))
+}
+
+variable "scheduling" {
+  type = object({
+    gce_name = string
+    on_host_maintenance = string
+    automatic_restart = bool
+  })
+
+  default = null
+}
+
+variable "access_config" {
+  type = object({
+    nat_ip = string
+  })
+
+  default = {
+    nat_ip = null
+  }
 }

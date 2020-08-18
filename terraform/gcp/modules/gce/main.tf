@@ -7,8 +7,14 @@ locals {
       tags          = _conf.tags
       network       = _conf.network
       boot_disk     = _conf.boot_disk
-      access_config = [for _acc in _conf.access_config : _acc if _acc.access_config_enable]
-      scheduling    = [for _sc in _conf.scheduling : _sc if _sc.scheduling_enable]
+      access_config = _conf.access_config
+      scheduling = flatten([
+        for _s in local._sch : {
+          on_host_maintenance = _s.on_host_maintenance
+          automatic_restart   = _s.automatic_restart
+          preemptible         = _s.preemptible
+        } if _s.gce_name == _conf.name
+      ])
     } if _conf.gce_enable
   ])
 
@@ -25,13 +31,49 @@ locals {
 
   _nw_list = flatten([
     for _conf in var.gce_conf : {
-      name = _conf.network
+      name   = _conf.network
       region = _conf.region
     } if _conf.gce_enable
+  ])
+
+  _sch = flatten([
+    for _conf in var.gce_conf : [
+      for _s in local._sch_tmp : _s
+    ] if _conf.preemptible_enable
+  ])
+
+  _sch_tmp = flatten([
+    [
+      for _conf in var.gce_conf : [
+        for _sche in var.scheduling : {
+          gce_name            = _sche.gce_name
+          automatic_restart   = _sche.automatic_restart
+          on_host_maintenance = _sche.on_host_maintenance
+          preemptible         = false
+        } if _sche.gce_name == _conf.name
+      ] if ! _conf.preemptible_enable && var.scheduling != null
+    ],
+    flatten([
+      for _conf in var.gce_conf : [
+        for _tmp in local._pre_tmp : _tmp
+      ] if _conf.preemptible_enable
+    ])
+  ])
+
+  _pre_tmp = flatten([
+    for _conf in var.gce_conf : [
+      {
+        gce_name            = _conf.name
+        preemptible         = true
+        automatic_restart   = false
+        on_host_maintenance = "TERMINATE"
+      }
+    ] if _conf.preemptible_enable
   ])
 }
 
 resource "google_compute_instance" "main" {
+  depends_on = [ google_compute_disk.main]
   for_each = { for v in local._instance_conf_list : v.name => v }
 
   name         = each.value.name
@@ -42,6 +84,15 @@ resource "google_compute_instance" "main" {
   boot_disk {
     auto_delete = each.value.boot_disk.auto_delete
     source      = google_compute_disk.main[each.value.name].self_link
+  }
+
+  dynamic "scheduling" {
+    for_each = each.value.scheduling
+    content {
+      preemptible = scheduling.value.preemptible
+      automatic_restart = scheduling.value.automatic_restart
+      on_host_maintenance = scheduling.value.on_host_maintenance
+    }
   }
 
   network_interface {
@@ -55,14 +106,6 @@ resource "google_compute_instance" "main" {
     }
   }
 
-  dynamic "scheduling" {
-    for_each = each.value.scheduling
-    content {
-      preemptible         = scheduling.value.preemptible
-      on_host_maintenance = scheduling.value.on_host_maintenance
-      automatic_restart   = scheduling.value.automatic_restart
-    }
-  }
 }
 
 resource "google_compute_disk" "main" {

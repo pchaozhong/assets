@@ -6,3 +6,5 @@ terraform.tfstate.d
 terraform.tfstate
 inspec_rsa*
 terraform.tfstate.backup
+inspec.lock
+attributes.yaml

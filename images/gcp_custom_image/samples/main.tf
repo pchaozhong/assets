@@ -1,6 +1,11 @@
 locals {
-  zone = "asia-northeast1-b"
+  zone   = "asia-northeast1-b"
   region = "asia-northeast1"
+  network = "custom-img"
+  subnet = {
+    name = "custom-img"
+    cidr = "192.168.0.0/29"
+  }
 }
 
 variable "image" {
@@ -12,33 +17,24 @@ module "gce" {
 
   gce_conf = [
     {
-      gce_enable = false
+      gce_enable         = false
+      preemptible_enable = true
 
-      name         = "docker"
+      name         = "custom-img-demo"
       machine_type = "f1-micro"
       zone         = local.zone
+      region       = local.region
       tags         = ["test"]
-      network      = module.nw.subnetwork_self_link.custom-img
+      network      = local.subnet.name
       boot_disk = {
         size        = 10
         image       = var.image
         type        = "pd-ssd"
         auto_delete = true
       }
-      access_config = [
-        {
-          access_config_enable = true
-          nat_ip               = null
-        }
-      ]
-      scheduling = [
-        {
-          scheduling_enable   = true
-          preemptible         = true
-          on_host_maintenance = "TERMINATE"
-          automatic_restart   = false
-        }
-      ]
+      access_config = {
+        nat_ip = null
+      }
     }
   ]
 }
@@ -55,13 +51,13 @@ module "nw" {
       route_enable            = true
 
       vpc_network_conf = {
-        name             = "custom-img"
+        name                    = "custom-img"
         auto_create_subnetworks = false
       }
       subnetwork = [
         {
-          name   = "custom-img"
-          cidr   = "192.168.0.0/24"
+          name   = local.subnet.name
+          cidr   = local.subnet.cidr
           region = local.region
         }
       ]
@@ -75,7 +71,7 @@ module "nw" {
           allow_rules = [
             {
               protocol = "tcp"
-              ports = ["22", "80"]
+              ports    = ["22", "80"]
             }
           ]
           deny_rules = []

@@ -1,11 +1,11 @@
 module "gce" {
-  depends_on = [ module.network ]
-  source = "../modules/gce"
+  depends_on = [module.network]
+  source     = "../modules/gce"
 
   gce_conf = [
     {
+      gce_enable         = false
       preemptible_enable = true
-      gce_enable = false
 
       name         = "test"
       machine_type = "f1-micro"

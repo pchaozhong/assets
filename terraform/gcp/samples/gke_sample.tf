@@ -28,7 +28,7 @@ module "gke" {
         {
           network                   = "test"
           location                  = local.region
-          subnetwork                = "test"
+          subnetwork                = local.subnetwork.name
           initial_node_count        = local.gke.node_count
           remove_default_node_pool  = true
           default_max_pods_per_node = null

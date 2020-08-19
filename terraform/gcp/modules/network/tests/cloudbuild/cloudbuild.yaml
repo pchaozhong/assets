@@ -11,7 +11,7 @@ steps:
     volumes:
       - name: 'test'
         path: '/tests'
-    args: ["ls", "tests"]
+    args: ["ls"]
 
   - id: 'terraform init'
     name: 'hashicorp/terraform:$_TERRAFORM_VERSION'

@@ -9,7 +9,7 @@ locals {
 }
 
 module "network" {
-  source = "../"
+  source = "./modules/network"
 
   network_conf = [
     {

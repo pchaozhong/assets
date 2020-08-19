@@ -66,7 +66,7 @@ steps:
 
   - id: "inspec exec"
     name: 'chef/inspec'
-    args: ["exec", ".", "-t", "gcp://", "--input-file", "attributes.yaml", "--chef-license", "accept"]
+    args: ["exec", ".", "-t", "gcp://764086051850-6qr4p6gpi6hn506pt8ejuq83di341hur.apps.googleusercontent.com", "--input-file", "attributes.yaml", "--chef-license", "accept"]
 
   - id: 'terraform destroy'
     name: 'hashicorp/terraform:$_TERRAFORM_VERSION'

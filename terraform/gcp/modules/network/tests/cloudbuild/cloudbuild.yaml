@@ -4,7 +4,7 @@ steps:
     volumes:
       - name: 'test'
         path: '/tests'
-    args: ["cp", "-r", "terraform/gcp/modules/network/tests/main/*", "."]
+    args: ["cp", "-r", "terraform/gcp/modules/network/tests/main/", "."]
 
   - id: 'ls command tests'
     name: 'ubuntu'
@@ -12,6 +12,11 @@ steps:
       - name: 'test'
         path: '/tests'
     args: ["ls", "tests"]
+
+  - id: 'ls command tests'
+    name: 'ubuntu'
+    args: ["ls"]
+    dir: '/tests'
 
   - id: 'terraform init'
     name: 'hashicorp/terraform:$_TERRAFORM_VERSION'

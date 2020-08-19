@@ -65,7 +65,7 @@ steps:
     args: ["ls"]
 
   - id: "inspec exec"
-    name: 'gcr.io/$PROJECT_ID/inspec'
+    name: 'chef/inspec'
     args: ["exec", ".", "-t", "gcp://", "--input-file", "attributes.yaml", "--chef-license", "accept"]
 
   - id: 'terraform destroy'

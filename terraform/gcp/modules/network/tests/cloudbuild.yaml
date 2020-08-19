@@ -1,4 +1,13 @@
 steps:
+  - id: 'ls command default'
+    name: 'ubuntu'
+    args: ["ls"]
+
+  - id: 'ls command dir path'
+    name: 'ubuntu'
+    args: ["ls"]
+    dir: '/terraform/gcp/modules/network/tests'
+
   - id: 'terraform init'
     name: 'hashicorp/terraform:$_TERRAFORM_VERSION'
     args: ["init"]

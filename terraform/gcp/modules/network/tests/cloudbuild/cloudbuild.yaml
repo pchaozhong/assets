@@ -1,14 +1,14 @@
 steps:
   - id: 'ls'
     name: 'ubuntu'
-    args: ["ls", "terraform"]
+    args: ["ls", "terraform/gcp/modules/network/tests"]
 
   - id: 'copy'
     name: 'ubuntu'
     volumes:
       - name: 'test'
         path: '/tests'
-    args: ["cp", "-r", "/terraform/gcp/modules/network/tests"]
+    args: ["cp", "-r", "terraform/gcp/modules/network/tests"]
 
   - id: 'ls command default'
     name: 'ubuntu'

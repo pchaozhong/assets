@@ -9,9 +9,9 @@ steps:
     args: ["workspace", "new", "$PROJECT_ID"]
     dir: '/terraform/gcp/modules/network/tests'
 
-  - id: 'terraform worspace select'
-    name: 'hashicorp/terraform:$_TERRAFORM_VERSION'
-    args: ["workspace", "select", "$PROJECT_ID"]
+  - id: 'ls command'
+    name: 'ubuntu'
+    args: ["ls"]
     dir: '/terraform/gcp/modules/network/tests'
 
   - id: 'terraform apply'

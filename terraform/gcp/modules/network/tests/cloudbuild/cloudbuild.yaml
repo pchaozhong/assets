@@ -64,9 +64,6 @@ steps:
     name: 'ubuntu'
     args: ["sh", "make.sh"]
 
-  - id: "inspec exec"
-    name: 'gcr.io/$PROJECT_ID/inspec'
-    args: ["exec", ".", "-t", "gcp://", "--input-file", "attributes.yaml", "--chef-license", "accept"]
 
   - id: 'terraform destroy'
     name: 'hashicorp/terraform:$_TERRAFORM_VERSION'

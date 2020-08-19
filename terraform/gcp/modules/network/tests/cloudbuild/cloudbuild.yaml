@@ -1,7 +1,7 @@
 steps:
-  - id: 'tree'
+  - id: 'ls'
     name: 'ubuntu'
-    args: ["tree"]
+    args: ["ls"]
 
   - id: 'copy'
     name: 'ubuntu'

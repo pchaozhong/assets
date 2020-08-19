@@ -15,8 +15,10 @@ steps:
 
   - id: 'ls command tests'
     name: 'ubuntu'
-    args: ["ls"]
-    dir: '/tests'
+    volumes:
+      - name: 'test'
+        path: '/tests'
+    args: ["ls", "tests"]
 
   - id: 'terraform init'
     name: 'hashicorp/terraform:$_TERRAFORM_VERSION'

@@ -19,7 +19,7 @@ steps:
       - name: 'test'
         path: '/tests'
     args: ["ls"]
-    dir: '/main'
+    dir: '/tests'
 
   - id: 'terraform init'
     name: 'hashicorp/terraform:$_TERRAFORM_VERSION'

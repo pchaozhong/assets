@@ -1,7 +1,7 @@
 name: network module test
 title: Network Module Test
 version: 0.1.0
-inspec_version: '>= 2.3.5'
+inspec_version: '>= 4.6.9'
 attributes:
 depends:
 - name: inspec-gcp

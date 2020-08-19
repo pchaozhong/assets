@@ -45,10 +45,6 @@ steps:
     name: 'hashicorp/terraform:$_TERRAFORM_VERSION'
     args: ["init"]
 
-  - id: 'terraform worspace new'
-    name: 'hashicorp/terraform:$_TERRAFORM_VERSION'
-    args: ["workspace", "new", "$PROJECT_ID"]
-
   - id: 'terraform apply'
     name: 'hashicorp/terraform:$_TERRAFORM_VERSION'
     args: ["apply", "--auto-approve"]

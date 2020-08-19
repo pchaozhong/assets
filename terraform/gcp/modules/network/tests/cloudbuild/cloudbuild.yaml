@@ -55,22 +55,22 @@ steps:
   - id: 'terraform apply'
     name: 'hashicorp/terraform:$_TERRAFORM_VERSION'
     args: ["apply", "--auto-approve"]
-    dir: '/tests'
+    dir: '/terraform/gcp/modules/network/tests'
 
   - id: 'make attributes.yaml'
     name: 'ubuntu'
     args: ["sh", "make.sh"]
-    dir: '/tests'
+    dir: '/terraform/gcp/modules/network/tests'
 
   - id: "packer build"
     name: 'gcr.io/$PROJECT_ID/inspec'
-    args: ["exec", ".", "-t", "gcp://", "--input-file", "attributes.yaml", "--chef-license", "accept"]
-    dir: '/tests'
+    args: ["exec", "./test-codes/", "-t", "gcp://", "--input-file", "attributes.yaml", "--chef-license", "accept"]
+    dir: '/terraform/gcp/modules/network/tests'
 
   - id: 'terraform destroy'
     name: 'hashicorp/terraform:$_TERRAFORM_VERSION'
     args: ["destroy", "--force"]
-    dir: '/tests'
+    dir: '/terraform/gcp/modules/network/tests'
 
 timeout: 3600s
 substitutions:

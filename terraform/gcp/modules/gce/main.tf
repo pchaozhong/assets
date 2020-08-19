@@ -23,10 +23,6 @@ locals {
     } if _conf.gce_enable
   ])
 
-  _service_account_list = distinct(flatten([
-    for _conf in var.gce_conf : _conf.service_account.email
-  ]))
-
   _boot_disk_conf_list = flatten([
     for _conf in var.gce_conf : {
       gce_name = _conf.name

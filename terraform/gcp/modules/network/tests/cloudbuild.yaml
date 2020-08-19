@@ -11,6 +11,10 @@ steps:
     name: 'hashicorp/terraform:$_TERRAFORM_VERSION'
     args: ["workspace", "select", "$PROJECT_ID"]
 
+  - id: 'ls'
+    name: 'ubuntu'
+    args: ["ls"]
+
   - id: 'terraform apply'
     name: 'hashicorp/terraform:$_TERRAFORM_VERSION'
     args: ["apply", "--auto-approve"]

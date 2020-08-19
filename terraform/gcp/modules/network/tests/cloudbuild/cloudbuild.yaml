@@ -69,7 +69,7 @@ steps:
     volumes:
       - name: 'test'
         path: '/tests'
-    args: ["cat", "attributes.yaml"]
+    args: ["ls"]
 
   - id: "inspec exec"
     name: 'gcr.io/$PROJECT_ID/inspec'

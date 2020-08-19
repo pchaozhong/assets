@@ -1,4 +1,11 @@
 steps:
+  - id: 'copy terraform modules'
+    name: 'ubuntu'
+    volumes:
+      - name: 'test'
+        path: '/tests'
+    args: ["cp", "-r", "terraform/gcp/modules", "."]
+
   - id: 'copy terraform.tf'
     name: 'ubuntu'
     volumes:
@@ -12,6 +19,27 @@ steps:
       - name: 'test'
         path: '/tests'
     args: ["cp", "-r", "terraform/gcp/modules/network/tests/main/main.tf", "."]
+
+  - id: 'copy make.sh'
+    name: 'ubuntu'
+    volumes:
+      - name: 'test'
+        path: '/tests'
+    args: ["cp", "-r", "terraform/gcp/modules/network/tests/test-codes/make.sh", "."]
+
+  - id: 'copy inspec.yml'
+    name: 'ubuntu'
+    volumes:
+      - name: 'test'
+        path: '/tests'
+    args: ["cp", "-r", "terraform/gcp/modules/network/tests/test-codes/inspec.yml", "."]
+
+  - id: 'copy controls'
+    name: 'ubuntu'
+    volumes:
+      - name: 'test'
+        path: '/tests'
+    args: ["cp", "-r", "terraform/gcp/modules/network/tests/test-codes/controls", "."]
 
   - id: 'ls command tests'
     name: 'ubuntu'
@@ -36,9 +64,9 @@ steps:
     name: 'ubuntu'
     args: ["sh", "make.sh"]
 
-  - id: "packer build"
+  - id: "inspec exec"
     name: 'gcr.io/$PROJECT_ID/inspec'
-    args: ["exec", "./test-codes/", "-t", "gcp://", "--input-file", "attributes.yaml", "--chef-license", "accept"]
+    args: ["exec", ".", "-t", "gcp://", "--input-file", "attributes.yaml", "--chef-license", "accept"]
 
   - id: 'terraform destroy'
     name: 'hashicorp/terraform:$_TERRAFORM_VERSION'

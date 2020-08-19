@@ -17,6 +17,10 @@ variable "gce_conf" {
       image       = string
       auto_delete = bool
     })
+    service_account = object({
+      email = string
+      scopes = list(string)
+    })
   }))
 }
 

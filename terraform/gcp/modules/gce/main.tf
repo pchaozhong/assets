@@ -8,6 +8,11 @@ locals {
       network       = _conf.network
       boot_disk     = _conf.boot_disk
       access_config = _conf.access_config
+      service_account = {
+        email = data.google_service_account.main[_conf.service_account.email].email
+        scopes = _conf.service_account.scopes
+      }
+
       scheduling = flatten([
         for _s in local._sch : {
           on_host_maintenance = _s.on_host_maintenance
@@ -17,6 +22,10 @@ locals {
       ])
     } if _conf.gce_enable
   ])
+
+  _service_account_list = distinct(flatten([
+    for _conf in var.gce_conf : _conf.service_account.email
+  ]))
 
   _boot_disk_conf_list = flatten([
     for _conf in var.gce_conf : {
@@ -106,6 +115,10 @@ resource "google_compute_instance" "main" {
     }
   }
 
+  service_account {
+    email = each.value.service_account.email
+    scopes = each.value.service_account.scopes
+  }
 }
 
 resource "google_compute_disk" "main" {

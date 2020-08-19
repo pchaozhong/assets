@@ -4,3 +4,9 @@ data "google_compute_subnetwork" "main" {
   name   = each.value.name
   region = each.value.region
 }
+
+data "google_service_account" "main" {
+  for_each = toset(local._service_account_list)
+
+  account_id = each.value
+}

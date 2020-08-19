@@ -10,70 +10,26 @@ module "network" {
       route_enable            = false
 
       vpc_network_conf = {
-        name             = "test"
+        name                    = local.network
         auto_create_subnetworks = false
       }
       subnetwork = [
         {
-          name   = "test"
-          cidr   = "192.168.0.0/24"
+          name   = local.subnetwork.name
+          cidr   = local.subnetwork.cidr
           region = local.region
         }
       ]
       firewall_ingress_conf = [
-      ]
-      firewall_egress_conf = []
-      route_conf = [
-      ]
-    },
-    {
-      vpc_network_enable      = false
-      subnetwork_enable       = false
-      firewall_ingress_enable = false
-      firewall_egress_enable  = false
-      route_enable            = false
-
-      vpc_network_conf = {
-        name             = "test2"
-        auto_create_subnetworks = false
-      }
-      subnetwork = [
         {
-          name   = "test2"
-          cidr   = "192.168.1.0/24"
-          region = local.region
-        },
-        {
-          name   = "test3"
-          cidr   = "192.168.32.0/24"
-          region = local.region
-        },
-      ]
-      firewall_ingress_conf = [
-        {
-          name = "ssh-enable"
-          priority = 1000
-          enable_logging = false
+          name          = "test-nw"
+          priority      = 1000
           source_ranges = ["0.0.0.0/0"]
-          target_tags = ["test"]
+          target_tags   = []
           allow_rules = [
             {
               protocol = "tcp"
-              ports = ["22"]
-            }
-          ]
-          deny_rules = []
-        },
-        {
-          name = "http-enable"
-          priority = 1000
-          enable_logging = false
-          source_ranges = ["0.0.0.0/0"]
-          target_tags = ["test","web"]
-          allow_rules = [
-            {
-              protocol = "tcp"
-              ports = ["80"]
+              ports    = ["22"]
             }
           ]
           deny_rules = []
@@ -81,8 +37,14 @@ module "network" {
       ]
       firewall_egress_conf = []
       route_conf = [
+        {
+          name             = "test-dg"
+          dest_range       = "0.0.0.0/0"
+          priority         = 1000
+          tags             = []
+          next_hop_gateway = "default-internet-gateway"
+        }
       ]
-    },
-
+    }
   ]
 }

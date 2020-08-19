@@ -64,13 +64,6 @@ steps:
         path: '/tests'
     args: ["ls"]
 
-  - id: 'ls command tests'
-    name: 'ubuntu'
-    volumes:
-      - name: 'test'
-        path: '/tests'
-    args: ["ls"]
-
   - id: "inspec exec"
     name: 'gcr.io/$PROJECT_ID/inspec'
     args: ["exec", ".", "-t", "gcp://", "--input-file", "attributes.yaml", "--chef-license", "accept"]

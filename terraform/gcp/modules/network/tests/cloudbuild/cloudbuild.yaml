@@ -41,13 +41,6 @@ steps:
         path: '/tests'
     args: ["cp", "-r", "terraform/gcp/modules/network/tests/test-codes/controls", "."]
 
-  - id: 'ls command tests'
-    name: 'ubuntu'
-    volumes:
-      - name: 'test'
-        path: '/tests'
-    args: ["ls"]
-
   - id: 'terraform init'
     name: 'hashicorp/terraform:$_TERRAFORM_VERSION'
     args: ["init"]
@@ -64,6 +57,23 @@ steps:
     name: 'ubuntu'
     args: ["sh", "make.sh"]
 
+  - id: 'ls command tests'
+    name: 'ubuntu'
+    volumes:
+      - name: 'test'
+        path: '/tests'
+    args: ["ls"]
+
+  - id: 'ls command tests'
+    name: 'ubuntu'
+    volumes:
+      - name: 'test'
+        path: '/tests'
+    args: ["cat", "attributes.yaml"]
+
+  - id: "inspec exec"
+    name: 'gcr.io/$PROJECT_ID/inspec'
+    args: ["exec", ".", "-t", "gcp://", "--input-file", "attributes.yaml", "--chef-license", "accept"]
 
   - id: 'terraform destroy'
     name: 'hashicorp/terraform:$_TERRAFORM_VERSION'

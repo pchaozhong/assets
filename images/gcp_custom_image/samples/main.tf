@@ -13,12 +13,13 @@ variable "image" {
 }
 
 module "gce" {
+  depends_on = [ module.nw ]
   source = "../../../terraform/gcp/modules/gce"
 
   gce_conf = [
     {
       gce_enable         = false
-      preemptible_enable = true
+      preemptible_enable = false
 
       name         = "custom-img-demo"
       machine_type = "f1-micro"
@@ -44,7 +45,7 @@ module "nw" {
 
   network_conf = [
     {
-      vpc_network_enable      = true
+      vpc_network_enable      = false
       subnetwork_enable       = true
       firewall_ingress_enable = true
       firewall_egress_enable  = false
@@ -84,7 +85,7 @@ module "nw" {
           dest_range       = "0.0.0.0/0"
           priority         = 1000
           tags             = []
-          next_hop_gateway = "default-gateway"
+          next_hop_gateway = "default-internet-gateway"
         }
       ]
     }

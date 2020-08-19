@@ -1,0 +1,60 @@
+steps:
+  - id: 'copy'
+    name: 'ubuntu'
+    volumes:
+      - name: 'test'
+        path: '/tests'
+    args: ["cp", "-r", "/terraform/gcp/modules/network/tests"]
+
+  - id: 'ls command default'
+    name: 'ubuntu'
+    volumes:
+      - name: 'test'
+        path: '/tests'
+    args: ["ls"]
+
+  - id: 'ls command tests'
+    name: 'ubuntu'
+    volumes:
+      - name: 'test'
+        path: '/tests'
+    args: ["ls", "tests"]
+
+  - id: 'terraform init'
+    name: 'hashicorp/terraform:$_TERRAFORM_VERSION'
+    args: ["init"]
+    dir: '/terraform/gcp/modules/network/tests'
+
+  - id: 'terraform worspace new'
+    name: 'hashicorp/terraform:$_TERRAFORM_VERSION'
+    args: ["workspace", "new", "$PROJECT_ID"]
+    dir: '/terraform/gcp/modules/network/tests'
+
+  - id: 'ls command'
+    name: 'ubuntu'
+    args: ["ls"]
+    dir: '/terraform/gcp/modules/network/tests'
+
+  - id: 'terraform apply'
+    name: 'hashicorp/terraform:$_TERRAFORM_VERSION'
+    args: ["apply", "--auto-approve"]
+    dir: '/terraform/gcp/modules/network/tests'
+
+  - id: 'make attributes.yaml'
+    name: 'ubuntu'
+    args: ["sh", "make.sh"]
+    dir: '/terraform/gcp/modules/network/tests'
+
+  - id: "packer build"
+    name: 'gcr.io/$PROJECT_ID/inspec'
+    args: ["exec", "./test-codes/", "-t", "gcp://", "--input-file", "attributes.yaml", "--chef-license", "accept"]
+    dir: '/terraform/gcp/modules/network/tests'
+
+  - id: 'terraform destroy'
+    name: 'hashicorp/terraform:$_TERRAFORM_VERSION'
+    args: ["destroy", "--force"]
+    dir: '/terraform/gcp/modules/network/tests'
+
+timeout: 3600s
+substitutions:
+  _TERRAFORM_VERSION: 0.13.0

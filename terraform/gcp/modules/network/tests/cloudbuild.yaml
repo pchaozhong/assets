@@ -1,8 +1,31 @@
 steps:
-  - id: 'cd terraform directory'
-    name: 'ubuntu'
-    args: ["cd", "main"]
+  - id: 'terraform init'
+    name: 'hashicorp/terraform:$_TERRAFORM_VERSION'
+    args: ["init"]
 
+  - id: 'terraform worspace new'
+    name: 'hashicorp/terraform:$_TERRAFORM_VERSION'
+    args: ["workspace", "new", "$PROJECT_ID"]
+
+  - id: 'terraform worspace select'
+    name: 'hashicorp/terraform:$_TERRAFORM_VERSION'
+    args: ["workspace", "select", "$PROJECT_ID"]
+
+  - id: 'terraform apply'
+    name: 'hashicorp/terraform:$_TERRAFORM_VERSION'
+    args: ["apply", "--auto-approve"]
+
+  - id: 'make attributes.yaml'
+    name: 'ubuntu'
+    args: ["sh", "make.sh"]
+
+  - id: "packer build"
+    name: 'gcr.io/$PROJECT_ID/inspec'
+    args: ["exec", "./test-codes/", "-t", "gcp://", "--input-file", "attributes.yaml", "--chef-license", "accept"]
+
+  - id: 'terraform destroy'
+    name: 'hashicorp/terraform:$_TERRAFORM_VERSION'
+    args: ["destroy", "--force"]
 
 timeout: 3600s
 substitutions:

@@ -15,9 +15,9 @@ module "network" {
     {
       vpc_network_enable      = true
       subnetwork_enable       = true
-      firewall_ingress_enable = false
-      firewall_egress_enable  = false
-      route_enable            = false
+      firewall_ingress_enable = true
+      firewall_egress_enable  = true
+      route_enable            = true
 
       vpc_network_conf = {
         name             = local.network
@@ -30,11 +30,9 @@ module "network" {
           region = local.region
         }
       ]
-      firewall_ingress_conf = [
-      ]
+      firewall_ingress_conf = []
       firewall_egress_conf = []
-      route_conf = [
-      ]
+      route_conf = []
     }
   ]
 }

@@ -20,7 +20,7 @@ variable "network_conf" {
     firewall_ingress_conf = list(object({
       name           = string
       priority       = number
-      enable_logging = bool
+      # enable_logging = bool
       source_ranges  = list(string)
       target_tags    = list(string)
       allow_rules = list(object({
@@ -36,7 +36,7 @@ variable "network_conf" {
     firewall_egress_conf = list(object({
       name               = string
       priority           = number
-      enable_logging     = bool
+      # enable_logging     = bool
       destination_ranges = list(string)
       target_tags        = list(string)
       allow_rules = list(object({

@@ -5,7 +5,7 @@ locals {
         name               = _fw_conf.name
         network            = _conf.vpc_network_conf.name
         priority           = _fw_conf.priority
-        enable_logging     = _fw_conf.enable_logging
+        # enable_logging     = _fw_conf.enable_logging
         destination_ranges = _fw_conf.destination_ranges
         target_tags        = _fw_conf.target_tags
         allow_rules        = _fw_conf.allow_rules
@@ -20,7 +20,7 @@ locals {
         name           = _fw_conf.name
         network        = _conf.vpc_network_conf.name
         priority       = _fw_conf.priority
-        enable_logging = _fw_conf.enable_logging
+        # enable_logging = _fw_conf.enable_logging
         source_ranges  = _fw_conf.source_ranges
         target_tags    = _fw_conf.target_tags
         allow_rules    = _fw_conf.allow_rules
@@ -37,7 +37,7 @@ resource "google_compute_firewall" "main_egress" {
   name           = each.value.name
   network        = google_compute_network.main[each.value.network].self_link
   priority       = each.value.priority
-  enable_logging = each.value.enable_logging
+  # enable_logging = each.value.enable_logging
 
   destination_ranges = each.value.destination_ranges
   target_tags        = each.value.target_tags
@@ -67,7 +67,7 @@ resource "google_compute_firewall" "main_igress" {
   name           = each.value.name
   network        = google_compute_network.main[each.value.network].self_link
   priority       = each.value.priority
-  enable_logging = each.value.enable_logging
+  # enable_logging = each.value.enable_logging
 
   source_ranges = each.value.source_ranges
   target_tags   = each.value.target_tags

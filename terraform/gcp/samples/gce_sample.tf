@@ -1,5 +1,9 @@
 module "gce" {
-  depends_on = [module.network]
+  depends_on = [
+    module.network,
+    module.iam,
+    module.service_account
+  ]
   source     = "../modules/gce"
 
   gce_conf = [
@@ -22,6 +26,12 @@ module "gce" {
         image       = "ubuntu-2004-lts"
         type        = "pd-ssd"
         auto_delete = true
+      }
+      service_account = {
+        email = "module-sample"
+        scopes = [
+          "cloud-platform"
+        ]
       }
     }
   ]

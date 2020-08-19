@@ -1,4 +1,8 @@
 steps:
+  - id: 'tree'
+    name: 'ubuntu'
+    args: ["tree"]
+
   - id: 'copy'
     name: 'ubuntu'
     volumes:

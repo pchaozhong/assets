@@ -9,7 +9,7 @@ module "iam" {
       member = "module-sample"
       member_type = "serviceAccount"
       role = [
-        "roles/editor"
+        "roles/owner"
       ]
     },
   ]

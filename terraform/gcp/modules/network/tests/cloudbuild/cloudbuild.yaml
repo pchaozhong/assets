@@ -31,10 +31,6 @@ steps:
     name: 'hashicorp/terraform:$_TERRAFORM_VERSION'
     args: ["init"]
 
-  - id: 'terraform new'
-    name: 'hashicorp/terraform:$_TERRAFORM_VERSION'
-    args: ["workspace", "new", "$PROJECT_ID"]
-
   - id: 'terraform worspace select'
     name: 'hashicorp/terraform:$_TERRAFORM_VERSION'
     args: ["workspace", "select", "$PROJECT_ID"]

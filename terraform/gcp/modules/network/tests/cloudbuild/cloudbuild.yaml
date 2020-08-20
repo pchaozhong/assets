@@ -34,7 +34,7 @@ steps:
 
   - id: "inspec exec"
     name: 'chef/inspec'
-    args: ["exec", '$_INSPEC_PATH' , "-t", "gcp://", "--input-file", "terraform/gcp/modules/network/tests/test-codes/attributes.yml", "--chef-license", "accept"]
+    args: ["exec", '$_INSPEC_PATH' , "-t", "gcp://", "--input-file", '$_INSPEC_PATH/attributes.yml', "--chef-license", "accept"]
 
   - id: 'terraform destroy'
     name: 'hashicorp/terraform:$_TERRAFORM_VERSION'

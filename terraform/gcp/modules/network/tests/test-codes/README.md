@@ -4,7 +4,7 @@ Module test
 # Usage
 
 ```
-inspec exec . -t gcp:// --input-file attributes.yml
+sh make.sh PROJECT_ID
+inspec exec . -t gcp:// --input-file attributes.yaml
 ```
 
-attribute

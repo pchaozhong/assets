@@ -1,7 +1,7 @@
 #!/bin/sh
 
-PJ=$(gcloud config get-value core/project)
+PJID=$1
 
 tee attributes.yaml <<EOF > /dev/null
-gcp_project_id: '$PJ'
+gcp_project_id: '$PJID'
 EOF

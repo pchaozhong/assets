@@ -34,13 +34,6 @@ steps:
         path: '/tests'
     args: ["sh", "make.sh", $PROJECT_ID]
 
-  - id: 'cat attributes.yaml'
-    name: 'ubuntu'
-    volumes:
-      - name: 'test'
-        path: '/tests'
-    args: ["cat", "attributes.yaml"]
-
   - id: 'terraform init'
     name: 'hashicorp/terraform:$_TERRAFORM_VERSION'
     args: ["init"]

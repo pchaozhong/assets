@@ -1,17 +1,18 @@
 #!/bin/sh
 
 PJ=$1
+PREFIX=$2
 
 tee attributes.yaml <<EOF > /dev/null
-gcp_project_id: '$PJID'
+gcp_project_id: '$PJ'
 EOF
 
 tee terraform.tf <<EOF > /dev/null
 terraform {
     required_version = "~> 0.13"
     backend "gcs" {
-        bucket = "$PJ-modules-state"
-        prefix = "$2"
+        bucket = "$PJ-terraform-modules-state"
+        prefix = "$PREFIX"
     }
 }
 

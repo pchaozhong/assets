@@ -20,27 +20,6 @@ steps:
         path: '/tests'
     args: ["cp", "-r", "terraform/gcp/modules/network/tests/main/main.tf", "."]
 
-  - id: 'copy make.sh'
-    name: 'ubuntu'
-    volumes:
-      - name: 'test'
-        path: '/tests'
-    args: ["cp", "-r", "terraform/gcp/modules/network/tests/test-codes/make.sh", "."]
-
-  - id: 'copy inspec.yml'
-    name: 'ubuntu'
-    volumes:
-      - name: 'test'
-        path: '/tests'
-    args: ["cp", "-r", "terraform/gcp/modules/network/tests/test-codes/inspec.yml", "."]
-
-  - id: 'copy controls'
-    name: 'ubuntu'
-    volumes:
-      - name: 'test'
-        path: '/tests'
-    args: ["cp", "-r", "terraform/gcp/modules/network/tests/test-codes/controls", "."]
-
   - id: 'terraform init'
     name: 'hashicorp/terraform:$_TERRAFORM_VERSION'
     args: ["init"]
@@ -57,16 +36,9 @@ steps:
     name: 'ubuntu'
     args: ["sh", "make.sh"]
 
-  - id: 'ls command tests'
-    name: 'ubuntu'
-    volumes:
-      - name: 'test'
-        path: '/tests'
-    args: ["ls"]
-
   - id: "inspec exec"
     name: 'chef/inspec'
-    args: ["exec", "./terraform/gcp/modules/network/tests/test-codes", "-t", "gcp://", "--input-file", "terraform/gcp/modules/network/tests/test-codes/attributes.yml", "--chef-license", "accept"]
+    args: ["exec", '$_INSPEC_PATH' , "-t", "gcp://", "--input-file", "terraform/gcp/modules/network/tests/test-codes/attributes.yml", "--chef-license", "accept"]
 
   - id: 'terraform destroy'
     name: 'hashicorp/terraform:$_TERRAFORM_VERSION'
@@ -75,3 +47,4 @@ steps:
 timeout: 3600s
 substitutions:
   _TERRAFORM_VERSION: 0.13.0
+  _INSPEC_PATH: ./terraform/gcp/modules/network/tests/test-codes

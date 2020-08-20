@@ -32,14 +32,7 @@ steps:
     volumes:
       - name: 'test'
         path: '/tests'
-    args: ["sh", "make.sh"]
-
-  - id: 'sed attributes.yaml'
-    name: 'ubuntu'
-    volumes:
-      - name: 'test'
-        path: '/tests'
-    args: ["sed","-i", "-e", "s/PJ_ID/$PROJECT_ID/g", "attributes.yaml"]
+    args: ["sh", "make.sh", $PROJECT_ID]
 
   - id: 'cat attributes.yaml'
     name: 'ubuntu'

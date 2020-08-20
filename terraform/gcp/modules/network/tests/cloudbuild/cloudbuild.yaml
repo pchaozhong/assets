@@ -32,10 +32,6 @@ steps:
     name: 'hashicorp/terraform:$_TERRAFORM_VERSION'
     args: ["apply", "--auto-approve"]
 
-  - id: 'make attributes.yaml'
-    name: 'ubuntu'
-    args: ["sh", "make.sh"]
-
   - id: "inspec exec"
     name: 'chef/inspec'
     args: ["exec", '$_INSPEC_PATH' , "-t", "gcp://", "--input-file", "terraform/gcp/modules/network/tests/test-codes/attributes.yml", "--chef-license", "accept"]

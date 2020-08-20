@@ -27,6 +27,13 @@ steps:
         path: '/tests'
     args: ["sh", "make.sh", $PROJECT_ID, $_MODULE_PREFIX]
 
+  - id: 'ls'
+    name: 'ubuntu'
+    volumes:
+      - name: 'test'
+        path: '/tests'
+    args: ["ls"]
+
   - id: 'terraform init'
     name: 'hashicorp/terraform:$_TERRAFORM_VERSION'
     args: ["init"]

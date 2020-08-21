@@ -3,20 +3,16 @@ module "build" {
 
   build_conf = [
     {
-      build_enable = false
+      build_enable = true
 
-      name = "module-test"
+      name = "asset-testing-network"
       disabled = true
-      filename = "cloudbuild.yaml"
-      ignored_files = null
-      included_files = null
-      substitutions = {
-        _FOO = "bar"
-      }
+
+      filename = "terraform/gcp/modules/network/tests/cloudbuild/shunit_test.yaml"
 
       trigger_template = [
         {
-          repo_name = "my-repo"
+          repo_name = "github_atsushikitano_assets"
           branch_name = "master"
           tag_name = null
           commit_sha = null
@@ -25,31 +21,10 @@ module "build" {
 
       github = []
       build = []
+      ignored_files = null
+      included_files = null
+      substitutions = null
     },
-    {
-      build_enable = false
-
-      name = "module-test2"
-      disabled = true
-      filename = "cloudbuild.yaml"
-      ignored_files = null
-      included_files = null
-      substitutions = {
-        _FOO = "bar"
-      }
-
-      trigger_template = [
-        {
-          repo_name = "my-repo"
-          branch_name = "master"
-          tag_name = null
-          commit_sha = null
-        }
-      ]
-
-      github = []
-      build = []
-    }
 
   ]
 }

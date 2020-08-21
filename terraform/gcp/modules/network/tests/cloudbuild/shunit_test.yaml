@@ -1,51 +1,7 @@
 steps:
-  - id: 'copy terraform modules'
-    name: 'ubuntu'
-    volumes:
-      - name: 'test'
-        path: '/tests'
-    args: ["cp", "-r", $_TERRAFORM_MODULE_PATH , "."]
-
-  - id: 'copy main.tf'
-    name: 'ubuntu'
-    volumes:
-      - name: 'test'
-        path: '/tests'
-    args: ["cp", "-r", '$_TERRAFORM_FILE_PATH/main.tf', "."]
-
-  - id: 'copy make file'
-    name: 'ubuntu'
-    volumes:
-      - name: 'test'
-        path: '/tests'
-    args: ["cp", "-r", $_START_UP_PATH, "."]
-
-  - id: 'make attributes.yaml and terraform.tf'
-    name: 'ubuntu'
-    volumes:
-      - name: 'test'
-        path: '/tests'
-    args: ["sh", "make.sh", $PROJECT_ID, $_MODULE_PREFIX]
-
-  - id: 'terraform init'
-    name: 'hashicorp/terraform:$_TERRAFORM_VERSION'
-    args: ["init"]
-
-  - id: 'terraform worspace select'
-    name: 'hashicorp/terraform:$_TERRAFORM_VERSION'
-    args: ["workspace", "select", "$PROJECT_ID"]
-
-  - id: 'terraform apply'
-    name: 'hashicorp/terraform:$_TERRAFORM_VERSION'
-    args: ["apply", "--auto-approve"]
-
   - id: "test"
     name: 'gcr.io/$PROJECT_ID/shunit2-cloudsdk:${_IMG_VER}'
     args: ["sh", '$_SHUNIT_PATH/testNetworkModule.sh' ]
-
-  - id: 'terraform destroy'
-    name: 'hashicorp/terraform:$_TERRAFORM_VERSION'
-    args: ["destroy", "--force"]
 
 timeout: 3600s
 substitutions:

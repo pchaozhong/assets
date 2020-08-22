@@ -3,7 +3,6 @@ package terratest
 import (
 	"testing"
 
-    "github.com/gruntwork-io/terratest/modules/gcp"
 	"github.com/gruntwork-io/terratest/modules/terraform"
     "github.com/stretchr/testify/assert"
 )
@@ -12,14 +11,8 @@ func TestNetwork(t *testing.T) {
 	t.Parallel()
 
 
-    projectId := gcp.GetGoogleProjectIDFromEnvVar(t)
-
 	terraformOptions := &terraform.Options{
 		TerraformDir: ".",
-
-        EnvVars: map[string]string{
-			"GOOGLE_PROJECT": projectId,
-		},
 	}
 
 	defer terraform.Destroy(t, terraformOptions)

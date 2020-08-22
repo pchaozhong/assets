@@ -3,9 +3,9 @@ terraform {
 }
 
 provider "google" {
-  project = terraform.workspace
+  project = "ca-kitano-study-sandbox"
 }
 
 provider "google-beta" {
-  project = terraform.workspace
+  project = "ca-kitano-study-sandbox"
 }

@@ -8,7 +8,7 @@ import (
     network "../../../../../../iaas/sdk/gcp/golang/testingtool/network"
 )
 
-func TestVPCNetwork(t *testing.T){
+func TestExistTestNetwork(t *testing.T){
     actual := network.ContainVPCNetwork("test")
     expected := true
     if actual != expected {
@@ -16,7 +16,7 @@ func TestVPCNetwork(t *testing.T){
     }
 }
 
-func TestGetCidr(t *testing.T){
+func TestTestSubnetworkCidr(t *testing.T){
     actual, err := network.GetCidr("test", "asia-northeast1")
     if err != nil {
         fmt.Println(err)

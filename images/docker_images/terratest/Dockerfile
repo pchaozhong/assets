@@ -6,6 +6,5 @@ RUN /usr/bin/unzip terraform_${TERRAFORM_VERSION}_linux_amd64.zip
 
 FROM golang
 RUN go get github.com/gruntwork-io/terratest/modules/terraform \
-  && go get github.com/stretchr/testify/assert \
-  && go get github.com/gruntwork-io/terratest/modules/gcp
+  && go get github.com/stretchr/testify/assert
 COPY --from=0 terraform /bin/terraform

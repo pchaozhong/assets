@@ -9,8 +9,14 @@ import (
 )
 
 func TestVPCNetwork(t *testing.T){
-    actual := network.ContainVPCNetwork("test")
+    actual ,err := network.ContainVPCNetwork("test")
     expected := true
+
+    if err != nil {
+        fmt.Println(err)
+        os.Exit(1)
+    }
+
     if actual != expected {
         t.Errorf("got: %v\nwant: %v", actual, expected)
     }

@@ -2,7 +2,6 @@ package network
 
 import(
 	"os"
-    "fmt"
     "context"
 
     "google.golang.org/api/compute/v1"
@@ -28,17 +27,17 @@ func GetVPCNetwork() ([]string, error){
     return networkNameList, nil
 }
 
-func ContainVPCNetwork(network string) (bool) {
+func ContainVPCNetwork(network string) (bool, error) {
     networkList, err := GetVPCNetwork()
 
     if err != nil {
-        fmt.Println(err)
+        return false , err
     }
 
     for _, n := range networkList {
         if n == network {
-            return true
+            return true, err
         }
     }
-    return false
+    return false, err
 }

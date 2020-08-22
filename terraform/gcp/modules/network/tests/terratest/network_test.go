@@ -2,6 +2,7 @@ package terratest
 
 import (
 	"testing"
+    "os"
 
     "github.com/gruntwork-io/terratest/modules/gcp"
 	"github.com/gruntwork-io/terratest/modules/terraform"
@@ -15,7 +16,7 @@ func TestNetwork(t *testing.T) {
     projectId := gcp.GetGoogleProjectIDFromEnvVar(t)
 
 	terraformOptions := &terraform.Options{
-		TerraformDir: ".",
+		TerraformDir: os.Getenv("TERRATEST_PATH"),
 
         EnvVars: map[string]string{
 			"GOOGLE_PROJECT": projectId,

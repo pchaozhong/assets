@@ -1,11 +1,4 @@
 steps:
-  - id: 'copy test file'
-    name: 'ubuntu'
-    volumes:
-      - name: 'test'
-        path: '/tests'
-    args: ["cp", "-r", $_TEST_PATH, "."]
-
   - id: 'copy terraform modules'
     name: 'ubuntu'
     volumes:
@@ -47,8 +40,8 @@ steps:
     args: ["apply", "--auto-approve"]
 
   - id: "testing"
-    name: 'gcr.io/cloud-builders/go:alpine'
-    args: ["test"]
+    name: 'golang'
+    args: ["go", "test", $_TEST_PATH, '-v']
 
   - id: 'terraform destroy'
     name: 'hashicorp/terraform:$_TERRAFORM_VERSION'
@@ -59,7 +52,7 @@ substitutions:
   _IMG_VER: 2.1.6
   _TERRAFORM_VERSION: 0.13.0
   _START_UP_PATH: ./terraform/gcp/modules/network/tests/make.sh
-  _TEST_PATH: ./terraform/gcp/modules/network/tests/sdk/network_test.go
+  _TEST_PATH: ./terraform/gcp/modules/network/tests/sdk/
   _TERRAFORM_FILE_PATH: ./terraform/gcp/modules/network/tests/main
   _TERRAFORM_MODULE_PATH: ./terraform/gcp/modules
   _MODULE_PREFIX: network

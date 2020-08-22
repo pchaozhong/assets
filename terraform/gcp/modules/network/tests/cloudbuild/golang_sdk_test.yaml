@@ -39,7 +39,6 @@ steps:
     name: 'hashicorp/terraform:$_TERRAFORM_VERSION'
     args: ["apply", "--auto-approve"]
 
-
   - id: "testing"
     name: 'gcr.io/$PROJECT_ID/gcpglang'
     volumes:
@@ -47,7 +46,6 @@ steps:
         path: '/tests'
     args: ["go", "test", $_TEST_PATH, '-v']
     env:
-      - 'GOPATH=/workspace/.go'
       - 'GCP_PROJECT=$PROJECT_ID'
 
   - id: 'terraform destroy'

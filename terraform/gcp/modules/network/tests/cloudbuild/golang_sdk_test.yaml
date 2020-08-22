@@ -39,17 +39,9 @@ steps:
     name: 'hashicorp/terraform:$_TERRAFORM_VERSION'
     args: ["apply", "--auto-approve"]
 
-  - id: "adding compute module"
-    name: 'golang'
-    volumes:
-      - name: 'test'
-        path: '/tests'
-    args: ["go", "get", "google.golang.org/api/compute/v1"]
-    env:
-      - 'GOPATH=/workspace/.go'
 
   - id: "testing"
-    name: 'golang'
+    name: 'gcr.io/$PROJECT_ID/gcpglang'
     volumes:
       - name: 'test'
         path: '/tests'

@@ -10,15 +10,6 @@ locals {
   ]
 }
 
-data "google_compute_subnetwork" "test" {
-  name = "test"
-  region = "asia-northeast1"
-}
-
-data "google_compute_network" "test" {
-  name = "test"
-}
-
 data "google_compute_subnetwork" "main" {
   for_each = { for v in local.subnetwork : v.name => v}
 

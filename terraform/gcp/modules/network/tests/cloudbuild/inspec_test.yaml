@@ -4,21 +4,14 @@ steps:
     volumes:
       - name: 'test'
         path: '/tests'
-    args: ["cp", "-r", $_TERRAFORM_MODULE_PATH , "."]
+    args: ["cp", "-r", '$_TERRAFORM_MODULE_PATH' , "."]
 
   - id: 'copy main.tf'
     name: 'ubuntu'
     volumes:
       - name: 'test'
         path: '/tests'
-    args: ["cp", "-r", '$_TERRAFORM_FILE_PATH/main.tf', "."]
-
-  - id: 'copy make terrafromfile'
-    name: 'ubuntu'
-    volumes:
-      - name: 'test'
-        path: '/tests'
-    args: ["cp", "-r", $_START_UP_PATH, "."]
+    args: ["cp", "-r", '$_FILE_PATH/main/main.tf', "."]
 
   - id: 'copy terraform makeup shell'
     name: 'ubuntu'
@@ -73,8 +66,5 @@ substitutions:
   _TERRAFORM_VERSION: 0.13.0
   _MODULE_PREFIX: network
   _TERRAFORM_MODULE_PATH: ./terraform/gcp/modules
-  _FILE_PATH: ./terraform/gcp/modules/network/tests
-  _START_UP_PATH: ./terraform/gcp/modules/network/tests/make.sh
-  _TERRAFORM_FILE_PATH: ./terraform/gcp/modules/network/tests/main
-  
+  _FILE_PATH: ./terraform/gcp/modules/network/tests  
   

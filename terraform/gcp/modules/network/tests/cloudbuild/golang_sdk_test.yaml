@@ -45,6 +45,8 @@ steps:
       - name: 'test'
         path: '/tests'
     args: ["go", "get", "google.golang.org/api/compute/v1"]
+    env:
+      - 'GOPATH=./go'
 
   - id: "testing"
     name: 'golang'
@@ -52,6 +54,8 @@ steps:
       - name: 'test'
         path: '/tests'
     args: ["go", "test", $_TEST_PATH, '-v']
+    env:
+      - 'GOPATH=./go'
 
   - id: 'terraform destroy'
     name: 'hashicorp/terraform:$_TERRAFORM_VERSION'

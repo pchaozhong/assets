@@ -47,6 +47,7 @@ steps:
     args: ["go", "test", $_TEST_PATH, '-v']
     env:
       - 'GOOGLE_PROJECT=$PROJECT_ID'
+      - 'TERRATEST_PATH=$_TEST_PATH'
 
   - id: 'terraform destroy'
     name: 'hashicorp/terraform:$_TERRAFORM_VERSION'

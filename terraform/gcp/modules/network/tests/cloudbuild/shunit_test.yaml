@@ -41,7 +41,7 @@ steps:
 
   - id: "test"
     name: 'gcr.io/$PROJECT_ID/shunit2-cloudsdk:${_IMG_VER}'
-    args: ["sh", '$_FILE_PATH/shunit/testNetwoModule.sh' ]
+    args: ["sh", '$_FILE_PATH/shunit_cloudSDK/main.sh', '$_FILE_PATH/shunit_cloudSDK' ]
 
   - id: 'terraform destroy'
     name: 'hashicorp/terraform:$_TERRAFORM_VERSION'

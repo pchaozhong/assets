@@ -56,6 +56,7 @@ steps:
     args: ["go", "test", $_TEST_PATH, '-v']
     env:
       - 'GOPATH=/workspace/.go'
+      - 'GCP_PROJECT=$PROJECT_ID'
 
   - id: 'terraform destroy'
     name: 'hashicorp/terraform:$_TERRAFORM_VERSION'

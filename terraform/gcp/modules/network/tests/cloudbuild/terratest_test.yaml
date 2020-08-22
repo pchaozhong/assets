@@ -20,12 +20,26 @@ steps:
         path: '/tests'
     args: ["cp", "-r", $_START_UP_PATH, "."]
 
+  - id: 'copy terratest make file'
+    name: 'ubuntu'
+    volumes:
+      - name: 'test'
+        path: '/tests'
+    args: ["cp", "-r", '${_TEST_PATH}/make.sh', "./terratest_make.sh"]
+
   - id: 'make attributes.yaml and terraform.tf'
     name: 'ubuntu'
     volumes:
       - name: 'test'
         path: '/tests'
     args: ["sh", "make.sh", $PROJECT_ID, $_MODULE_PREFIX]
+
+  - id: 'make terraform.tf at terratest'
+    name: 'ubuntu'
+    volumes:
+      - name: 'test'
+        path: '/tests'
+    args: ["sh", "terratest_make.sh", $PROJECT_ID, '${_TEST_PATH}/terraform.tf']
 
   - id: 'terraform init'
     name: 'hashicorp/terraform:$_TERRAFORM_VERSION'

@@ -1,11 +1,18 @@
+#!/bin/sh
+
+PJ=$1
+FILEPATH=$2
+
+tee $FILEPATH <<EOF
 terraform {
   required_version = "~> 0.13"
 }
 
 provider "google" {
-  project = "ca-kitano-study-sandbox"
+  project = "$PJ"
 }
 
 provider "google-beta" {
-  project = "ca-kitano-study-sandbox"
+  project = "$PJ"
 }
+EOF

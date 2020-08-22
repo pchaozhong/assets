@@ -39,6 +39,10 @@ steps:
     name: 'hashicorp/terraform:$_TERRAFORM_VERSION'
     args: ["apply", "--auto-approve"]
 
+  - id: 'chake current path'
+    name: 'ubuntu'
+    args: ["pwd"]
+
   - id: "adding compute module"
     name: 'golang'
     volumes:

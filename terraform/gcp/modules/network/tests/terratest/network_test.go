@@ -22,5 +22,4 @@ func TestNetwork(t *testing.T) {
 
 	assert.Equal(t, "test", testNetworkName)
 	assert.Equal(t, "192.168.0.0/29", testSubnetCidr)
-    assert.Equal(t, "192.168.1.0/29", testSubnetCidr)
 }

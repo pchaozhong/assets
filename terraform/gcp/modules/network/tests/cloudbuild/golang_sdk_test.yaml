@@ -39,6 +39,13 @@ steps:
     name: 'hashicorp/terraform:$_TERRAFORM_VERSION'
     args: ["apply", "--auto-approve"]
 
+  - id: "ls test"
+    name: 'ubuntu'
+    volumes:
+      - name: 'test'
+        path: '/tests'
+    args: ["ls", $_TEST_PATH]
+
   - id: "adding compute module"
     name: 'golang'
     volumes:

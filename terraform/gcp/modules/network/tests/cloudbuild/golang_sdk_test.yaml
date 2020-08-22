@@ -1,5 +1,5 @@
 steps:
-    - id: 'copy test file'
+  - id: 'copy test file'
     name: 'ubuntu'
     volumes:
       - name: 'test'

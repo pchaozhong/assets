@@ -13,19 +13,40 @@ steps:
         path: '/tests'
     args: ["cp", "-r", '$_TERRAFORM_FILE_PATH/main.tf', "."]
 
-  - id: 'copy make file'
+  - id: 'copy make terrafromfile'
     name: 'ubuntu'
     volumes:
       - name: 'test'
         path: '/tests'
     args: ["cp", "-r", $_START_UP_PATH, "."]
 
-  - id: 'make attributes.yaml and terraform.tf'
+  - id: 'copy terraform makeup shell'
     name: 'ubuntu'
     volumes:
       - name: 'test'
         path: '/tests'
-    args: ["sh", "make.sh", $PROJECT_ID, $_MODULE_PREFIX]
+    args: ["cp", "-r", '$_FILE_PATH/main/make.sh', "./main_terraform_make.sh"]
+
+  - id: 'copy inspec makeup shell'
+    name: 'ubuntu'
+    volumes:
+      - name: 'test'
+        path: '/tests'
+    args: ["cp", "-r", '$_FILE_PATH/inspec/make.sh', "./inspec_make.sh"]
+
+  - id: 'make terraform.tf'
+    name: 'ubuntu'
+    volumes:
+      - name: 'test'
+        path: '/tests'
+    args: ["sh", "main_terraform_make.sh", $PROJECT_ID, $_MODULE_PREFIX]
+
+  - id: 'make attributes.yaml'
+    name: 'ubuntu'
+    volumes:
+      - name: 'test'
+        path: '/tests'
+    args: ["sh", "inspec_make.sh", $PROJECT_ID]
 
   - id: 'terraform init'
     name: 'hashicorp/terraform:$_TERRAFORM_VERSION'
@@ -41,7 +62,7 @@ steps:
 
   - id: "inspec exec"
     name: 'chef/inspec'
-    args: ["exec", '$_INSPEC_PATH' , "-t", "gcp://", "--input-file", 'attributes.yaml', "--chef-license", "accept"]
+    args: ["exec", '$_FILE_PATH/inspec' , "-t", "gcp://", "--input-file", 'attributes.yaml', "--chef-license", "accept"]
 
   - id: 'terraform destroy'
     name: 'hashicorp/terraform:$_TERRAFORM_VERSION'
@@ -50,8 +71,10 @@ steps:
 timeout: 3600s
 substitutions:
   _TERRAFORM_VERSION: 0.13.0
-  _START_UP_PATH: ./terraform/gcp/modules/network/tests/make.sh
-  _INSPEC_PATH: ./terraform/gcp/modules/network/tests/inspec
-  _TERRAFORM_FILE_PATH: ./terraform/gcp/modules/network/tests/main
-  _TERRAFORM_MODULE_PATH: ./terraform/gcp/modules
   _MODULE_PREFIX: network
+  _TERRAFORM_MODULE_PATH: ./terraform/gcp/modules
+  _FILE_PATH: ./terraform/gcp/modules/network/tests
+  _START_UP_PATH: ./terraform/gcp/modules/network/tests/make.sh
+  _TERRAFORM_FILE_PATH: ./terraform/gcp/modules/network/tests/main
+  
+  

@@ -22,7 +22,7 @@ func TestTestSubnetworkCidr(t *testing.T){
         fmt.Println(err)
         os.Exit(1)
     }
-    expected := "192.168.0.0/29"
+    expected := "192.168.1.0/29"
 
     if actual != expected {
         t.Errorf("got: %v\nwant: %v", actual, expected)

@@ -39,7 +39,7 @@ steps:
     name: 'hashicorp/terraform:$_TERRAFORM_VERSION'
     args: ["apply", "--auto-approve"]
 
-  - id: "get google compute module"
+  - id: "adding compute module"
     name: 'golang'
     volumes:
       - name: 'test'

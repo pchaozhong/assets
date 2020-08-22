@@ -20,7 +20,7 @@ steps:
         path: '/tests'
     args: ["cp", "-r", $_START_UP_PATH, "."]
 
-  - id: 'copy make file'
+  - id: 'copy test file'
     name: 'ubuntu'
     volumes:
       - name: 'test'
@@ -46,7 +46,7 @@ steps:
     name: 'hashicorp/terraform:$_TERRAFORM_VERSION'
     args: ["apply", "--auto-approve"]
 
-  - id: "test"
+  - id: "testing"
     name: 'gcr.io/cloud-builders/go:alpine'
     args: ["test"]
 

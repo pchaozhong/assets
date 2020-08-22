@@ -20,7 +20,7 @@ steps:
         path: '/tests'
     args: ["cp", "-r", '$_FILE_PATH/main/make.sh', "./main_terraform_make.sh"]
 
-  - id: 'make attributes.yaml and terraform.tf'
+  - id: 'make terraform.tf'
     name: 'ubuntu'
     volumes:
       - name: 'test'

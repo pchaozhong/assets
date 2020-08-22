@@ -18,7 +18,7 @@ func TestNetwork(t *testing.T) {
 		TerraformDir: ".",
 
         EnvVars: map[string]string{
-			"GCP_PROJECT": projectId,
+			"GOOGLE_PROJECT": projectId,
 		},
 	}
 

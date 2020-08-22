@@ -51,7 +51,7 @@ timeout: 3600s
 substitutions:
   _TERRAFORM_VERSION: 0.13.0
   _START_UP_PATH: ./terraform/gcp/modules/network/tests/make.sh
-  _INSPEC_PATH: ./terraform/gcp/modules/network/tests/test-codes
+  _INSPEC_PATH: ./terraform/gcp/modules/network/tests/inspec
   _TERRAFORM_FILE_PATH: ./terraform/gcp/modules/network/tests/main
   _TERRAFORM_MODULE_PATH: ./terraform/gcp/modules
   _MODULE_PREFIX: network

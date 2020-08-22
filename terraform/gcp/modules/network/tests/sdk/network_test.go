@@ -9,8 +9,14 @@ import (
 )
 
 func TestExistTestNetwork(t *testing.T){
-    actual := network.ContainVPCNetwork("test")
+    actual, err := network.ContainVPCNetwork("test")
     expected := true
+
+    if err != nil {
+        fmt.Println(err)
+        os.Exit(1)
+    }
+
     if actual != expected {
         t.Errorf("got: %v\nwant: %v", actual, expected)
     }
@@ -18,11 +24,12 @@ func TestExistTestNetwork(t *testing.T){
 
 func TestTestSubnetworkCidr(t *testing.T){
     actual, err := network.GetCidr("test", "asia-northeast1")
+    expected := "192.168.0.0/29"
+
     if err != nil {
         fmt.Println(err)
         os.Exit(1)
     }
-    expected := "192.168.0.0/29"
 
     if actual != expected {
         t.Errorf("got: %v\nwant: %v", actual, expected)

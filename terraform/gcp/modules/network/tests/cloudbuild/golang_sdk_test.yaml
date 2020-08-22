@@ -11,7 +11,7 @@ steps:
     volumes:
       - name: 'test'
         path: '/tests'
-    args: ["cp", "-r", '$_TERRAFORM_FILE_PATH/main.tf', "."]
+    args: ["cp", "-r", '$_FILE_PATH/main/main.tf', "."]
 
   - id: 'copy make terraform makeup shell'
     name: 'ubuntu'
@@ -56,8 +56,6 @@ timeout: 3600s
 substitutions:
   _IMG_VER: 2.1.6
   _TERRAFORM_VERSION: 0.13.0
+  _MODULE_PREFIX: network
   _TERRAFORM_MODULE_PATH: ./terraform/gcp/modules
   _FILE_PATH: ./terraform/gcp/modules/network/tests
-  _TEST_PATH: ./terraform/gcp/modules/network/tests/sdk/
-  _TERRAFORM_FILE_PATH: ./terraform/gcp/modules/network/tests/main
-  _MODULE_PREFIX: network

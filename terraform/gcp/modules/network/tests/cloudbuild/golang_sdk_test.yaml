@@ -13,19 +13,19 @@ steps:
         path: '/tests'
     args: ["cp", "-r", '$_TERRAFORM_FILE_PATH/main.tf', "."]
 
-  - id: 'copy make file'
+  - id: 'copy make terraform makeup shell'
     name: 'ubuntu'
     volumes:
       - name: 'test'
         path: '/tests'
-    args: ["cp", "-r", $_START_UP_PATH, "."]
+    args: ["cp", "-r", '$_FILE_PATH/main/make.sh', "./main_terraform_make.sh"]
 
   - id: 'make attributes.yaml and terraform.tf'
     name: 'ubuntu'
     volumes:
       - name: 'test'
         path: '/tests'
-    args: ["sh", "make.sh", $PROJECT_ID, $_MODULE_PREFIX]
+    args: ["sh", "main_terraform_make.sh", $PROJECT_ID, $_MODULE_PREFIX]
 
   - id: 'terraform init'
     name: 'hashicorp/terraform:$_TERRAFORM_VERSION'
@@ -44,7 +44,7 @@ steps:
     volumes:
       - name: 'test'
         path: '/tests'
-    args: ["go", "test", $_TEST_PATH, '-v']
+    args: ["go", "test", '$_FILE_PATH/sdk/', '-v']
     env:
       - 'GCP_PROJECT=$PROJECT_ID'
 
@@ -56,8 +56,8 @@ timeout: 3600s
 substitutions:
   _IMG_VER: 2.1.6
   _TERRAFORM_VERSION: 0.13.0
-  _START_UP_PATH: ./terraform/gcp/modules/network/tests/make.sh
+  _TERRAFORM_MODULE_PATH: ./terraform/gcp/modules
+  _FILE_PATH: ./terraform/gcp/modules/network/tests
   _TEST_PATH: ./terraform/gcp/modules/network/tests/sdk/
   _TERRAFORM_FILE_PATH: ./terraform/gcp/modules/network/tests/main
-  _TERRAFORM_MODULE_PATH: ./terraform/gcp/modules
   _MODULE_PREFIX: network

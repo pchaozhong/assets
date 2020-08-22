@@ -2,10 +2,11 @@
 
 PJ=$1
 FILEPATH=$2
+TERRAFORMVERSION=$3
 
 tee $FILEPATH <<EOF
 terraform {
-  required_version = "~> 0.13"
+  required_version = "~> $TERRAFORMVERSION"
 }
 
 provider "google" {

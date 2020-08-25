@@ -2,6 +2,13 @@ locals {
   _service_account_list = distinct(flatten([
     for _conf in var.gce_conf : _conf.service_account.email if _conf.gce_enable
   ]))
+
+  _nw_list = distinct(flatten([
+    for _conf in var.gce_conf : {
+      name   = _conf.network
+      region = _conf.region
+    } if _conf.gce_enable
+  ]))
 }
 
 data "google_compute_subnetwork" "main" {

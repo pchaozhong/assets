@@ -34,16 +34,9 @@ locals {
     } if _conf.gce_enable
   ])
 
-  _nw_list = flatten([
-    for _conf in var.gce_conf : {
-      name   = _conf.network
-      region = _conf.region
-    } if _conf.gce_enable
-  ])
-
   _sch = flatten([
     for _conf in var.gce_conf : [
-      for _s in local._sch_tmp : _s
+      for _s in local._sch_tmp : _s if _s.gce_name == _conf.name
     ] if _conf.preemptible_enable
   ])
 
@@ -58,14 +51,14 @@ locals {
         } if _sche.gce_name == _conf.name
       ] if ! _conf.preemptible_enable && var.scheduling != null
     ],
-    flatten([
+    distinct(flatten([
       for _conf in var.gce_conf : [
         for _tmp in local._pre_tmp : _tmp
       ] if _conf.preemptible_enable
-    ])
+    ]))
   ])
 
-  _pre_tmp = flatten([
+  _pre_tmp = distinct(flatten([
     for _conf in var.gce_conf : [
       {
         gce_name            = _conf.name
@@ -74,7 +67,7 @@ locals {
         on_host_maintenance = "TERMINATE"
       }
     ] if _conf.preemptible_enable
-  ])
+  ]))
 }
 
 resource "google_compute_instance" "main" {

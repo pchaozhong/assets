@@ -18,40 +18,5 @@ module "gke" {
   source = "../modules/gke"
 
   preemptible_enable = true
-  gke_conf = [
-    {
-      cluster_enable   = false
-      node_pool_enable = false
-
-      cluster_name = "test"
-      cluster = [
-        {
-          network                   = "test"
-          location                  = local.region
-          subnetwork                = local.subnetwork.name
-          initial_node_count        = local.gke.node_count
-          remove_default_node_pool  = true
-          default_max_pods_per_node = null
-          ip_allocation_policy = {
-            cluster_ipv4_cidr_block  = local.gke.cluster.cluster_ip
-            services_ipv4_cidr_block = local.gke.cluster.services_ip
-          }
-          node_config = {
-            oauth_scopes = local.gke.oauth_scopes
-          }
-        }
-      ]
-      node_pool = [
-        {
-          name       = local.gke.node_pool.name
-          location   = local.region
-          node_count = local.gke.node_count
-          node_config = {
-            machine_type = local.gke.node_pool.machine_type
-            oauth_scopes = local.gke.oauth_scopes
-          }
-        }
-      ]
-    }
-  ]
+  gke_conf = yamldecode(file("./files/gke.yaml"))
 }

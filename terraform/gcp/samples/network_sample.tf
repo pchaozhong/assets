@@ -3,7 +3,7 @@ module "network" {
 
   network_conf = [
     {
-      vpc_network_enable      = false
+      vpc_network_enable      = true
       subnetwork_enable       = false
       firewall_ingress_enable = false
       firewall_egress_enable  = false
@@ -12,11 +12,15 @@ module "network" {
       vpc_network_conf = {
         name                    = local.network
         auto_create_subnetworks = false
+        opt_conf = {
+
+        }
       }
       subnetwork = [
         {
           name   = local.subnetwork.name
           cidr   = local.subnetwork.cidr
+          description = "test"
           region = local.region
         }
       ]

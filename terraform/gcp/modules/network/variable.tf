@@ -9,6 +9,7 @@ variable "network_conf" {
     vpc_network_conf = object({
       name                    = string
       auto_create_subnetworks = bool
+      opt_conf = map(string)
     })
 
     subnetwork = list(object({

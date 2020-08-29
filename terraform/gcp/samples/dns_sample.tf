@@ -55,12 +55,16 @@ module "network_dns" {
       vpc_network_conf = {
         name                    = "dns-test"
         auto_create_subnetworks = false
+        opt_conf = {}
       }
       subnetwork = [
         {
           name   = "dns-test"
           cidr   = "192.168.0.0/29"
           region = local.region
+          opt_conf = {
+
+          }
         }
       ]
       firewall_ingress_conf = []

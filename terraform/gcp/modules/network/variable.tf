@@ -9,21 +9,22 @@ variable "network_conf" {
     vpc_network_conf = object({
       name                    = string
       auto_create_subnetworks = bool
-      opt_conf = map(string)
+      opt_conf                = map(string)
     })
 
     subnetwork = list(object({
-      name   = string
-      cidr   = string
-      region = string
+      name     = string
+      cidr     = string
+      region   = string
+      opt_conf = map(string)
     }))
 
     firewall_ingress_conf = list(object({
-      name           = string
-      priority       = number
+      name     = string
+      priority = number
       # enable_logging = bool
-      source_ranges  = list(string)
-      target_tags    = list(string)
+      source_ranges = list(string)
+      target_tags   = list(string)
       allow_rules = list(object({
         protocol = string
         ports    = list(string)
@@ -35,8 +36,8 @@ variable "network_conf" {
     }))
 
     firewall_egress_conf = list(object({
-      name               = string
-      priority           = number
+      name     = string
+      priority = number
       # enable_logging     = bool
       destination_ranges = list(string)
       target_tags        = list(string)

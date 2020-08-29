@@ -22,6 +22,9 @@ module "network" {
           cidr   = local.subnetwork.cidr
           description = "test"
           region = local.region
+          opt_conf = {
+
+          }
         }
       ]
       firewall_ingress_conf = [

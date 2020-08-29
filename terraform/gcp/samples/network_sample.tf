@@ -3,8 +3,8 @@ module "network" {
 
   network_conf = [
     {
-      vpc_network_enable      = true
-      subnetwork_enable       = true
+      vpc_network_enable      = false
+      subnetwork_enable       = false
       firewall_ingress_enable = false
       firewall_egress_enable  = false
       route_enable            = false
@@ -47,6 +47,10 @@ module "network" {
             }
           ]
           deny_rules = []
+          opt_conf = {
+            log_config = false
+            metadata = "EXCLUDE_ALL_METADATA"
+          }
         }
       ]
       firewall_egress_conf = []

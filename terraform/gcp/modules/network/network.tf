@@ -16,11 +16,11 @@ locals {
         cidr               = _subnet.cidr
         region             = _subnet.region
         network            = _conf.vpc_network_conf.name
-        purpose            = lookup(_conf.subnetwork.opt_conf, "purpose", null)
-        range_name         = lookup(_conf.subnetwork.opt_conf, "range_name", null)
-        description        = lookup(_conf.subnetwork.opt_conf, "description", null)
-        ip_cidr_range      = lookup(_conf.subnetwork.opt_conf, "ip_cidr_range", null)
-        secondary_ip_range = lookup(_conf.subnetwork.opt_conf, "secondary_ip_range", false)
+        purpose            = lookup(_subnet.opt_conf, "purpose", null)
+        range_name         = lookup(_subnet.opt_conf, "range_name", null)
+        description        = lookup(_subnet.opt_conf, "description", null)
+        ip_cidr_range      = lookup(_subnet.opt_conf, "ip_cidr_range", null)
+        secondary_ip_range = lookup(_subnet.opt_conf, "secondary_ip_range", false)
       }
     ] if _conf.subnetwork_enable && _conf.vpc_network_enable
   ])

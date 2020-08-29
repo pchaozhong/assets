@@ -8,7 +8,7 @@ testExistTestNetwork()
 
 testCidrTestNetwork()
 {
-    assertEquals $(gcloud compute networks subnets describe test | grep ipCidrRange | awk '{print $2}') "192.168.1.0/29"
+    assertEquals $(gcloud compute networks subnets describe --region=asia-northeast1 test | grep ipCidrRange | awk '{print $2}') "192.168.1.0/29"
 }
 
 . shunit2

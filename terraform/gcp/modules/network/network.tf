@@ -12,15 +12,19 @@ locals {
   _subnet_conf = flatten([
     for _conf in var.network_conf : [
       for _subnet in _conf.subnetwork : {
-        name               = _subnet.name
-        cidr               = _subnet.cidr
-        region             = _subnet.region
-        network            = _conf.vpc_network_conf.name
-        purpose            = lookup(_subnet.opt_conf, "purpose", null)
-        range_name         = lookup(_subnet.opt_conf, "range_name", null)
-        description        = lookup(_subnet.opt_conf, "description", null)
-        ip_cidr_range      = lookup(_subnet.opt_conf, "ip_cidr_range", null)
-        secondary_ip_range = lookup(_subnet.opt_conf, "secondary_ip_range", false)
+        name                 = _subnet.name
+        cidr                 = _subnet.cidr
+        region               = _subnet.region
+        network              = _conf.vpc_network_conf.name
+        purpose              = lookup(_subnet.opt_conf, "purpose", null)
+        metadata             = lookup(_subnet.opt_conf, "metadata", null)
+        log_config           = lookup(_subnet.opt_conf, "log_config", false)
+        range_name           = lookup(_subnet.opt_conf, "range_name", null)
+        description          = lookup(_subnet.opt_conf, "description", null)
+        flow_sampling        = lookup(_subnet.opt_conf, "flow_sampling", null)
+        ip_cidr_range        = lookup(_subnet.opt_conf, "ip_cidr_range", null)
+        secondary_ip_range   = lookup(_subnet.opt_conf, "secondary_ip_range", false)
+        aggregation_interval = lookup(_subnet.opt_conf, "aggregation_interval", null)
       }
     ] if _conf.subnetwork_enable && _conf.vpc_network_enable
   ])
@@ -48,13 +52,26 @@ resource "google_compute_subnetwork" "main" {
   purpose       = each.value.purpose
 
   dynamic "secondary_ip_range" {
-    for_each = lookup(each.value, "secondary_ip_range", false) ? [{
+    for_each = each.value.secondary_ip_range ? [{
       range_name    = each.value.range_name
       ip_cidr_range = each.value.ip_cidr_range
     }] : []
     content {
       range_name    = secondary_ip_range.value.range_name
       ip_cidr_range = secondary_ip_range.value.ip_cidr_range
+    }
+  }
+
+  dynamic "log_config" {
+    for_each = each.value.log_config ? [{
+      aggregation_interval = each.value.aggregation_interval
+      flow_sampling        = each.value.flow_sampling
+      metadata             = each.value.metadata
+    }] : []
+    content {
+      aggregation_interval = log_config.value.aggregation_interval
+      flow_sampling        = log_config.value.flow_sampling
+      metadata             = log_config.value.metadata
     }
   }
 }

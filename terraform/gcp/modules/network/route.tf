@@ -12,6 +12,7 @@ locals {
         next_hop_instance      = lookup(_route_conf.opt_conf, "next_hop_instance", null)
         next_hop_ip            = lookup(_route_conf.opt_conf, "next_hop_ip", null)
         next_hop_ilb           = lookup(_route_conf.opt_conf, "next_hop_ilb", null)
+        next_hop_vpn_tunnel    = lookup(_route_conf.opt_conf, "next_hop_vpn_tunnel", null)
         next_hop_instance_zone = lookup(_route_conf.opt_conf, "next_hop_instance_zone", null)
       }
     ] if _conf.route_enable && _conf.vpc_network_enable
@@ -30,6 +31,7 @@ resource "google_compute_route" "main" {
   next_hop_gateway       = each.value.next_hop_gateway
   next_hop_instance      = each.value.next_hop_instance
   next_hop_ip            = each.value.next_hop_ip
-  next_hop_ilb           = each.value.next_hop_ilb
+  next_hop_ilb           = each.value.next_hop_ilb != null ? data.google_compute_forwarding_rule.main[each.value.next_hop_ilb].id : null 
+  next_hop_vpn_tunnel    = each.value.next_hop_vpn_tunnel
   next_hop_instance_zone = each.value.next_hop_instance_zone
 }

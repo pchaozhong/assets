@@ -8,7 +8,7 @@ module "gce" {
 
   gce_conf = [
     {
-      gce_enable = true
+      gce_enable = false
 
       name         = "test"
       machine_type = "f1-micro"
@@ -26,7 +26,7 @@ module "gce" {
       }
       boot_disk = {
         size     = 10
-        type     = "ps-ssd"
+        type     = "pd-ssd"
         image    = "ubuntu-2004-lts"
         opt_conf = {}
       }

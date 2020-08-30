@@ -68,7 +68,3 @@ module "network" {
     }
   ]
 }
-
-output "test" {
-  value = module.network
-}

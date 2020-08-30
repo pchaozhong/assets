@@ -58,9 +58,11 @@ module "network" {
         {
           name             = "test-dg"
           dest_range       = "0.0.0.0/0"
-          priority         = 1000
           tags             = []
-          next_hop_gateway = "default-internet-gateway"
+          opt_conf = {
+            next_hop_gateway = "default-internet-gateway"
+            priority         = "1000"
+          }
         }
       ]
     }

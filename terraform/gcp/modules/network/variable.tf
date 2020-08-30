@@ -54,9 +54,8 @@ variable "network_conf" {
     route_conf = list(object({
       name             = string
       dest_range       = string
-      priority         = number
       tags             = list(string)
-      next_hop_gateway = string
+      opt_conf = map(string)
     }))
   }))
 }

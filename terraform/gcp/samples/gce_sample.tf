@@ -4,8 +4,33 @@ module "gce" {
     module.iam,
     module.service_account
   ]
-  source     = "../modules/gce"
+  source = "../modules/gce"
 
-  gce_conf = yamldecode(file("./files/gce.yaml"))
+  gce_conf = [
+    {
+      gce_enable = true
+
+      name         = "test"
+      machine_type = "f1-micro"
+      zone         = local.zone
+      region       = local.region
+      tags         = ["test"]
+      subnetwork   = local.subnetwork.name
+      opt_conf = {
+        access_config = true
+        preemptible   = true
+      }
+      service_account = {
+        email  = "test-module"
+        scopes = []
+      }
+      boot_disk = {
+        size     = 10
+        type     = "ps-ssd"
+        image    = "ubuntu-2004-lts"
+        opt_conf = {}
+      }
+    }
+  ]
 }
 

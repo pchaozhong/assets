@@ -5,7 +5,7 @@ locals {
 
   _nw_list = distinct(flatten([
     for _conf in var.gce_conf : {
-      name   = _conf.network
+      name   = _conf.subnetwork
       region = _conf.region
     } if _conf.gce_enable
   ]))

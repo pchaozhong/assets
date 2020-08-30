@@ -18,6 +18,7 @@ locals {
       nat_ip                  = lookup(_conf.opt_conf, "nat_ip", null)
       public_ptr_domain_name  = lookup(_conf.opt_conf, "public_ptr_domain_name", null)
       network_tier            = lookup(_conf.opt_conf, "network_tier", null)
+      service_account_enable  = lookup(_conf.opt_conf, "service_account_enable", true)
       service_account = {
         email  = data.google_service_account.main[_conf.service_account.email].email
         scopes = _conf.service_account.scopes
@@ -84,9 +85,15 @@ resource "google_compute_instance" "main" {
     }
   }
 
-  service_account {
-    email  = each.value.service_account.email
-    scopes = each.value.service_account.scopes
+  dynamic "service_account" {
+    for_each = each.value.service_account_enable ? [{
+      email  = each.value.service_account.email
+      scopes = each.value.service_account.scopes
+    }] : []
+    content {
+      email  = service_account.value.email
+      scopes = service_account.value.scopes
+    }
   }
 }
 

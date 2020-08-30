@@ -2,7 +2,7 @@ locals {
   _network_conf = flatten([
     for _conf in var.network_conf : {
       name                            = _conf.vpc_network_conf.name
-      auto_create_subnetworks         = _conf.vpc_network_conf.auto_create_subnetworks
+      auto_create_subnetworks         = lookup(_conf.vpc_network_conf.opt_conf, "auto_create_subnetworks", false)
       delete_default_routes_on_create = lookup(_conf.vpc_network_conf.opt_conf, "delete_default_routes_on_create", null)
       routing_mode                    = lookup(_conf.vpc_network_conf.opt_conf, "routing_mode", "REGIONAL")
       description                     = lookup(_conf.vpc_network_conf.opt_conf, "description", null)

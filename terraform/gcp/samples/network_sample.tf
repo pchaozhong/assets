@@ -11,10 +11,7 @@ module "network" {
 
       vpc_network_conf = {
         name                    = local.network
-        auto_create_subnetworks = false
-        opt_conf = {
-
-        }
+        opt_conf = {}
       }
       subnetwork = [
         {

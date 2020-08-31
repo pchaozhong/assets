@@ -4,7 +4,8 @@ module "network" {
   network_conf = [
     {
       vpc_conf = {
-        vpc_enable = false
+        vpc_enable    = false
+        global_enable = true
 
         name       = "test"
         cidr_block = "192.168.0.0/16"
@@ -19,10 +20,16 @@ module "network" {
           opt_var    = {}
         }
       ]
+
+      route_table_conf = [
+        {
+          route_table_enable = true
+          cidr_block = "0.0.0.0/0"
+          opt_var = {
+            gateway_id = "test"
+          }
+        }
+      ]
     }
   ]
-}
-
-output "network" {
-  value = module.network
 }

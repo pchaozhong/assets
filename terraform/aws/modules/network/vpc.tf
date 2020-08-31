@@ -6,6 +6,13 @@ locals {
       opt_var    = _conf.vpc_conf.opt_var
     } if _conf.vpc_conf.vpc_enable
   ])
+
+  _ig_conf = flatten([
+    for _conf in var.network_conf : {
+      vpc_id = _conf.vpc_conf.name
+      name   = _conf.vpc_conf.name
+    } if _conf.vpc_conf.vpc_enable && _conf.vpc_conf.global_enable
+  ])
 }
 
 resource "aws_vpc" "main" {
@@ -24,6 +31,11 @@ resource "aws_vpc" "main" {
   assign_generated_ipv6_cidr_block = lookup(each.value.opt_var, "assign_generated_ipv6_cidr_block", null)
 }
 
-output "vpc" {
-  value = local._vpc_conf
+resource "aws_internet_gateway" "main" {
+  for_each = { for v in local._ig_conf : v.name => v }
+
+  vpc_id = aws_vpc.main[each.value.vpc_id].id
+  tags = {
+    Name = each.value.name
+  }
 }

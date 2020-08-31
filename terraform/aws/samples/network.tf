@@ -4,7 +4,7 @@ module "network" {
   network_conf = [
     {
       vpc_conf = {
-        vpc_enable    = false
+        vpc_enable    = true
         global_enable = true
 
         name       = "test"

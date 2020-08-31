@@ -1,5 +1,7 @@
 #!/bin/sh
 
+FILEPATH=$1
+
 tee $FILEPATH/terraform.tf <<EOF
 provider "aws" {
   region     = local.env[terraform.workspace]

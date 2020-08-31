@@ -60,10 +60,9 @@ module "network_dns" {
       subnetwork = [
         {
           name   = "dns-test"
-          cidr   = "192.168.0.0/29"
+          cidr   = "10.2.0.0/16"
           region = local.region
           opt_conf = {
-
           }
         }
       ]

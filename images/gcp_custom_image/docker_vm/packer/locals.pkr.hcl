@@ -3,4 +3,5 @@ locals {
   user           = "packer"
   machine_type   = "f1-micro"
   zone           = "asia-northeast1-b"
+  subnetwork     = "custom-img"
 }

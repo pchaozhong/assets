@@ -4,7 +4,7 @@ module "network" {
   network_conf = [
     {
       vpc_conf = {
-        vpc_enable    = true
+        vpc_enable    = false
         global_enable = true
 
         name       = "test"
@@ -13,7 +13,7 @@ module "network" {
       }
       subnet_conf = [
         {
-          subnet_enable = false
+          subnet_enable = true
 
           name       = "test"
           cidr_block = "192.168.0.0/24"
@@ -24,12 +24,28 @@ module "network" {
       route_table_conf = [
         {
           route_table_enable = true
-          cidr_block = "0.0.0.0/0"
+          cidr_block         = "0.0.0.0/0"
           opt_var = {
             gateway_id = "test"
           }
         }
       ]
+
+      acl_ingress_conf = [
+        {
+          enable = true
+          id     = 1
+
+          protocol   = "tcp"
+          rule_no    = 1000
+          action     = "allow"
+          cidr_block = "0.0.0.0/0"
+          from_port  = 22
+          to_port    = 22
+        }
+      ]
+
+      acl_egress_conf = []
     }
   ]
 }

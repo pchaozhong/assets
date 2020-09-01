@@ -17,9 +17,32 @@ variable "network_conf" {
     }))
 
     route_table_conf = list(object({
-      cidr_block = string
-      opt_var = map(string)
+      cidr_block         = string
+      opt_var            = map(string)
       route_table_enable = bool
+    }))
+
+
+    acl_ingress_conf = list(object({
+      enable     = bool
+      id         = number
+      protocol   = string
+      rule_no    = number
+      action     = string
+      cidr_block = string
+      from_port  = number
+      to_port    = number
+    }))
+
+    acl_egress_conf = list(object({
+      enable     = bool
+      id         = number
+      protocol   = string
+      rule_no    = number
+      action     = string
+      cidr_block = string
+      from_port  = number
+      to_port    = number
     }))
 
   }))

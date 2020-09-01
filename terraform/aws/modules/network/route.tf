@@ -29,7 +29,7 @@ resource "aws_route_table" "main" {
     for_each = { for v in each.value.routes : v.cidr_block => v }
     content {
       cidr_block                = route.value.cidr_block
-      gateway_id                = aws_internet_gateway.main[route.value.gateway_id].id
+      gateway_id                = route.value.gateway_id != null ? aws_internet_gateway.main[route.value.gateway_id].id : null
       instance_id               = route.value.instance_id
       nat_gateway_id            = route.value.nat_gateway_id
       network_interface_id      = route.value.network_interface_id

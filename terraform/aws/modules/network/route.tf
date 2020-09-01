@@ -3,7 +3,7 @@ locals {
     for _conf in var.network_conf : {
       vpc = _conf.vpc_conf.name
       routes = local._rt_tb_conf_tmp
-    } if _conf.vpc_conf.vpc_enable
+    }
   ])
 
   _rt_tb_conf_tmp = flatten([
@@ -15,7 +15,7 @@ locals {
         nat_gateway_id            = lookup(_rt_conf.opt_var, "nat_gateway_id", null)
         network_interface_id      = lookup(_rt_conf.opt_var, "network_interface_id", null)
         vpc_peering_connection_id = lookup(_rt_conf.opt_var, "vpc_peering_connection_id", null)
-      } if _rt_conf.route_table_enable
+      }
     ]
   ])
 }

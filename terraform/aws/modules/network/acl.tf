@@ -4,18 +4,18 @@ locals {
       vpc     = _conf.vpc_conf.name
       ingress = local._acl_ingress_tmp
       egress  = local._acl_egress_tmp
-    } if _conf.vpc_conf.vpc_enable
+    }
   ])
 
   _acl_ingress_tmp = flatten([
     for _conf in var.network_conf : [
-      for _acl_conf in _conf.acl_ingress_conf : _acl_conf if _acl_conf.enable
+      for _acl_conf in _conf.acl_ingress_conf : _acl_conf
     ]
   ])
 
   _acl_egress_tmp = flatten([
     for _conf in var.network_conf : [
-      for _acl_conf in _conf.acl_egress_conf : _acl_conf if _acl_conf.enable
+      for _acl_conf in _conf.acl_egress_conf : _acl_conf
     ]
   ])
 

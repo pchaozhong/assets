@@ -6,7 +6,7 @@ locals {
         vpc        = _conf.vpc_conf.name
         cidr_block = _sub.cidr_block
         opt_var    = _sub.opt_var
-      } if _sub.subnet_enable && _conf.vpc_conf.vpc_enable
+      }
     ]
   ])
 }

@@ -4,14 +4,14 @@ locals {
       cidr_block = _conf.vpc_conf.cidr_block
       name       = _conf.vpc_conf.name
       opt_var    = _conf.vpc_conf.opt_var
-    } if _conf.vpc_conf.vpc_enable
+    }
   ])
 
   _ig_conf = flatten([
     for _conf in var.network_conf : {
       vpc_id = _conf.vpc_conf.name
       name   = _conf.vpc_conf.name
-    } if _conf.vpc_conf.vpc_enable && _conf.vpc_conf.global_enable
+    } if _conf.vpc_conf.global_enable
   ])
 }
 

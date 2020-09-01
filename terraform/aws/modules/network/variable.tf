@@ -4,14 +4,12 @@ variable "network_conf" {
     vpc_conf = object({
       name          = string
       cidr_block    = string
-      vpc_enable    = bool
       global_enable = bool
       opt_var       = map(string)
     })
 
     subnet_conf = list(object({
       name          = string
-      subnet_enable = bool
       cidr_block    = string
       opt_var       = map(string)
     }))
@@ -19,12 +17,10 @@ variable "network_conf" {
     route_table_conf = list(object({
       cidr_block         = string
       opt_var            = map(string)
-      route_table_enable = bool
     }))
 
 
     acl_ingress_conf = list(object({
-      enable     = bool
       id         = number
       protocol   = string
       rule_no    = number
@@ -35,7 +31,6 @@ variable "network_conf" {
     }))
 
     acl_egress_conf = list(object({
-      enable     = bool
       id         = number
       protocol   = string
       rule_no    = number

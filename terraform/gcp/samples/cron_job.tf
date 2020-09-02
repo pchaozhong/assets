@@ -9,8 +9,8 @@ module "cron_job" {
       scheduler_job_conf = {
         name      = "sample"
         time_zone = "Japan"
-        schedule  = "0 22 * * *"
-        data      = "stop+gce"
+        schedule  = "0 8 * * *"
+        data      = base64encode("sample_module")
         opt_var = {
         }
       }

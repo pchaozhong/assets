@@ -5,8 +5,8 @@ module "csr" {
     {
       csr_enable = false
 
-      name           = "test"
-      pubsub_configs = []
+      name     = "test"
+      opt_conf = {}
     }
   ]
 }

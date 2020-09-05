@@ -3,8 +3,8 @@ package functions
 import (
     "os"
     "context"
+    "log"
     // "strings"
-    "fmt"
 
     "google.golang.org/api/compute/v1"
 )
@@ -42,7 +42,7 @@ func GetZones(ctx context.Context,m PubSubMessage) ([]string, error) {
 		zones = append(zones, zone.Name)
 	}
 
-    fmt.Println(zones)
+    log.Println(zones)
 	return zones, nil
 }
 

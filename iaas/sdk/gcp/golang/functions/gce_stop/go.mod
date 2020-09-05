@@ -1,4 +1,4 @@
-module asset/gce_stop
+module sample.asset/gce_stop
 
 go 1.13
 

@@ -99,6 +99,9 @@ func StopAllGCEs(ctx context.Context, m PubSubMessage) error {
     for _, g := range(gces) {
         fmt.Println("stop gce: ", g.Name)
         err = stopGCE(g, ctx)
+        if err != nil {
+            return err
+        }
     }
 
     fmt.Println("Finish Stopping Task")

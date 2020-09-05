@@ -1,4 +1,4 @@
-package gce_stop
+package functions
 
 import (
 	"context"

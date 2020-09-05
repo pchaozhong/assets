@@ -33,9 +33,7 @@ func getZones(ctx context.Context) ([]string, error) {
 		return zones, err
 	}
 
-    log.Println("before new zoneservice")
 	zs := compute.NewZonesService(sv)
-    log.Println("before getting zone list")
 	zoneList, err := zs.List(os.Getenv("GCP_PROJECT")).Do()
 
 	if err != nil {

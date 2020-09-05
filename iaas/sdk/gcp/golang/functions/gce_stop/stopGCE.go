@@ -1,19 +1,34 @@
 package functions
 
 import (
-	"context"
-	"fmt"
-	"google.golang.org/api/compute/v1"
-	"os"
-	"strings"
+    "os"
+    "context"
+    "strings"
+
+    "google.golang.org/api/compute/v1"
 )
 
 type PubSubMessage struct {
 	Data []byte `json:"data"`
 }
 
-func GetZones(cps *compute.Service) ([]string, error) {
+func createSv(ctx context.Context) (*compute.Service, error){
+    return compute.NewService(ctx)
+}
+
+func getInstanceService(ctx context.Context) (*compute.InstancesService, error) {
+    sv, err := createSv(ctx)
+    return compute.NewInstancesService(sv), err
+}
+
+func getZones(ctx context.Context) ([]string, error) {
 	var zones []string
+
+    cps, err := createSv(ctx)
+
+    if err != nil {
+		return zones, err
+	}
 
 	zs := compute.NewZonesService(cps)
 	zoneList, err := zs.List(os.Getenv("GCP_PROJECT")).Do()
@@ -29,72 +44,61 @@ func GetZones(cps *compute.Service) ([]string, error) {
 	return zones, nil
 }
 
-func GetInstances(cs *compute.InstancesService, zones []string) ([]*compute.Instance, error) {
-	var gces []*compute.Instance
+func getInstances(ctx context.Context) ([]*compute.Instance, error){
+    var gces []*compute.Instance
+    zones, err := getZones(ctx)
 
-	for _, z := range zones {
-		instances, err := cs.List(os.Getenv("GCP_PROJECT"), z).Do()
-		if err != nil {
-			return gces, err
-		}
+    if err != nil {
+        return gces, err
+    }
 
-		for _, i := range instances.Items {
-			gces = append(gces, i)
-		}
-	}
-	return gces, nil
+    isv , err := getInstanceService(ctx)
+
+    if err != nil {
+        return gces, err
+    }
+
+    for _,z := range zones {
+        instances, err := isv.List(os.Getenv("GCP_PROJECT"),z).Do()
+        if err != nil {
+            return gces, err
+        }
+
+        for _,i := range instances.Items{
+            gces = append(gces, i)
+        }
+    }
+
+    return gces, nil
 }
 
-func StopGCEInstances(sa *compute.InstancesService, gce *compute.Instance) error {
-	metadatas := *gce.Metadata
+func stopGCE(gce *compute.Instance,ctx context.Context) error {
+    t := strings.Split(gce.Zone, "/")
+    zone := t[len(t)-1]
+    isa, err := getInstanceService(ctx)
 
-	for _, m := range metadatas.Items {
-		if m.Key == "poweroff-schedule" {
-			err := StopScheduledGCEInstance(sa, gce, m)
-			if err != nil {
-				return err
-			}
-		}
-	}
+    if err != nil {
+        return err
+    }
 
-	return nil
+
+    if gce.Status == "RUNNING" {
+        _, err := isa.Stop(os.Getenv("GCP_PROJECT"), zone, gce.Name).Do()
+        return err
+    }
+
+    return nil
 }
 
-func StopScheduledGCEInstance(sa *compute.InstancesService, gce *compute.Instance, metadata *compute.MetadataItems) error {
-	tmps := strings.Split(gce.Zone, "/")
-	zone := tmps[len(tmps)-1]
+func StopAllGCEs(ctx context.Context) error {
+    gces, err := getInstances(ctx)
+    if err != nil {
+        return err
+    }
+    for _, g := range(gces) {
+        err = stopGCE(g, ctx)
+        return err
+    }
 
-	if *metadata.Value == "on" && gce.Status == "RUNNING" {
-		_, err := sa.Stop(os.Getenv("GCP_PROJECT"), zone, gce.Name).Do()
-		return err
-	}
-	return nil
-}
-
-func StopGCEInstancesDaily(ctx context.Context, m PubSubMessage) error {
-	cps, err := compute.NewService(ctx)
-	if err != nil {
-		return err
-	}
-	sa := compute.NewInstancesService(cps)
-
-	zones, err := GetZones(cps)
-	if err != nil {
-		return err
-	}
-
-	gces, err := GetInstances(sa, zones)
-	if err != nil {
-		return err
-	}
-
-	for _, gce := range gces {
-		err = StopGCEInstances(sa, gce)
-		if err != nil {
-			return err
-		}
-		fmt.Printf("STOP %s VM", gce.Name)
-	}
-
-	return nil
+    return nil
 }

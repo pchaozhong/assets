@@ -5,6 +5,7 @@ variable "glue_conf" {
     gcf_conf = object({
       name                  = string
       runtime               = string
+      region                = string
       environment_variables = map(string)
       opt_var               = map(string)
     })
@@ -12,14 +13,14 @@ variable "glue_conf" {
     pubsub_conf = list(object({
       enable = bool
 
-      name = string
+      name     = string
       opt_conf = map(string)
     }))
 
     gcs_conf = list(object({
       enable = bool
 
-      name = string
+      name     = string
       location = string
       opt_conf = map(string)
     }))

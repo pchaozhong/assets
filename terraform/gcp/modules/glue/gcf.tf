@@ -3,7 +3,7 @@ locals {
     for _conf in var.glue_conf : _conf.gcf_conf if _conf.enable
   ])
 
-  resource_type = {
+  event_type = {
     gcs_finalize        = "google.storage.object.finalize"
     gcs_delete          = "google.storage.object.delete"
     gcs_arcive          = "google.storage.object.archive"
@@ -15,25 +15,26 @@ locals {
 resource "google_cloudfunctions_function" "main" {
   for_each = { for v in local._gcf_conf : v.name => v }
 
-  name                  = each.value.name
-  runtime               = each.value.runtime
+  name    = each.value.name
+  runtime = each.value.runtime
+  region  = each.value.region
+
   environment_variables = each.value.environment_variables
 
   description         = lookup(each.value.opt_var, "description", null)
-  available_memory_mb = lookup(each.value.opt_var, "available_memory_mb", "256MB")
+  available_memory_mb = lookup(each.value.opt_var, "available_memory_mb", 256)
   timeout             = lookup(each.value.opt_var, "timeout", 540)
   entry_point         = lookup(each.value.opt_var, "entry_point", null)
 
   dynamic "event_trigger" {
     for_each = lookup(each.value.opt_var, "event_trigger", false) ? [{
-      event_type     = lookup(each.value.opt_var, "event_type", null)
       resource_type  = lookup(each.value.opt_var, "resource_type", null)
       resource       = lookup(each.value.opt_var, "resource", null)
-      failure_policy = lookup(each.value.opt_var, "failure_policy", null)
+      failure_policy = lookup(each.value.opt_var, "failure_policy", false)
       retry          = lookup(each.value.opt_var, "retry", false)
     }] : []
     content {
-      event_type = event_trigger.value.event_type
+      event_type = local.event_type[event_trigger.value.resource_type]
       resource   = event_trigger.value.resource_type == "pubsub" ? google_pubsub_topic.main[event_trigger.value.resource].id : google_storage_bucket.main[event_trigger.value.resource].name
       dynamic "failure_policy" {
         for_each = event_trigger.value.failure_policy ? [{

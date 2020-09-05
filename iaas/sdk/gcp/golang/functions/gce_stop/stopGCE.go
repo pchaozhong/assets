@@ -13,6 +13,11 @@ type PubSubMessage struct {
 	Data []byte `json:"data"`
 }
 
+func TestGCEStop(ctx context.Context, m PubSubMessage) error {
+    log.Println(string(m.Data))
+    return nil
+}
+
 func createSv(ctx context.Context) (*compute.Service, error){
     return compute.NewService(ctx)
 }

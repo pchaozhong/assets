@@ -91,7 +91,7 @@ func stopGCE(gce *compute.Instance,ctx context.Context) error {
     return nil
 }
 
-func StopAllGCEs(ctx context.Context) error {
+func StopAllGCEs(ctx context.Context, m PubSubMessage) error {
     gces, err := getInstances(ctx)
     if err != nil {
         return err

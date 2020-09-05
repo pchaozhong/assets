@@ -1,7 +1,7 @@
 package functions
 
 import (
-    // "os"
+    "os"
     "context"
     "log"
     // "strings"
@@ -37,7 +37,7 @@ func GetZones(ctx context.Context,m PubSubMessage) (error) {
     log.Println("before new zoneservice")
 	zs := compute.NewZonesService(sv)
     log.Println("before getting zone list")
-	zoneList, err := zs.List("ca-kitano-study-sandbox").Do()
+	zoneList, err := zs.List(os.Getenv("GCP_PROJECT")).Do()
 
 	if err != nil {
         log.Println("error zs error")

@@ -4,6 +4,7 @@ import (
     "os"
     "context"
     "strings"
+    "fmt"
 
     "google.golang.org/api/compute/v1"
 )
@@ -96,9 +97,10 @@ func StopAllGCEs(ctx context.Context) error {
         return err
     }
     for _, g := range(gces) {
+        fmt.Println("stop gce: ", g.Name)
         err = stopGCE(g, ctx)
-        return err
     }
 
+    fmt.Println("Finish Stopping Task")
     return nil
 }

@@ -26,13 +26,15 @@ func GetZones(ctx context.Context,m PubSubMessage) (error) {
 	var zones []string
     log.Println(string(m.Data))
 
-    cps, err := createSv(ctx)
+    sv , err := compute.NewService(ctx)
 
     if err != nil {
 		return err
 	}
 
-	zs := compute.NewZonesService(cps)
+    log.Println("before new zoneservice")
+	zs := compute.NewZonesService(sv)
+    log.Println("before getting zone list")
 	zoneList, err := zs.List(os.Getenv("GCP_PROJECT")).Do()
 
 	if err != nil {

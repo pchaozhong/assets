@@ -13,11 +13,6 @@ type PubSubMessage struct {
 	Data []byte `json:"data"`
 }
 
-func TestGCEStop(ctx context.Context, m PubSubMessage) error {
-    log.Println(string(m.Data))
-    return nil
-}
-
 func createSv(ctx context.Context) (*compute.Service, error){
     return compute.NewService(ctx)
 }
@@ -27,20 +22,21 @@ func getInstanceService(ctx context.Context) (*compute.InstancesService, error) 
     return compute.NewInstancesService(sv), err
 }
 
-func GetZones(ctx context.Context,m PubSubMessage) ([]string, error) {
+func GetZones(ctx context.Context,m PubSubMessage) (error) {
 	var zones []string
+    log.Println(string(m.Data))
 
     cps, err := createSv(ctx)
 
     if err != nil {
-		return zones, err
+		return err
 	}
 
 	zs := compute.NewZonesService(cps)
 	zoneList, err := zs.List(os.Getenv("GCP_PROJECT")).Do()
 
 	if err != nil {
-		return zones, err
+		return err
 	}
 
 	for _, zone := range zoneList.Items {
@@ -48,7 +44,7 @@ func GetZones(ctx context.Context,m PubSubMessage) ([]string, error) {
 	}
 
     log.Println(zones)
-	return zones, nil
+	return nil
 }
 
 // func getInstances(ctx context.Context) ([]*compute.Instance, error){

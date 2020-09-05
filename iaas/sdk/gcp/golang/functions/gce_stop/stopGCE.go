@@ -4,7 +4,7 @@ import (
     "os"
     "context"
     "log"
-    // "strings"
+    "strings"
 
     "google.golang.org/api/compute/v1"
 )
@@ -22,16 +22,15 @@ func getInstanceService(ctx context.Context) (*compute.InstancesService, error) 
     return compute.NewInstancesService(sv), err
 }
 
-func GetZones(ctx context.Context,m PubSubMessage) (error) {
+func getZones(ctx context.Context) ([]string, error) {
 	var zones []string
-    log.Println(string(m.Data))
 
-    sv , err := compute.NewService(ctx)
+    sv , err := createSv(ctx)
 
     if err != nil {
         log.Println("error NewService")
         log.Println(err)
-		return err
+		return zones, err
 	}
 
     log.Println("before new zoneservice")
@@ -42,76 +41,77 @@ func GetZones(ctx context.Context,m PubSubMessage) (error) {
 	if err != nil {
         log.Println("error zs error")
         log.Println(err)
-		return err
+		return zones, err
 	}
 
 	for _, zone := range zoneList.Items {
 		zones = append(zones, zone.Name)
 	}
 
-    log.Println(zones)
-	return nil
+	return zones,nil
 }
 
-// func getInstances(ctx context.Context) ([]*compute.Instance, error){
-//     var gces []*compute.Instance
-//     zones, err := getZones(ctx)
+func getInstances(ctx context.Context) ([]*compute.Instance, error){
+    var gces []*compute.Instance
+    zones, err := getZones(ctx)
 
-//     if err != nil {
-//         return gces, err
-//     }
+    if err != nil {
+        return gces, err
+    }
 
-//     isv , err := getInstanceService(ctx)
+    isv , err := getInstanceService(ctx)
 
-//     if err != nil {
-//         return gces, err
-//     }
+    if err != nil {
+        return gces, err
+    }
 
-//     for _,z := range zones {
-//         instances, err := isv.List(os.Getenv("GCP_PROJECT"),z).Do()
-//         if err != nil {
-//             return gces, err
-//         }
+    for _,z := range zones {
+        instances, err := isv.List(os.Getenv("GCP_PROJECT"),z).Do()
+        if err != nil {
+            return gces, err
+        }
 
-//         for _,i := range instances.Items{
-//             gces = append(gces, i)
-//         }
-//     }
+        for _,i := range instances.Items{
+            gces = append(gces, i)
+        }
+    }
 
-//     return gces, nil
-// }
+    return gces, nil
+}
 
-// func stopGCE(gce *compute.Instance,ctx context.Context) error {
-//     t := strings.Split(gce.Zone, "/")
-//     zone := t[len(t)-1]
-//     isa, err := getInstanceService(ctx)
+func stopGCE(gce *compute.Instance,ctx context.Context) error {
+    t := strings.Split(gce.Zone, "/")
+    zone := t[len(t)-1]
+    isa, err := getInstanceService(ctx)
 
-//     if err != nil {
-//         return err
-//     }
+    if err != nil {
+        return err
+    }
 
 
-//     if gce.Status == "RUNNING" {
-//         _, err := isa.Stop(os.Getenv("GCP_PROJECT"), zone, gce.Name).Do()
-//         return err
-//     }
+    if gce.Status == "RUNNING" {
+        _, err := isa.Stop(os.Getenv("GCP_PROJECT"), zone, gce.Name).Do()
+        return err
+    }
 
-//     return nil
-// }
+    return nil
+}
 
-// func StopAllGCEs(ctx context.Context, m PubSubMessage) error {
-//     gces, err := getInstances(ctx)
-//     if err != nil {
-//         return err
-//     }
-//     for _, g := range(gces) {
-//         fmt.Println("stop gce: ", g.Name)
-//         err = stopGCE(g, ctx)
-//         if err != nil {
-//             return err
-//         }
-//     }
+func StopAllGCEs(ctx context.Context, m PubSubMessage) error {
+    gces, err := getInstances(ctx)
+    if err != nil {
+        return err
+    }
+    for _, g := range(gces) {
+        log.Println("stop gce: ", g.Name)
+        err = stopGCE(g, ctx)
+        if err != nil {
+            log.Println("error stog GCP")
+            log.Println(err)
+            return err
+        }
+    }
 
-//     fmt.Println("Finish Stopping Task")
-//     return nil
-// }
+    log.Println("Finish Stopping Task")
+    return nil
+}

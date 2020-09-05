@@ -12,7 +12,7 @@ type PubSubMessage struct {
 	Data []byte `json:"data"`
 }
 
-func getZones(cps *compute.Service) ([]string, error) {
+func GetZones(cps *compute.Service) ([]string, error) {
 	var zones []string
 
 	zs := compute.NewZonesService(cps)
@@ -29,7 +29,7 @@ func getZones(cps *compute.Service) ([]string, error) {
 	return zones, nil
 }
 
-func getInstances(cs *compute.InstancesService, zones []string) ([]*compute.Instance, error) {
+func GetInstances(cs *compute.InstancesService, zones []string) ([]*compute.Instance, error) {
 	var gces []*compute.Instance
 
 	for _, z := range zones {
@@ -45,12 +45,12 @@ func getInstances(cs *compute.InstancesService, zones []string) ([]*compute.Inst
 	return gces, nil
 }
 
-func stopGCEInstances(sa *compute.InstancesService, gce *compute.Instance) error {
+func StopGCEInstances(sa *compute.InstancesService, gce *compute.Instance) error {
 	metadatas := *gce.Metadata
 
 	for _, m := range metadatas.Items {
 		if m.Key == "poweroff-schedule" {
-			err := stopScheduledGCEInstance(sa, gce, m)
+			err := StopScheduledGCEInstance(sa, gce, m)
 			if err != nil {
 				return err
 			}
@@ -60,7 +60,7 @@ func stopGCEInstances(sa *compute.InstancesService, gce *compute.Instance) error
 	return nil
 }
 
-func stopScheduledGCEInstance(sa *compute.InstancesService, gce *compute.Instance, metadata *compute.MetadataItems) error {
+func StopScheduledGCEInstance(sa *compute.InstancesService, gce *compute.Instance, metadata *compute.MetadataItems) error {
 	tmps := strings.Split(gce.Zone, "/")
 	zone := tmps[len(tmps)-1]
 
@@ -71,25 +71,25 @@ func stopScheduledGCEInstance(sa *compute.InstancesService, gce *compute.Instanc
 	return nil
 }
 
-func StopGCEInstances(ctx context.Context, m PubSubMessage) error {
+func StopGCEInstancesDaily(ctx context.Context, m PubSubMessage) error {
 	cps, err := compute.NewService(ctx)
 	if err != nil {
 		return err
 	}
 	sa := compute.NewInstancesService(cps)
 
-	zones, err := getZones(cps)
+	zones, err := GetZones(cps)
 	if err != nil {
 		return err
 	}
 
-	gces, err := getInstances(sa, zones)
+	gces, err := GetInstances(sa, zones)
 	if err != nil {
 		return err
 	}
 
 	for _, gce := range gces {
-		err = stopGCEInstances(sa, gce)
+		err = StopGCEInstances(sa, gce)
 		if err != nil {
 			return err
 		}

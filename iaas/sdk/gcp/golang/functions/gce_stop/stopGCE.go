@@ -29,6 +29,8 @@ func GetZones(ctx context.Context,m PubSubMessage) (error) {
     sv , err := compute.NewService(ctx)
 
     if err != nil {
+        log.Println("error NewService")
+        log.Println(err)
 		return err
 	}
 
@@ -38,6 +40,8 @@ func GetZones(ctx context.Context,m PubSubMessage) (error) {
 	zoneList, err := zs.List(os.Getenv("GCP_PROJECT")).Do()
 
 	if err != nil {
+        log.Println("error zs error")
+        log.Println(err)
 		return err
 	}
 

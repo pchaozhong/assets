@@ -7,8 +7,9 @@ locals {
 }
 
 resource "google_storage_bucket" "main" {
-  for_each = toset(local._gcs_conf)
+  for_each = { for v in local._gcs_conf : v.name => v}
 
   name = each.value.name
   location = each.value.location
+  force_destroy = lookup(each.value.opt_conf, "force_destroy", true)
 }

@@ -6,7 +6,7 @@
   region: asia-northeast1
   tags:
     - test
-  network: test
+  network: module-test
   access_config:
     nat_ip: null
   boot_disk:

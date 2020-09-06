@@ -1,3 +1,7 @@
+locals {
+  region = "asia-northeast1"
+}
+
 module "stop_gce" {
   source = "../../../../../../terraform/gcp/modules/glue"
 
@@ -6,9 +10,9 @@ module "stop_gce" {
       enable = true
 
       gcf_conf = {
-        name                  = "stop-all-gce"
-        runtime               = "go113"
-        region                = "asia-northeast1"
+        name    = "stop-all-gce"
+        runtime = "go113"
+        region  = "asia-northeast1"
         environment_variables = {
           GCP_PROJECT = terraform.workspace
         }
@@ -17,9 +21,9 @@ module "stop_gce" {
           event_trigger     = true
           source_repository = true
 
-          entry_point = "StopAllGCEs"
-          resource_type = "pubsub"
-          resource      = "stopgce"
+          entry_point   = "StopAllGCEs"
+          resource_type = "gcs_finalize"
+          resource      = join("-", [terraform.workspace, "stopgce"])
           url = join("/", [
             "https://source.developers.google.com/projects",
             terraform.workspace,
@@ -34,13 +38,21 @@ module "stop_gce" {
 
       pubsub_conf = [
         {
-          enable = true
+          enable = false
 
           name     = "stopgce"
           opt_conf = {}
         }
       ]
-      gcs_conf = []
+      gcs_conf = [
+        {
+          enable = true
+
+          name     = join("-", [terraform.workspace, "stopgce"])
+          location = upper(local.region)
+          opt_conf = {}
+        }
+      ]
     }
   ]
 }

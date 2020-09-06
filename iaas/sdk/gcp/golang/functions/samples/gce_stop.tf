@@ -7,7 +7,7 @@ module "stop_gce" {
 
   glue_conf = [
     {
-      enable = true
+      enable = false
 
       gcf_conf = {
         name    = "stop-all-gce"
@@ -46,7 +46,7 @@ module "stop_gce" {
       ]
       gcs_conf = [
         {
-          enable = true
+          enable = false
 
           name     = join("-", [terraform.workspace, "stopgce"])
           location = upper(local.region)

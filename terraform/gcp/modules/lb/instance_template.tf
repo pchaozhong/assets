@@ -16,40 +16,38 @@ locals {
 resource "google_compute_instance_template" "main" {
   for_each = { for v in local._instance_template : v.name_prefix => v }
 
-  name_prefix  = each.value.name_prefix
-  machine_type = each.value.machine_type
-  tags         = each.value.tags
-  instance_description = lookup(each.value.opt_var, "", null)
-  project = lookup(each.value.opt_var, "", terraform.workspace)
-  region = each.value.region
-
-  tags = []
+  name_prefix          = each.value.name_prefix
+  machine_type         = each.value.machine_type
+  tags                 = each.value.tags
+  region               = each.value.region
+  instance_description = lookup(each.value.opt_var, "instance_description", null)
+  project              = lookup(each.value.opt_var, "project", terraform.workspace)
 
   dynamic "service_account" {
     for_each = lookup(each.value.opt_var, "service_account", false) ? [{
-      email = lookup(email.value.opt_var, "email", null)
+      email  = lookup(email.value.opt_var, "email", null)
       scopes = each.value.scopes
     }] : []
     content {
-      email = service_account.value.email != null ? data.service_account.main[service_account.value.email].email : null
+      email  = service_account.value.email != null ? data.service_account.main[service_account.value.email].email : null
       scopes = var.scopes
     }
   }
 
   dynamic "guest_accelerator" {
     for_each = lookup(each.value.opt_var, "guest_accelerator", false) ? [{
-      type = each.value.type
+      type  = each.value.type
       count = each.value.count
     }] : []
     content {
-      type = guest_accelerator.value.type
+      type  = guest_accelerator.value.type
       count = guest_accelerator.value.count
     }
   }
 
 
   min_cpu_platform = lookup(each.value.opt_var, "", null)
-  enable_display = lookup(each.value.opt_var, "", null)
+  enable_display   = lookup(each.value.opt_var, "", null)
 
   disk {
     source_image = each.value.source_image
@@ -133,7 +131,17 @@ resource "google_compute_instance_template" "main" {
       enable_integrity_monitoring = shielded_instance_config.value.enable_integrity_monitoring
     }
   }
-  lifecycle {
-    create_before_destroy = each.value.create_before_destroy
+
+  dynamic "lifecycle" {
+    for_each = lookup(each.value.opt_var, "lifecycle", false) ? [{
+      create_before_destroy = lookup(each.value.opt_var, "create_before_destroy", null)
+      prevent_destroy       = lookup(each.value.opt_var, "prevent_destroy", false)
+      ignore_changes        = lookup(each.value.opt_var, "ignore_changes", null)
+    }] : []
+    content {
+      create_before_destroy = lifecycle.value.create_before_destroy
+      prevent_destroy       = lifecycle.value.prevent_destroy
+      ignore_changes        = lifecycle.value.ignore_changes
+    }
   }
 }

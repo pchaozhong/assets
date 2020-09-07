@@ -19,22 +19,120 @@ resource "google_compute_instance_template" "main" {
   name_prefix  = each.value.name_prefix
   machine_type = each.value.machine_type
   tags         = each.value.tags
+  instance_description = lookup(each.value.opt_var, "", null)
+  project = lookup(each.value.opt_var, "", terraform.workspace)
+  region = each.value.region
+
+  tags = []
+
+  dynamic "service_account" {
+    for_each = lookup(each.value.opt_var, "service_account", false) ? [{
+      email = lookup(email.value.opt_var, "email", null)
+      scopes = each.value.scopes
+    }] : []
+    content {
+      email = service_account.value.email != null ? data.service_account.main[service_account.value.email].email : null
+      scopes = var.scopes
+    }
+  }
+
+  dynamic "guest_accelerator" {
+    for_each = lookup(each.value.opt_var, "guest_accelerator", false) ? [{
+      type = each.value.type
+      count = each.value.count
+    }] : []
+    content {
+      type = guest_accelerator.value.type
+      count = guest_accelerator.value.count
+    }
+  }
+
+
+  min_cpu_platform = lookup(each.value.opt_var, "", null)
+  enable_display = lookup(each.value.opt_var, "", null)
 
   disk {
     source_image = each.value.source_image
-    auto_delete  = each.value.auto_delete
+    auto_delete  = lookup(each.value.opt_var, "auto_delete", true)
+    device_name  = lookup(each.value.opt_var, "device_name", null)
+    disk_name    = lookup(each.value.opt_var, "disk_name", null)
+    interface    = lookup(each.value.opt_var, "interface", null)
+    mode         = lookup(each.value.opt_var, "", null)
+    disk_type    = lookup(each.value.opt_var, "", null)
+    disk_size_gb = lookup(each.value.opt_var, "", null)
+    type         = lookup(each.value.opt_var, "", null)
   }
 
   network_interface {
-    subnetwork = each.value.subnetwork
-    dynamic "access_config" {
-      for_each = each.value.access_config
-      content {
+    network        = lookup(each.value.opt_var, "", null)
+    subnetwork     = each.value.subnetwork
+    network_ip     = lookup(each.value.opt_var, "", null)
+    alias_ip_range = lookup(each.value.opt_var, "", null)
 
+
+    dynamic "access_config" {
+      for_each = lookup(each.value.opt_var, "access_config", false) ? [{
+        nat_ip       = lookup(each.value.opt_var, "", null)
+        network_tier = lookup(each.value.opt_var, "", null)
+      }] : []
+      content {
+        nat_ip       = access_config.value.nat_ip
+        network_tier = access_config.value.network_tier
+      }
+    }
+
+    dynamic "alias_ip_range" {
+      for_each = lookup(each.value.opt_var, "access_config", false) ? [{
+        ip_cidr_range         = lookup(each.value.opt_var, "", null)
+        subnetwork_range_name = lookup(each.value.opt_var, "", null)
+      }] : []
+      content {
+        ip_cidr_range         = alias_ip_range.value.ip_cidr_range
+        subnetwork_range_name = alias_ip_range.value.subnetwork_range_name
       }
     }
   }
 
+  dynamic "schduling" {
+    for_each = lookup(each.value.opt_var, "schduling", false) ? [{
+      automatic_restart   = lookup(each.value.opt_var, "", null)
+      on_host_maintenance = lookup(each.value.opt_var, "", null)
+      preemtible          = lookup(each.value.opt_var, "", false)
+      node_affinities     = lookup(each.value.opt_var, "", false)
+    }] : []
+    content {
+      automatic_restart   = schduling.value.automatic_restart
+      on_host_maintenance = schduling.value.on_host_maintenance
+      preemtible          = schduling.value.preemtible
+
+      dynamic "node_affinities" {
+        for_each = schduling.value.node_affinities ? [{
+          key      = each.value.key
+          operator = each.value.operator
+          value    = each.value.value
+        }] : []
+        content {
+          key      = node_affinities.value.key
+          operator = node_affinities.value.operator
+          value    = node_affinities.value.value
+        }
+      }
+    }
+  }
+
+
+  dynamic "shielded_instance_config" {
+    for_each = lookup(each.value.opt_var, "shielded_instance_config", false) ? [{
+      enable_secure_boot          = lookup(each.value.opt_var, "", null)
+      enable_vtpm                 = lookup(each.value.opt_var, "", null)
+      enable_integrity_monitoring = lookup(each.value.opt_var, "", null)
+    }] : []
+    content {
+      enable_secure_boot          = shielded_instance_config.value.enable_secure_boot
+      enable_vtpm                 = shielded_instance_config.value.enable_vtpm
+      enable_integrity_monitoring = shielded_instance_config.value.enable_integrity_monitoring
+    }
+  }
   lifecycle {
     create_before_destroy = each.value.create_before_destroy
   }

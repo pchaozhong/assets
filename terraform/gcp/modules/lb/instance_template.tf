@@ -57,23 +57,23 @@ resource "google_compute_instance_template" "main" {
     device_name  = lookup(each.value.opt_var, "device_name", null)
     disk_name    = lookup(each.value.opt_var, "disk_name", null)
     interface    = lookup(each.value.opt_var, "interface", null)
-    mode         = lookup(each.value.opt_var, "", null)
-    disk_type    = lookup(each.value.opt_var, "", null)
-    disk_size_gb = lookup(each.value.opt_var, "", null)
-    type         = lookup(each.value.opt_var, "", null)
+    mode         = lookup(each.value.opt_var, "mode", null)
+    disk_type    = lookup(each.value.opt_var, "disk_type", null)
+    disk_size_gb = lookup(each.value.opt_var, "disk_size_gb", null)
+    type         = lookup(each.value.opt_var, "type", null)
   }
 
   network_interface {
-    network        = lookup(each.value.opt_var, "", null)
-    subnetwork     = each.value.subnetwork
-    network_ip     = lookup(each.value.opt_var, "", null)
-    alias_ip_range = lookup(each.value.opt_var, "", null)
+    network        = lookup(each.value.opt_var, "network", null)
+    subnetwork     = lookup(each.value.opt_var, "subnetwork", null)
+    network_ip     = lookup(each.value.opt_var, "network_ip", null)
+    alias_ip_range = lookup(each.value.opt_var, "alias_ip_range", null)
 
 
     dynamic "access_config" {
       for_each = lookup(each.value.opt_var, "access_config", false) ? [{
-        nat_ip       = lookup(each.value.opt_var, "", null)
-        network_tier = lookup(each.value.opt_var, "", null)
+        nat_ip       = lookup(each.value.opt_var, "nat_ip", null)
+        network_tier = lookup(each.value.opt_var, "network_tier", null)
       }] : []
       content {
         nat_ip       = access_config.value.nat_ip
@@ -83,8 +83,8 @@ resource "google_compute_instance_template" "main" {
 
     dynamic "alias_ip_range" {
       for_each = lookup(each.value.opt_var, "access_config", false) ? [{
-        ip_cidr_range         = lookup(each.value.opt_var, "", null)
-        subnetwork_range_name = lookup(each.value.opt_var, "", null)
+        ip_cidr_range         = lookup(each.value.opt_var, "ip_cidr_range", null)
+        subnetwork_range_name = lookup(each.value.opt_var, "subnetwork_range_name", null)
       }] : []
       content {
         ip_cidr_range         = alias_ip_range.value.ip_cidr_range
@@ -95,10 +95,10 @@ resource "google_compute_instance_template" "main" {
 
   dynamic "schduling" {
     for_each = lookup(each.value.opt_var, "schduling", false) ? [{
-      automatic_restart   = lookup(each.value.opt_var, "", null)
-      on_host_maintenance = lookup(each.value.opt_var, "", null)
-      preemtible          = lookup(each.value.opt_var, "", false)
-      node_affinities     = lookup(each.value.opt_var, "", false)
+      automatic_restart   = lookup(each.value.opt_var, "automatic_restart", null)
+      on_host_maintenance = lookup(each.value.opt_var, "on_host_maintenance", null)
+      preemtible          = lookup(each.value.opt_var, "preemtible", false)
+      node_affinities     = lookup(each.value.opt_var, "node_affinities", false)
     }] : []
     content {
       automatic_restart   = schduling.value.automatic_restart
@@ -123,9 +123,9 @@ resource "google_compute_instance_template" "main" {
 
   dynamic "shielded_instance_config" {
     for_each = lookup(each.value.opt_var, "shielded_instance_config", false) ? [{
-      enable_secure_boot          = lookup(each.value.opt_var, "", null)
-      enable_vtpm                 = lookup(each.value.opt_var, "", null)
-      enable_integrity_monitoring = lookup(each.value.opt_var, "", null)
+      enable_secure_boot          = lookup(each.value.opt_var, "enable_secure_boot", null)
+      enable_vtpm                 = lookup(each.value.opt_var, "enable_vtpm", null)
+      enable_integrity_monitoring = lookup(each.value.opt_var, "enable_integrity_monitoring", null)
     }] : []
     content {
       enable_secure_boot          = shielded_instance_config.value.enable_secure_boot

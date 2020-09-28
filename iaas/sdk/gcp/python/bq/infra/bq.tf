@@ -1,3 +1,8 @@
+locals {
+  dataset_id = "github_source_data"
+  table_id = "git_sample"
+}
+
 module "bq" {
   source = "../../../../../../terraform/gcp/modules/bq"
 
@@ -6,7 +11,7 @@ module "bq" {
       enable = true
 
       dataset_conf = {
-        dataset_id = "github_source_data"
+        dataset_id = local.dataset_id
         location   = "US"
         opt_conf   = {}
       }
@@ -15,7 +20,7 @@ module "bq" {
         {
           enable = true
 
-          table_id = "git_sample"
+          table_id = local.table_id
         }
       ]
 

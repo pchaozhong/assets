@@ -6,6 +6,7 @@ locals {
       zone                    = _conf.zone
       tags                    = _conf.tags
       subnetwork              = _conf.subnetwork
+      metadata_startup_script = lookup(_conf.opt_conf, "metadata_startup_script", null)
       auto_delete             = lookup(_conf.boot_disk.opt_conf, "auto_delete", false)
       device_name             = lookup(_conf.boot_disk.opt_conf, "device_name", null)
       mode                    = lookup(_conf.boot_disk.opt_conf, "mode", "READ_WRITE")
@@ -42,10 +43,11 @@ resource "google_compute_instance" "main" {
   depends_on = [google_compute_disk.main]
   for_each   = { for v in local._instance_conf_list : v.name => v }
 
-  name         = each.value.name
-  machine_type = each.value.machine_type
-  zone         = each.value.zone
-  tags         = each.value.tags
+  name                    = each.value.name
+  machine_type            = each.value.machine_type
+  zone                    = each.value.zone
+  tags                    = each.value.tags
+  metadata_startup_script = each.value.metadata_startup_script
 
   boot_disk {
     auto_delete             = each.value.auto_delete

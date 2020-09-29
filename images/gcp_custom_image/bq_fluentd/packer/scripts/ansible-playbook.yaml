@@ -38,18 +38,13 @@
           <source>
             @type tail
             @id input_tail
-          <parse>
-            @type nginx
-          </parse>
+            <parse>
+              @type nginx
+            </parse>
             path /var/log/nginx/access.log
             pos_file /var/log/td-agent/httpd-access.log.pos
             tag nginx.access
           </source>
-
-    - name: add block
-      blockinfile:
-        path: /etc/td-agent/td-agent.conf
-        block: |
           <match nginx.access>
             @type bigquery_insert
             auth_method compute_engine

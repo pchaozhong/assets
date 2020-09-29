@@ -2,26 +2,32 @@ locals {
   job_query = {
     dataset_id = "github_source_data"
     table_id   = "git_sample"
-    location = "US"
+    location   = "US"
   }
 
   fluentd_log = {
-    enable = false
-    zone = "asia-northeast1-b"
-    region = "asia-northeast1"
+    enable = true
+    zone   = "us-central1-c"
+    region = "us-central1"
 
     gce = {
-      name = "fluentd-log"
+      name         = "fluentd-log"
       machine_type = "f1-micro"
-      disk_size = 30
-      disk_type = "pd-ssd"
-      disk_image = "bq-fluentd"
+      disk_size    = 30
+      disk_type    = "pd-ssd"
+      disk_image   = "bq-fluentd"
     }
 
     network = {
-      name = "fluentd-log"
-      cidr = "192.168.0.0/24"
+      name        = "fluentd-log"
+      cidr        = "192.168.0.0/24"
       description = "analyze fluentd log"
+    }
+
+    bq = {
+      location   = "US"
+      dataset_id = "fluentd_log"
+      table_id   = "fluentd_log"
     }
   }
 }
@@ -71,7 +77,7 @@ module "fluentd_log_gce" {
       subnetwork   = local.fluentd_log.network.name
       opt_conf = {
         metadata_startup_script = "td_config"
-        preemptible = true
+        preemptible             = true
       }
       service_account = {
         email  = local.fluentd_log.gce.name
@@ -110,7 +116,7 @@ module "fluentd_nw" {
           cidr        = local.fluentd_log.network.cidr
           description = local.fluentd_log.network.description
           region      = local.fluentd_log.region
-          opt_conf = {}
+          opt_conf    = {}
         }
       ]
 
@@ -127,7 +133,7 @@ module "fluentd_nw" {
             }
           ]
           deny_rules = []
-          opt_conf = {}
+          opt_conf   = {}
         }
       ]
 
@@ -136,5 +142,32 @@ module "fluentd_nw" {
       route_conf = [
       ]
     },
+  ]
+}
+
+module "fluentd_bq" {
+  source = "../../../../../../terraform/gcp/modules/bq"
+
+  bq_conf = [
+    {
+      enable = local.fluentd_log.enable
+
+      dataset_conf = {
+        dataset_id = local.fluentd_log.bq.dataset_id
+        location   = local.fluentd_log.bq.location
+        opt_conf   = {}
+      }
+
+      table_conf = [
+        {
+          enable = true
+
+          table_id = local.fluentd_log.bq.table_id
+        }
+      ]
+
+      query_job_conf = [
+      ]
+    }
   ]
 }

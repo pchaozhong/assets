@@ -4,7 +4,7 @@ locals {
       for _tb_conf in _conf.table_conf : {
         dataset_id = _conf.dataset_conf.dataset_id
         table_id   = _tb_conf.table_id
-        opt_conf   = _conf.dataset_conf.opt_conf
+        opt_conf   = _tb_conf.opt_conf
       } if _tb_conf.enable
     ] if _conf.enable
   ])

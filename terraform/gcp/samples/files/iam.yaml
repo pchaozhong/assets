@@ -1,4 +1,4 @@
-- iam_enable: false
+- enable: false
   member: module-sample
   member_type: serviceAccount
   role:

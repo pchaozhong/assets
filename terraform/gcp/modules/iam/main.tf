@@ -6,13 +6,14 @@ locals {
         member = _conf.member_type != "serviceAccount" ? join(":", [_conf.member_type, _conf.member]) : join(":", [_conf.member_type, data.google_service_account.main[_conf.member].email])
         role   = _role
       }
-    ] if _conf.iam_enable
+    ] if _conf.enable
   ])
 }
 
 variable "iam_member_conf" {
   type = list(object({
-    iam_enable  = bool
+    enable = bool
+
     member      = string
     member_type = string
     role        = list(string)

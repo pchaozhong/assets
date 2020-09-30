@@ -12,6 +12,7 @@ variable "bq_conf" {
       enable = bool
 
       table_id = string
+      opt_conf = map(string)
     }))
 
     query_job_conf = list(object({

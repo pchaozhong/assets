@@ -2,13 +2,13 @@ variable "build_conf" {
   type = list(object({
     build_enable = bool
 
-    name           = string
-    disabled       = bool
+    name     = string
+    disabled = bool
 
     filename       = string
     ignored_files  = list(string)
     included_files = list(string)
-    substitutions = map(string)
+    substitutions  = map(string)
 
     trigger_template = list(object({
       repo_name   = string

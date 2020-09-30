@@ -37,6 +37,6 @@ variable "gke_conf" {
 }
 
 variable "preemptible_enable" {
-  type = bool
+  type    = bool
   default = false
 }

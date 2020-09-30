@@ -63,3 +63,8 @@ variable "lb_conf" {
     }))
   }))
 }
+
+variable "scopes" {
+  type = list(string)
+  default = []
+}

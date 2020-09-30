@@ -6,7 +6,7 @@ locals {
 
 resource "google_cloudbuild_trigger" "main" {
   for_each = { for v in local._build_conf : v.name => v }
-  provider   = "google-beta"
+  provider = "google-beta"
 
   name           = each.value.name
   disabled       = each.value.disabled

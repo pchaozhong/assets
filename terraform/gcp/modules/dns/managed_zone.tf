@@ -15,7 +15,7 @@ locals {
 resource "google_dns_managed_zone" "main" {
   for_each = { for v in local._dns_zone_conf : v.name => v }
 
-  depends_on = [ google_project_service.main]
+  depends_on = [google_project_service.main]
   provider   = "google-beta"
 
   name       = each.value.name

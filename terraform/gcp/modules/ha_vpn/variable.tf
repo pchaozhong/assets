@@ -1,5 +1,5 @@
 variable "vpn_enable" {
-  type = bool
+  type    = bool
   default = false
 }
 
@@ -30,8 +30,8 @@ variable "router_conf" {
     router_name = string
     # network     = string
     nw_name = string
-    asn         = number
-    region      = string
+    asn     = number
+    region  = string
     interface = list(object({
       interface_name = string
       ip_range       = string

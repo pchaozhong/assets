@@ -34,6 +34,6 @@ resource "google_container_cluster" "main" {
 
   node_config {
     oauth_scopes = each.value.node_config.oauth_scopes
-    preemptible = var.preemptible_enable
+    preemptible  = var.preemptible_enable
   }
 }

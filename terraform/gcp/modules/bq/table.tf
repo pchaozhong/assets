@@ -25,9 +25,9 @@ resource "google_bigquery_table" "main" {
       require_partition_filter = lookup(each.value.opt_conf, "time_partitioning_require_partition_filter", true)
     }] : []
     content {
-      expiration_ms = time_partitioning.value.expiration_ms
-      field = time_partitioning.value.field
-      type = time_partitioning.value.type
+      expiration_ms            = time_partitioning.value.expiration_ms
+      field                    = time_partitioning.value.field
+      type                     = time_partitioning.value.type
       require_partition_filter = time_partitioning.value.require_partition_filter
     }
   }

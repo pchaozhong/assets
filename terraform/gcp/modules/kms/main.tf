@@ -9,8 +9,8 @@ locals {
   _crypto_key_conf = flatten([
     for _conf in var.kms_conf : [
       for _crypto in _conf.crypto_key : {
-        name = _crypto.name
-        key_ring = _conf.key_ring_conf.name
+        name            = _crypto.name
+        key_ring        = _conf.key_ring_conf.name
         prevent_destroy = _crypto.prevent_destroy
       }
     ] if _conf.crypto_enable
@@ -19,7 +19,7 @@ locals {
 
 resource "google_kms_key_ring" "main" {
   depends_on = [google_project_service.main]
-  for_each = { for v in local._key_ring_conf : v.name => v }
+  for_each   = { for v in local._key_ring_conf : v.name => v }
 
   name     = each.value.name
   location = each.value.location

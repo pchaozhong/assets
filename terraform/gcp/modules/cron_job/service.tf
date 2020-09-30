@@ -2,7 +2,7 @@ locals {
   _service_list = compact(distinct(flatten([
     for _conf in var.cron_job_conf : [
       for _sv in local.google_project_service_list : _sv
-    ]  if _conf.enable
+    ] if _conf.enable
   ])))
 
   google_project_service_list = [

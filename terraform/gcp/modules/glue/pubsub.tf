@@ -7,7 +7,7 @@ locals {
 }
 
 resource "google_pubsub_topic" "main" {
-  for_each = { for v in local._pubsub_conf : v.name => v}
+  for_each = { for v in local._pubsub_conf : v.name => v }
 
   name = each.value.name
 }

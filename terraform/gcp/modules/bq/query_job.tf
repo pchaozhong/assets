@@ -26,7 +26,7 @@ resource "google_bigquery_job" "query_job" {
     query = each.value.query
 
     destination_table {
-      table_id = google_bigquery_table.main[each.value.table_id].id
+      table_id   = google_bigquery_table.main[each.value.table_id].id
       dataset_id = google_bigquery_dataset.main[each.value.dataset_id].id
     }
 

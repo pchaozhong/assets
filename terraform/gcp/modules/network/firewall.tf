@@ -27,7 +27,7 @@ locals {
         allow_rules   = _fw_conf.allow_rules
         deny_rules    = _fw_conf.deny_rules
         log_config    = lookup(_fw_conf.opt_conf, "log_config", false)
-        metadata           = lookup(_fw_conf.opt_conf, "metadata", "INCLUDE_ALL_METADATA")
+        metadata      = lookup(_fw_conf.opt_conf, "metadata", "INCLUDE_ALL_METADATA")
         description   = lookup(_fw_conf.opt_conf, "description", null)
       }
     ] if _conf.firewall_ingress_enable && _conf.vpc_network_enable

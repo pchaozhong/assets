@@ -31,7 +31,7 @@ resource "google_compute_route" "main" {
   next_hop_gateway       = each.value.next_hop_gateway
   next_hop_instance      = each.value.next_hop_instance
   next_hop_ip            = each.value.next_hop_ip
-  next_hop_ilb           = each.value.next_hop_ilb != null ? data.google_compute_forwarding_rule.main[each.value.next_hop_ilb].id : null 
+  next_hop_ilb           = each.value.next_hop_ilb != null ? data.google_compute_forwarding_rule.main[each.value.next_hop_ilb].id : null
   next_hop_vpn_tunnel    = each.value.next_hop_vpn_tunnel
   next_hop_instance_zone = each.value.next_hop_instance_zone
 }

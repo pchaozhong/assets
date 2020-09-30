@@ -1,18 +1,20 @@
 locals {
   job_query = {
+    enable = false
+
     dataset_id = "github_source_data"
     table_id   = "git_sample"
     location   = "US"
   }
 
   fluentd_log = {
-    enable = true
+    enable = false
     zone   = "us-central1-c"
     region = "us-central1"
 
     gce = {
       name         = "fluentd-log"
-      machine_type = "f1-micro"
+      machine_type = "n1-standard-1"
       disk_size    = 30
       disk_type    = "pd-ssd"
       disk_image   = "bq-fluentd"
@@ -26,8 +28,8 @@ locals {
 
     bq = {
       location   = "US"
-      dataset_id = "fluentd_log"
-      table_id   = "fluentd_log"
+      dataset_id = "fluentd"
+      table_id   = "nginx_access"
     }
   }
 }
@@ -37,7 +39,7 @@ module "job_query" {
 
   bq_conf = [
     {
-      enable = false
+      enable = local.job_query.enable
 
       dataset_conf = {
         dataset_id = local.job_query.dataset_id
@@ -50,6 +52,7 @@ module "job_query" {
           enable = true
 
           table_id = local.job_query.table_id
+          opt_conf = {}
         }
       ]
 
@@ -61,7 +64,9 @@ module "job_query" {
 
 module "fluentd_log_gce" {
   depends_on = [
-    module.fluentd_nw
+    module.fluentd_nw,
+    module.fluentd_bq,
+    module.fluentd_sa
   ]
   source = "../../../../../../terraform/gcp/modules/gce"
 
@@ -81,7 +86,9 @@ module "fluentd_log_gce" {
       }
       service_account = {
         email  = local.fluentd_log.gce.name
-        scopes = []
+        scopes = [
+          "cloud-platform"
+        ]
       }
       boot_disk = {
         size     = local.fluentd_log.gce.disk_size
@@ -129,7 +136,7 @@ module "fluentd_nw" {
           allow_rules = [
             {
               protocol = "tcp"
-              ports    = ["22"]
+              ports    = ["22", "80", "443"]
             }
           ]
           deny_rules = []
@@ -163,6 +170,10 @@ module "fluentd_bq" {
           enable = true
 
           table_id = local.fluentd_log.bq.table_id
+          opt_conf = {
+            schema            = file("./fluentd_table_schem.json")
+            time_partitioning = false
+          }
         }
       ]
 
@@ -170,4 +181,31 @@ module "fluentd_bq" {
       ]
     }
   ]
+}
+
+module "fluentd_sa" {
+  source = "../../../../../../terraform/gcp/modules/service_account"
+
+  service_account_conf = [{
+    enable = local.fluentd_log.enable
+
+    account_id = local.fluentd_log.gce.name
+  }]
+}
+
+module "fluentd_iam" {
+  depends_on = [
+    module.fluentd_sa
+  ]
+  source = "../../../../../../terraform/gcp/modules/iam"
+
+  iam_member_conf = [{
+    enable = local.fluentd_log.enable
+
+    member = local.fluentd_log.gce.name
+    member_type = "serviceAccount"
+    role = [
+      "roles/bigquery.admin"
+    ]
+  }]
 }

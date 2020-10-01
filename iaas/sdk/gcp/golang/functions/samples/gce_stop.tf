@@ -38,7 +38,7 @@ module "stop_gce" {
 
       pubsub_conf = [
         {
-          enable = false
+          enable = true
 
           name     = "stopgce"
           opt_conf = {}

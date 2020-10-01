@@ -21,9 +21,9 @@ module "gce" {
         preemptible   = true
       }
       service_account = {
-        enable = false
+        enable = true
 
-        email  = "test-module"
+        email  = "module-sample"
         scopes = []
       }
       boot_disk = {

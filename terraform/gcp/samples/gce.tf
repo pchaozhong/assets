@@ -27,8 +27,9 @@ module "gce" {
       boot_disk = {
         size     = 10
         type     = "pd-ssd"
-        image    = "ubuntu-2004-lts"
-        opt_conf = {}
+        opt_conf = {
+          image    = "ubuntu-2004-lts"
+        }
       }
     }
   ]

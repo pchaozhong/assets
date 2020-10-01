@@ -4,10 +4,10 @@ module "network" {
   network_conf = [
     {
       vpc_network_enable      = false
-      subnetwork_enable       = false
-      firewall_ingress_enable = false
-      firewall_egress_enable  = false
-      route_enable            = false
+      subnetwork_enable       = true
+      firewall_ingress_enable = true
+      firewall_egress_enable  = true
+      route_enable            = true
 
       vpc_network_conf = {
         name                    = local.network
@@ -50,7 +50,26 @@ module "network" {
           }
         }
       ]
-      firewall_egress_conf = []
+      firewall_egress_conf = [
+        {
+          name          = "test-nw-deny"
+          priority      = 1000
+          destination_ranges = ["0.0.0.0/0"]
+          target_tags   = []
+          allow_rules = [
+          ]
+          deny_rules = [
+            {
+              protocol = "all"
+              ports = null
+            }
+          ]
+          opt_conf = {
+            log_config = false
+            metadata = "EXCLUDE_ALL_METADATA"
+          }
+        }
+      ]
       route_conf = [
         {
           name             = "test-dg"
@@ -62,6 +81,36 @@ module "network" {
           }
         }
       ]
+    },
+
+    {
+      vpc_network_enable      = false
+      subnetwork_enable       = true
+      firewall_ingress_enable = false
+      firewall_egress_enable  = false
+      route_enable            = false
+
+      vpc_network_conf = {
+        name                    = "reserved-address-test"
+        opt_conf = {}
+      }
+      subnetwork = [
+        {
+          name        = "reserved-address-test"
+          cidr        = "192.168.0.0/24"
+          description = "reserved-address"
+          region      = "us-central1"
+          opt_conf = {
+          }
+        }
+      ]
+      firewall_ingress_conf = [
+      ]
+      firewall_egress_conf = [
+      ]
+      route_conf = [
+      ]
     }
+
   ]
 }

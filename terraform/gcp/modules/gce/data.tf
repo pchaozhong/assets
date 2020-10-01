@@ -1,6 +1,6 @@
 locals {
   _service_account_list = distinct(flatten([
-    for _conf in var.gce_conf : _conf.service_account.email if _conf.gce_enable
+    for _conf in var.gce_conf : _conf.service_account.email if _conf.service_account.enable
   ]))
 
   _nw_list = distinct(flatten([

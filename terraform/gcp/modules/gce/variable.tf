@@ -13,6 +13,7 @@ variable "gce_conf" {
       opt_conf = map(string)
     })
     service_account = object({
+      enable = bool
       email  = string
       scopes = list(string)
     })

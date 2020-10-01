@@ -35,6 +35,19 @@
       blockinfile:
         path: /etc/td-agent/td-agent.conf
         block: |
+          <match nginx.access>
+           @type bigquery_insert
+           auth_method compute_engine
+           project MY_PROJECT_NAME
+           dataset fluentd
+           table nginx_access
+           fetch_schema true
+           <inject>
+             time_key time
+             time_type string
+             time_format %Y-%m-%dT%H:%M:%S.%NZ
+           </inject>
+          </match>
           <source>
             @type tail
             @id input_tail
@@ -45,24 +58,14 @@
             pos_file /var/log/td-agent/httpd-access.log.pos
             tag nginx.access
           </source>
-          <match nginx.access>
-            @type bigquery_insert
-            auth_method compute_engine
-            project [MY_PROJECT_NAME]
-            dataset fluentd
-            table nginx_access
-            fetch_schema true
-            <inject>
-              time_key time
-              time_type string
-              time_format %Y-%m-%dT%H:%M:%S.%NZ
-            </inject>
-          </match>
 
     - name: add config td-agent.conf file
       copy:
-        src: ./td_config.sh
-        dest: /usr/local/bin/td_config
+        src: "{{ item.src }}"
+        dest: /usr/local/bin/{{ item.dest }}
         mode: 0777
         owner: root
         group: root
+      loop:
+        - {src: ./td_config.sh, dest: td_config}
+        - {src: ./install_bq_plugin.sh, dest: install_bq_plugin}

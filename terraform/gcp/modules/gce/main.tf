@@ -33,7 +33,7 @@ locals {
       name     = join("-", [_conf.name, "boot-disk"])
       size     = _conf.boot_disk.size
       type     = _conf.boot_disk.type
-      image    = _conf.boot_disk.image
+      opt_conf = _conf.boot_disk.opt_conf
       zone     = _conf.zone
     } if _conf.gce_enable
   ])
@@ -106,5 +106,6 @@ resource "google_compute_disk" "main" {
   size  = each.value.size
   type  = each.value.type
   zone  = each.value.zone
-  image = each.value.image
+  image = lookup(each.value.opt_conf, "image", null)
+  snapshot = lookup(each.value.opt_conf, "snapshot", null)
 }

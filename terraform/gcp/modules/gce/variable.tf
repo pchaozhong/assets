@@ -10,7 +10,6 @@ variable "gce_conf" {
     boot_disk = object({
       size     = number
       type     = string
-      image    = string
       opt_conf = map(string)
     })
     service_account = object({

@@ -21,6 +21,8 @@ module "gce" {
         preemptible   = true
       }
       service_account = {
+        enable = false
+
         email  = "test-module"
         scopes = []
       }

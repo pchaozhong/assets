@@ -16,12 +16,13 @@ module "bq" {
           enable = true
 
           table_id = "git_sample"
+          opt_conf = {}
         }
       ]
 
       query_job_conf = [
         {
-          enable = true
+          enable = false
 
           job_id              = "github_repos_commit_query"
           query               = file("./files/query_job.sql")

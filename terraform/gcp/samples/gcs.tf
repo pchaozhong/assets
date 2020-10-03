@@ -2,7 +2,7 @@ module "gcs" {
   source = "../modules/gcs"
 
   gcs_conf = {
-    enable = true
+    enable = false
 
     storage_conf = [
       {

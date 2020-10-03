@@ -9,7 +9,7 @@ resource "google_dataflow_job" "main" {
 
   name                  = each.value.name
   template_gcs_path     = each.value.template_gcs_path
-  temp_gcs_location     = each.value.template_gcs_location
+  temp_gcs_location     = each.value.temp_gcs_location
   network               = each.value.network
   subnetwork            = each.value.subnetwork
   machine_type          = each.value.machine_type

@@ -5,7 +5,7 @@ variable "dataflow_conf" {
     job_conf = list(object({
       name                  = string
       template_gcs_path     = string
-      template_gcs_location = string
+      temp_gcs_location     = string
       network               = string
       region                = string
       zone                  = string

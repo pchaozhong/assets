@@ -1,6 +1,6 @@
 locals {
   https_lb = {
-    enable      = false
+    enable      = true
     name        = "https-lb-demo"
     subnet_cidr = "192.168.10.0/24"
     region      = "asia-northeast1"
@@ -62,6 +62,65 @@ module "https_loadbalancer" {
           }
         ]
         opt_conf = {}
+      }
+    ]
+
+    health_check_conf = [
+      {
+        enable = true
+
+        name                = local.https_lb.name
+        healthy_threshold   = 2
+        timeout_sec         = 5
+        check_interval_sec  = 10
+        unhealthy_threshold = 3
+
+        http_health_check = {
+          enable       = true
+          port_name    = local.https_lb.name
+          host         = null
+          request_path = "/"
+        }
+      }
+    ]
+
+    backend_service_conf = [
+      {
+        enable = true
+
+        name          = local.https_lb.name
+        protocol      = "HTTP"
+        health_check  = local.https_lb.name
+        backend       = local.https_lb.name
+        instnce_group = local.https_lb.name
+      }
+    ]
+
+    url_map_conf = [
+      {
+        enable = true
+
+        name            = local.https_lb.name
+        backend_service = local.https_lb.name
+      }
+    ]
+
+    target_http_proxy_conf = [
+      {
+        enable = true
+
+        name    = local.https_lb.name
+        url_map = local.https_lb.name
+      }
+    ]
+
+    global_forwarding_rule_conf = [
+      {
+        enable = true
+
+        name       = local.https_lb.name
+        target     = local.https_lb.name
+        port_range = "80"
       }
     ]
   }

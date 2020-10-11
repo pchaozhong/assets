@@ -37,5 +37,49 @@ variable "https_loadbalancer_conf" {
       }))
       opt_conf = map(string)
     }))
+
+    health_check_conf = list(object({
+      enable              = bool
+      name                = string
+      healthy_threshold   = number
+      timeout_sec         = number
+      check_interval_sec  = number
+      unhealthy_threshold = number
+
+      http_health_check = object({
+        enable       = bool
+        port_name    = string
+        host         = string
+        request_path = string
+      })
+    }))
+
+    backend_service_conf = list(object({
+      enable        = bool
+      name          = string
+      protocol      = string
+      health_check  = string
+      backend       = string
+      instnce_group = string
+    }))
+
+    url_map_conf = list(object({
+      enable          = bool
+      name            = string
+      backend_service = string
+    }))
+
+    target_http_proxy_conf = list(object({
+      enable  = bool
+      name    = string
+      url_map = string
+    }))
+
+    global_forwarding_rule_conf = list(object({
+      enable     = bool
+      name       = string
+      target     = string
+      port_range = string
+    }))
   })
 }

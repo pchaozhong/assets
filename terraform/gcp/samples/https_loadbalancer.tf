@@ -1,6 +1,6 @@
 locals {
   https_lb = {
-    enable      = true
+    enable      = false
     name        = "https-lb-demo"
     subnet_cidr = "192.168.10.0/24"
     region      = "asia-northeast1"

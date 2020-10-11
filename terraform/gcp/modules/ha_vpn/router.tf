@@ -30,6 +30,7 @@ locals {
       name    = _conf.router_name
       network = data.google_compute_network.router_main[_conf.nw_name].self_link
       asn     = _conf.asn
+      region  = _conf.region
     } if var.vpn_enable
   ])
 }
@@ -40,6 +41,7 @@ resource "google_compute_router" "main" {
 
   name    = each.value.name
   network = each.value.network
+  region  = each.value.region
   bgp {
     asn = each.value.asn
   }

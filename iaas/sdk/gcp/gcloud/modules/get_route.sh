@@ -15,10 +15,13 @@ if [ ! -d $OUTPUTDIR/json/$OUTPUT ]; then
     mkdir $OUTPUTDIR/json/$OUTPUT
 fi
 
-echo "name,destRange,network,priority" > $OUTPUTDIR/csv/$OUTPUT-$PROJECT.csv
+if [ ! -e $OUTPUTDIR/csv/$OUTPUT.csv ]; then
+    echo "name,project,destRange,network,priority" > $OUTPUTDIR/csv/$OUTPUT.csv
+fi
+
 for route in $(gcloud compute routes list --project $PROJECT | awk 'NR>1{print $1}'); do
     gcloud compute routes describe --project $PROJECT --format=json $route | \
-        tee $OUTPUTDIR/json/route/$route-$PROJECT.json | jq -r '[.name,.destRange,.network,.priority]|@csv' |\
-        sed -e 's/"//g' >> $OUTPUTDIR/csv/$OUTPUT-$PROJECT.csv
+        tee $OUTPUTDIR/json/route/$route-$PROJECT.json | jq -r '[.name,"'$PROJECT'",.destRange,.network,.priority]|@csv' |\
+        sed -e 's/"//g' >> $OUTPUTDIR/csv/$OUTPUT.csv
 done
 

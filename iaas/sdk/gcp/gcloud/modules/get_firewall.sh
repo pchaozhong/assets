@@ -5,6 +5,8 @@ OUTPUTDIR=$2
 OUTPUT=firewall
 SERVICE=compute.googleapis.com
 
+echo "get firewall"
+
 grep $SERVICE $OUTPUTDIR/json/service_list/$PROJECT.txt
 
 if [ $? != 0 ]; then

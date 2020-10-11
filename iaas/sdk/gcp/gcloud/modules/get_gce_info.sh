@@ -5,6 +5,8 @@ OUTPUTDIR=$2
 OUTPUT=gce
 SERVICE=compute.googleapis.com
 
+echo "get gce"
+
 grep $SERVICE $OUTPUTDIR/json/service_list/$PROJECT.txt
 
 if [ $? != 0 ]; then
@@ -18,12 +20,15 @@ fi
 declare -a gces=($(gcloud compute instances list --project $PROJECT | awk 'NR>1{print $1}'))
 declare -a zones=($(gcloud compute instances list --project $PROJECT | awk 'NR>1{print $2}'))
 
-echo "name,zone" > $OUTPUTDIR/csv/$OUTPUT-$PROJECT.csv
+if [ ! -e $OUTPUTDIR/csv/$OUTPUT.csv ]; then
+    echo "name,project,zone" > $OUTPUTDIR/csv/$OUTPUT.csv
+fi
+
 count=0
 while [ $count -lt ${#gces[@]} ]; do
     gcloud compute instances describe --format json --zone ${zones[$count]} --project $PROJECT ${gces[$count]} | \
-        tee -a $OUTPUTDIR/json/gce/${gces[$count]}-$PROJECT.json | \
-        jq -r -c '[.name,.zone] | @csv' | \
-        sed -e 's/"//g' >> $OUTPUTDIR/csv/$OUTPUT-$PROJECT.csv
+        tee -a $OUTPUTDIR/json/$OUTPUT/${gces[$count]}-$PROJECT.json | \
+        jq -r -c '[.name,"'$PROJECT'",.zone] | @csv' | \
+        sed -e 's/"//g' >> $OUTPUTDIR/csv/$OUTPUT.csv
     count=$(( $count + 1 ))
 done

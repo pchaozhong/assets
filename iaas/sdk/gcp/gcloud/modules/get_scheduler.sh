@@ -23,10 +23,14 @@ if [ ! -d $OUTPUTDIR/json/$OUTPUT ]; then
 fi
 
 jobs=$(gcloud scheduler jobs list --project $PROJECT | awk 'NR>1{print $1}')
-echo "name,schedule,timeZone,data,topicName" > $OUTPUTDIR/csv/$OUTPUT-$PROJECT.csv
+
+if [ ! -e $OUTPUTDIR/csv/$OUTPUT.csv ]; then
+    echo "name,project,schedule,timeZone,data,topicName" > $OUTPUTDIR/csv/$OUTPUT.csv
+fi
+
 for job in ${jobs[@]};do
     gcloud scheduler jobs describe --project $PROJECT --format=json $job |\
         tee $OUTPUTDIR/json/$OUTPUT/$job-$PROJECT.json |\
-        jq -r -c '[.name,.schedule,.timeZone,.pubsubTarget.data,.pubsubTarget.topicName]|@csv' |\
-        sed -e 's/"//g' >> $OUTPUTDIR/csv/$OUTPUT-$PROJECT.csv
+        jq -r -c '[.name,"'$PROJECT'",.schedule,.timeZone,.pubsubTarget.data,.pubsubTarget.topicName]|@csv' |\
+        sed -e 's/"//g' >> $OUTPUTDIR/csv/$OUTPUT.csv
 done

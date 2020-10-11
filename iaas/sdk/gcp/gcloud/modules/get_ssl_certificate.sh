@@ -17,15 +17,14 @@ fi
 
 ssls=$(gcloud compute ssl-certificates list --project $PROJECT | awk 'NR>1{print $1}')
 
-if [ -z $ssls ] ; then
-    exit 0
+if [ ! -e $OUTPUTDIR/csv/$OUTPUT.csv ]; then
+    echo "name,project,type,subjectAlternativeNames" > $OUTPUTDIR/csv/$OUTPUT.csv
 fi
 
-echo "name,type,subjectAlternativeNames" > $OUTPUTDIR/csv/$OUTPUT/$ssl-$PROJECT.csv
 
 for ssl in ${ssls[@]}; do
     gcloud compute ssl-certificates describe --project $PROJECT --format jobs $ssl |\
         tee $OUTPUTDIR/json/$OUTPUT/$ssl-$PROJECT.json |\
-        jq -r -c '[.name,.type,.subjectAlternativeNames[]]|@csv' |\
-        sed -e 's/"//g' >> $OUTPUTDIR/csv/$OUTPUT/$ssl-$PROJECT.csv
+        jq -r -c '[.name,"'$PROJECT'",.type,.subjectAlternativeNames[]]|@csv' |\
+        sed -e 's/"//g' >> $OUTPUTDIR/csv/$OUTPUT.csv
 done

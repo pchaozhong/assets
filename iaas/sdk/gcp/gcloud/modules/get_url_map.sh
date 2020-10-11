@@ -19,11 +19,13 @@ fi
 
 services=$(gcloud compute url-maps list --project $PROJECT | awk 'NR>1{print $1}')
 
-echo "name,defaultService" > $OUTPUTDIR/csv/$OUTPUT-$PROJECT.csv
+if [ ! -e $OUTPUTDIR/csv/$OUTPUT.csv ]; then
+    echo "name,project,defaultService" > $OUTPUTDIR/csv/$OUTPUT.csv
+fi
 
 for service in ${services[@]}; do
     gcloud compute url-maps describe --project $PROJECT --format json $service |\
         tee $OUTPUTDIR/json/$OUTPUT/$service-$PROJECT.json |\
-        jq -r -c '[.name, .defaultService]|@csv' |\
-        sed -e 's/"//g' >> $OUTPUTDIR/csv/$OUTPUT-$PROJECT.csv
+        jq -r -c '[.name,"'$PROJECT'", .defaultService]|@csv' |\
+        sed -e 's/"//g' >> $OUTPUTDIR/csv/$OUTPUT.csv
 done

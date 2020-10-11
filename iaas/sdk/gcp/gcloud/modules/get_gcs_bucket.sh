@@ -6,6 +6,8 @@ OUTPUT=gcs_buckets
 OBJECTS=gcs_objects
 SERVICE=storage-api.googleapis.com
 
+echo "get gcs bucket"
+
 grep $SERVICE $OUTPUTDIR/json/service_list/$PROJECT.txt
 
 if [ $? != 0 ]; then

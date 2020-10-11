@@ -5,6 +5,8 @@ OUTPUTDIR=$2
 OUTPUT=iam_binding
 SERVICE=iam.googleapis.com
 
+echo "get iam role info"
+
 grep $SERVICE $OUTPUTDIR/json/service_list/$PROJECT.txt
 
 if [ $? != 0 ]; then

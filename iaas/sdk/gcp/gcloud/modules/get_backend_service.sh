@@ -5,6 +5,8 @@ OUTPUTDIR=$2
 OUTPUT=backend_service
 SERVICE=compute.googleapis.com
 
+echo "get backend service"
+
 grep $SERVICE $OUTPUTDIR/json/service_list/$PROJECT.txt
 
 if [ $? != 0 ]; then

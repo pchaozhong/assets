@@ -5,6 +5,8 @@ OUTPUTDIR=$2
 OUTPUT=armor
 SERVICE=compute.googleapis.com
 
+echo "get armor info"
+
 grep $SERVICE $OUTPUTDIR/json/service_list/$PROJECT.txt
 
 if [ $? != 0 ]; then

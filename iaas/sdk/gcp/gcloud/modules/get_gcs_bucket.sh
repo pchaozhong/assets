@@ -4,23 +4,28 @@ PROJECT=$1
 OUTPUTDIR=$2
 OUTPUT=gcs_buckets
 OBJECTS=gcs_objects
-SERVICE=storage-api.googleapis.com
+SERVICES=(
+    compute.googleapis.com
+    storage-api.googleapis.com
+)
 
-echo "get gcs bucket"
+out_modules=(
+    ./common/make_output_dir.sh \
+        ./common/check_enable_service.sh \
+        ./common/make_output_header.sh
+)
 
-grep $SERVICE $OUTPUTDIR/json/service_list/$PROJECT.txt
+for module in ${out_modules[@]}; do
+    source $module
+done
 
-if [ $? != 0 ]; then
-    exit 0
-fi
+for sv in ${SERVICES[@]}; do
+    check_enable_service $sv $OUTPUTDIR $PROJECT
+done
 
-if [ ! -d $OUTPUTDIR/json/$OUTPUT ]; then
-    mkdir $OUTPUTDIR/json/$OUTPUT
-fi
+make_raw_log_dir $OUTPUTDIR $OUTPUT
+make_raw_log_dir $OUTPUTDIR $OBJECTS
 
-if [ ! -d $OUTPUTDIR/json/$OBJECTS ]; then
-    mkdir $OUTPUTDIR/json/$OBJECTS
-fi
 
 # bkts=$(gsutil ls -p $PROJECT)
 # echo "name" > $OUTPUTDIR/csv/$OUTPUT-$PROJECT.csv

@@ -3,55 +3,53 @@
 PROJECT=$1
 OUTPUTDIR=$2
 OUTPUTRING=kmsrings
-OUTPUKEY=keys
+OUTPUTKEY=keys
+CSVHEADERRING="name,project,createTime"
+CSVHEADERKEY="name,project,algorithm,generateTime,protectionLevel,primary.state,purpose,versionTemplate.algorithm,primary.protectionalLevel"
+
 LOCATION=(
     global
     asia-northeast1
 )
-SERVICE=cloudkms.googleapis.com
+SERVICES=(
+    cloudkms.googleapis.com \
+)
+MODULES=(
+    ./common/make_file_name.sh \
+        ./common/make_output_dir.sh \
+        ./common/check_enable_service.sh \
+        ./common/make_output_header.sh
+)
 
-echo "get kms"
+for module in ${MODULES[@]}; do
+    source $module
+done
 
-grep $SERVICE $OUTPUTDIR/json/service_list/$PROJECT.txt
+for sv in ${SERVICES[@]}; do
+    check_enable_service $sv $OUTPUTDIR $PROJECT
+done
 
-if [ $? != 0 ]; then
-    exit 0
-fi
+for dir in $OUTPUTRING $OUTPUTKEY ; do
+    make_raw_log_dir $OUTPUTDIR $dir
+done
 
-if [ ! -d $OUTPUTDIR/json/$OUTPUTRING ]; then
-    mkdir $OUTPUTDIR/json/$OUTPUTRING
-fi
-
-if [ ! -d $OUTPUTDIR/json/$OUTPUKEY ]; then
-    mkdir $OUTPUTDIR/json/$OUTPUKEY
-fi
-
-if [ ! -e $OUTPUTDIR/csv/$OUTPUTRING.csv ]; then
-    echo "name,project,createTime" > $OUTPUTDIR/csv/$OUTPUTRING.csv
-fi
-
-if [ ! -e $OUTPUTDIR/csv/$OUTPUKEY.csv ]; then
-    echo "name,project,primary.algorithm, primary.generateTime, primary.protectionLevel, primary.state, purpose, versionTemplate.algorithm, versionTemplate.protectionalLevel" > $OUTPUTDIR/csv/$OUTPUKEY.csv
-fi
+make_header $CSVHEADERRING $OUTPUTDIR $OUTPUTRING
+make_header $CSVHEADERKEY $OUTPUTDIR $OUTPUTKEY
 
 for local in ${LOCATION[@]}; do
     KEYRINGS=$(gcloud kms keyrings list --location $local --project $PROJECT | awk 'NR>1{print $1}')
     for kr in ${KEYRINGS[@]}; do
-        tmp=$(echo $kr | tr '/' ' ')
-        declare -a tmparray=($tmp)
-        filename=${tmparray[$((${#tmparray[@]} - 1))]}
+        filename=$(make_file_name $kr)
         gcloud kms keyrings describe $kr --project $PROJECT --format=json | \
             tee -a $OUTPUTDIR/json/$OUTPUTRING/$filename-$PROJECT.json | jq -r -c '[.name,"'$PROJECT'",.createTime] | @csv' | \
             sed -e 's/"//g' >> $OUTPUTDIR/csv/$OUTPUTRING.csv
 
         for key in $(gcloud kms keys list --keyring $kr --project $PROJECT | awk 'NR>1{print $1}') ; do
-            tmp=$(echo $key | tr '/' ' ')
-            declare -a tmparray=($tmp)
-            filename=${tmparray[$((${#tmparray[@]} - 1))]}
+            filename=$(make_file_name $key)
             gcloud kms keys describe $key --project $PROJECT --format=json |\
-                tee $OUTPUTDIR/json/$OUTPUKEY/$filename-$PROJECT.json | \
+                tee $OUTPUTDIR/json/$OUTPUTKEY/$filename-$PROJECT.json | \
                 jq -r -c '[.name,"'$PROJECT'",.primary.algorithm, .primary.generateTime, .primary.protectionLevel, .primary.state, .purpose, .versionTemplate.algorithm, .versionTemplate.protectionalLevel] | @csv' |\
-                sed -e 's/"//g' >> $OUTPUTDIR/csv/$OUTPUKEY.csv
+                sed -e 's/"//g' >> $OUTPUTDIR/csv/$OUTPUTKEY.csv
         done
     done
 done

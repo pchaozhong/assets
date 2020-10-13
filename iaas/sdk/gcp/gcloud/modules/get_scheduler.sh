@@ -3,30 +3,31 @@
 PROJECT=$1
 OUTPUTDIR=$2
 OUTPUT=scheduler
-SERVICE=cloudscheduler.googleapis.com
-SERVICE2=appengine.googleapis.com
+SERVICES=(
+    cloudscheduler.googleapis.com \
+        appengine.googleapis.com
+)
+CSVHEADER="name,project,schedule,timeZone,data,topicName"
 
-grep $SERVICE $OUTPUTDIR/json/service_list/$PROJECT.txt
+out_modules=(
+    ./common/make_output_dir.sh \
+        ./common/check_enable_service.sh \
+        ./common/make_output_header.sh
+)
 
-if [ $? != 0 ]; then
-    exit 0
-fi
+for module in ${out_modules[@]}; do
+    source $module
+done
 
-grep $SERVICE2 $OUTPUTDIR/json/service_list/$PROJECT.txt
+for sv in ${SERVICES[@]}; do
+    check_enable_service $sv $OUTPUTDIR $PROJECT
+done
 
-if [ $? != 0 ]; then
-    exit 0
-fi
+make_raw_log_dir $OUTPUTDIR $OUTPUT
+make_header $CSVHEADER $OUTPUTDIR $OUTPUT
 
-if [ ! -d $OUTPUTDIR/json/$OUTPUT ]; then
-    mkdir $OUTPUTDIR/json/$OUTPUT
-fi
 
 jobs=$(gcloud scheduler jobs list --project $PROJECT | awk 'NR>1{print $1}')
-
-if [ ! -e $OUTPUTDIR/csv/$OUTPUT.csv ]; then
-    echo "name,project,schedule,timeZone,data,topicName" > $OUTPUTDIR/csv/$OUTPUT.csv
-fi
 
 for job in ${jobs[@]};do
     gcloud scheduler jobs describe --project $PROJECT --format=json $job |\

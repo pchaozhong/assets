@@ -4,32 +4,37 @@ PROJECT=$1
 OUTPUTDIR=$2
 OUTPUTR=cloud_router
 OUTPUTN=cloud_nat
+CSVHEADERR="name,project,network.region"
+CSVHEADERN="name,natIpAllocateOption,sourceSubnetworkIpRangesToNat,logConfig.enable,logConfig.filter"
+
 SERVICE=compute.googleapis.com
+SERVICES=(
+    compute.googleapis.com
+)
 
-grep $SERVICE $OUTPUTDIR/json/service_list/$PROJECT.txt
+out_modules=(
+    ./common/make_output_dir.sh \
+        ./common/check_enable_service.sh \
+        ./common/make_output_header.sh
+)
 
-if [ $? != 0 ]; then
-    exit 0
-fi
+for module in ${out_modules[@]}; do
+    source $module
+done
 
-if [ ! -d $OUTPUTDIR/json/$OUTPUTR ]; then
-    mkdir $OUTPUTDIR/json/$OUTPUTR
-fi
+for sv in ${SERVICES[@]}; do
+    check_enable_service $sv $OUTPUTDIR $PROJECT
+done
 
-if [ ! -d $OUTPUTDIR/json/$OUTPUTN ]; then
-    mkdir $OUTPUTDIR/json/$OUTPUTN
-fi
+for dir in $OUTPUTR $OUTPUTN; do
+    make_raw_log_dir $OUTPUTDIR $dir
+done
+
+make_header $CSVHEADERR $OUTPUTDIR $OUTPUTR
+make_header $CSVHEADERN $OUTPUTDIR $OUTPUTN
 
 declare -a routers=($(gcloud compute routers list --project $PROJECT | awk 'NR>1{print $1}'))
 declare -a regions=($(gcloud compute routers list --project $PROJECT | awk 'NR>1{print $2}'))
-
-if [ ! -e $OUTPUTDIR/csv/$OUTPUTR.csv ]; then
-    echo "name,project,network.region" > $OUTPUTDIR/csv/$OUTPUTR.csv
-fi
-
-if [ ! -e $OUTPUTDIR/csv/$OUTPUTN.csv ]; then
-    echo "name,natIpAllocateOption,sourceSubnetworkIpRangesToNat,logConfig.enable,logConfig.filter" > $OUTPUTDIR/csv/$OUTPUTN.csv
-fi
 
 count=0
 while [ $count -lt ${#routers[@]} ];do

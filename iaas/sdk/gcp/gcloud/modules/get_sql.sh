@@ -3,23 +3,29 @@
 PROJECT=$1
 OUTPUTDIR=$2
 OUTPUT=cloud_sql
-SERVICE=sqladmin.googleapis.com
+CSVHEADER="name,project,gceZone,databaseVersion,serviceAccountEmailAddress,activationPolicy,availabilityType,backupRetentionSettings,backupRetentionretentionUnit,dataDiskSizeGb,dataDiskType"
+SERVICES=(
+    sqladmin.googleapis.com
+)
 
-grep $SERVICE $OUTPUTDIR/json/service_list/$PROJECT.txt
+out_modules=(
+    ./common/make_output_dir.sh \
+        ./common/check_enable_service.sh \
+        ./common/make_output_header.sh
+)
 
-if [ $? != 0 ]; then
-    exit 0
-fi
+for module in ${out_modules[@]}; do
+    source $module
+done
 
-if [ ! -d $OUTPUTDIR/json/$OUTPUT ]; then
-    mkdir $OUTPUTDIR/json/$OUTPUT
-fi
+for sv in ${SERVICES[@]}; do
+    check_enable_service $sv $OUTPUTDIR $PROJECT
+done
+
+make_raw_log_dir $OUTPUTDIR $OUTPUT
+make_header $CSVHEADER $OUTPUTDIR $OUTPUT
 
 instances=$(gcloud sql instances list --project $PROJECT | awk 'NR>1{print $1}')
-
-if [ ! -e $OUTPUTDIR/csv/$OUTPUT.csv ]; then
-    echo "name,project,gceZone,databaseVersion,serviceAccountEmailAddress,activationPolicy, availabilityType,backupRetentionSettings,backupRetentionretentionUnit, dataDiskSizeGb, dataDiskType" > $OUTPUTDIR/csv/$OUTPUT.csv
-fi
 
 
 for instance in ${instances[@]}; do

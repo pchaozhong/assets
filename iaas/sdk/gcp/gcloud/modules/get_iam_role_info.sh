@@ -3,18 +3,24 @@
 PROJECT=$1
 OUTPUTDIR=$2
 OUTPUT=iam_binding
-SERVICE=iam.googleapis.com
+SERVICES=(
+    iam.googleapis.com
+)
 
-echo "get iam role info"
+out_modules=(
+    ./common/make_output_dir.sh \
+        ./common/check_enable_service.sh \
+        ./common/make_output_header.sh
+)
 
-grep $SERVICE $OUTPUTDIR/json/service_list/$PROJECT.txt
+for module in ${out_modules[@]}; do
+    source $module
+done
 
-if [ $? != 0 ]; then
-    exit 0
-fi
+for sv in ${SERVICES[@]}; do
+    check_enable_service $sv $OUTPUTDIR $PROJECT
+done
 
-if [ ! -d $OUTPUTDIR/json/$OUTPUT ]; then
-    mkdir $OUTPUTDIR/json/$OUTPUT
-fi
+make_raw_log_dir $OUTPUTDIR $OUTPUT
 
 gcloud projects get-iam-policy --format json $PROJECT > $OUTPUTDIR/json/$OUTPUT/$PROJECT.json

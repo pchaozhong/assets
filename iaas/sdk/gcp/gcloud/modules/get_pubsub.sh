@@ -4,27 +4,36 @@ PROJECT=$1
 OUTPUTDIR=$2
 OUTPUTSUB=pubsub_subscription
 OUTPUTTOP=pubsub_topics
-SERVICE=pubsub.googleapis.com
+CSVHEADERTOP="name,project"
+CSVHEADERSUB="name,project,topic,ackDeadlineSeconds,messageRetentionDuration"
 
-grep $SERVICE $OUTPUTDIR/json/service_list/$PROJECT.txt
+SERVICES=(
+    pubsub.googleapis.com
+)
 
-if [ $? != 0 ]; then
-    exit 0
-fi
+out_modules=(
+    ./common/make_output_dir.sh \
+        ./common/check_enable_service.sh \
+        ./common/make_output_header.sh
+)
 
-if [ ! -d $OUTPUTDIR/json/$OUTPUTSUB ]; then
-    mkdir $OUTPUTDIR/json/$OUTPUTSUB
-fi
+for module in ${out_modules[@]}; do
+    source $module
+done
 
-if [ ! -d $OUTPUTDIR/json/$OUTPUTTOP ]; then
-    mkdir $OUTPUTDIR/json/$OUTPUTTOP
-fi
+for sv in ${SERVICES[@]}; do
+    check_enable_service $sv $OUTPUTDIR $PROJECT
+done
+
+for dir in $OUTPUTTOP $OUTPUTSUB ;do
+    make_raw_log_dir $OUTPUTDIR $dir
+done
+
+make_header $CSVHEADERTOP $OUTPUTDIR $OUTPUTTOP
+make_header $CSVHEADERSUB $OUTPUTDIR $OUTPUTSUB
+
 
 subscriptions=$(gcloud pubsub subscriptions list --format=json --project=$PROJECT | jq -r -c '.[]|.name')
-
-if [ ! -e $OUTPUTDIR/csv/$OUTPUTSUB.csv ]; then
-    echo "name,project,topic,ackDeadlineSeconds,messageRetentionDuration" > $OUTPUTDIR/csv/$OUTPUTSUB.csv
-fi
 
 for sub in ${subscriptions[@]}; do
     tmp=$(echo $sub | tr '/' ' ')
@@ -36,10 +45,6 @@ for sub in ${subscriptions[@]}; do
         jq -r -c '[.name,"'$PROJECT'",.topic,.ackDeadlineSeconds,.messageRetentionDuration]|@csv' |\
         sed -e 's/"//g' >> $OUTPUTDIR/csv/$OUTPUTSUB.csv
 done
-
-if [ ! -e $OUTPUTDIR/csv/$OUTPUTTOP.csv ]; then
-    echo "name,project" > $OUTPUTDIR/csv/$OUTPUTTOP.csv
-fi
 
 topics=$(gcloud pubsub topics list --format=json --project $PROJECT | jq -r -c '.[]|.name')
 

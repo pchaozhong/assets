@@ -4,34 +4,37 @@ PROJECT=$1
 OUTPUTDIR=$2
 OUTPUTCL=gke_cluster
 OUTPUTND=gke_node
-SERVICE=container.googleapis.com
+CSVHEADERCL="name,project,network,subnetwork,endpoint,clusterIpv4Cidr,currentMasterVersion,currentNodeCount,currentNodeVersion,databaseEncryption.state,defaultMaxPodsConstraint.maxPodsPerNode,nodeConfig.diskSizeGb,nodeConfig.diskType,nodeConfig.imageType,nodeConfig.machineType,locations"
+CSVHEADERND="name,project,imageType,diskSizeGb,diskType,machineType,serviceAccount,podIpv4CidrSize,maxSurge,version"
 
-echo "get gke cluster"
+SERVICES=(
+    container.googleapis.com
+)
 
-grep $SERVICE $OUTPUTDIR/json/service_list/$PROJECT.txt
+out_modules=(
+    ./common/make_output_dir.sh \
+        ./common/check_enable_service.sh \
+        ./common/make_output_header.sh
+)
 
-if [ $? != 0 ]; then
-    exit 0
-fi
+for module in ${out_modules[@]}; do
+    source $module
+done
 
-if [ ! -d $OUTPUTDIR/json/$OUTPUTCL ]; then
-    mkdir $OUTPUTDIR/json/$OUTPUTCL
-fi
+for sv in ${SERVICES[@]}; do
+    check_enable_service $sv $OUTPUTDIR $PROJECT
+done
 
-if [ ! -d $OUTPUTDIR/json/$OUTPUTND ]; then
-    mkdir $OUTPUTDIR/json/$OUTPUTND
-fi
+for dir in $OUTPUTCL $OUTPUTND ; do
+    make_raw_log_dir $OUTPUTDIR $dir
+done
+
+make_header $CSVHEADERCL $OUTPUTDIR $OUTPUTCL
+make_header $CSVHEADERND $OUTPUTDIR $OUTPUTND
+
 
 declare -a clusters=($(gcloud container clusters list --project $PROJECT | awk 'NR>1{print $1}'))
 declare -a regions=($(gcloud container clusters list --project $PROJECT | awk 'NR>1{print $2}'))
-
-if [ ! -e $OUTPUTDIR/csv/$OUTPUTCL.csv ]; then
-    echo "name,project,network,subnetwork,endpoint,clusterIpv4Cidr,currentMasterVersion,currentNodeCount,currentNodeVersion,databaseEncryption.state,defaultMaxPodsConstraint.maxPodsPerNode,nodeConfig.diskSizeGb,nodeConfig.diskType,nodeConfig.imageType,nodeConfig.machineType,locations" > $OUTPUTDIR/csv/$OUTPUTCL.csv
-fi
-
-if [ ! -e $OUTPUTDIR/csv/$OUTPUTND.csv ]; then
-    echo "name,project,imageType,diskSizeGb,diskType,machineType,serviceAccount,podIpv4CidrSize,maxSurge,version" > $OUTPUTDIR/csv/$OUTPUTND.csv
-fi
 
 count=0
 

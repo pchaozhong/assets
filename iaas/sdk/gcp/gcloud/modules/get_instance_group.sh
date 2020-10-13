@@ -3,27 +3,31 @@
 PROJECT=$1
 OUTPUTDIR=$2
 OUTPUT=instance_group
-SERVICE=compute.googleapis.com
+CSVHEADER="name,project,network,size,subnetwork,zone"
+SERVICES=(
+    compute.googleapis.com
+)
 
-echo "get instance group"
+out_modules=(
+    ./common/make_output_dir.sh \
+        ./common/check_enable_service.sh \
+        ./common/make_output_header.sh
+)
 
-grep $SERVICE $OUTPUTDIR/json/service_list/$PROJECT.txt
+for module in ${out_modules[@]}; do
+    source $module
+done
 
-if [ $? != 0 ]; then
-    exit 0
-fi
+for sv in ${SERVICES[@]}; do
+    check_enable_service $sv $OUTPUTDIR $PROJECT
+done
 
-if [ ! -d $OUTPUTDIR/json/$OUTPUT ]; then
-    mkdir $OUTPUTDIR/json/$OUTPUT
-fi
+make_raw_log_dir $OUTPUTDIR $OUTPUT
+make_header $CSVHEADER $OUTPUTDIR $OUTPUT
 
 declare -a instance_groups_name=($(gcloud compute instance-groups list --project $PROJECT | awk 'NR>1{print $1}'))
 declare -a instance_groups_scope=($(gcloud compute instance-groups list --project $PROJECT | awk 'NR>1{print $3}'))
 declare -a instance_groups_location=($(gcloud compute instance-groups list --project $PROJECT | awk 'NR>1{print $2}'))
-
-if [ ! -e $OUTPUTDIR/csv/$OUTPUT.csv ]; then
-    echo "name,project,network,size,subnetwork,zone" > $OUTPUTDIR/csv/$OUTPUT.csv
-fi
 
 count=0
 

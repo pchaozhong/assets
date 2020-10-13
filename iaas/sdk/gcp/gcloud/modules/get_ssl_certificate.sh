@@ -4,23 +4,30 @@ PROJECT=$1
 OUTPUTDIR=$2
 OUTPUT=ssl_certificate
 SERVICE=compute.googleapis.com
+CSVHEADER="name,project,type,subjectAlternativeNames"
 
-grep $SERVICE $OUTPUTDIR/json/service_list/$PROJECT.txt
+SERVICES=(
+    compute.googleapis.com
+)
 
-if [ $? != 0 ]; then
-    exit 0
-fi
+out_modules=(
+    ./common/make_output_dir.sh \
+        ./common/check_enable_service.sh \
+        ./common/make_output_header.sh
+)
 
-if [ ! -d $OUTPUTDIR/json/$OUTPUT ]; then
-    mkdir $OUTPUTDIR/json/$OUTPUT
-fi
+for module in ${out_modules[@]}; do
+    source $module
+done
+
+for sv in ${SERVICES[@]}; do
+    check_enable_service $sv $OUTPUTDIR $PROJECT
+done
+
+make_raw_log_dir $OUTPUTDIR $OUTPUT
+make_header $CSVHEADER $OUTPUTDIR $OUTPUT
 
 ssls=$(gcloud compute ssl-certificates list --project $PROJECT | awk 'NR>1{print $1}')
-
-if [ ! -e $OUTPUTDIR/csv/$OUTPUT.csv ]; then
-    echo "name,project,type,subjectAlternativeNames" > $OUTPUTDIR/csv/$OUTPUT.csv
-fi
-
 
 for ssl in ${ssls[@]}; do
     gcloud compute ssl-certificates describe --project $PROJECT --format jobs $ssl |\

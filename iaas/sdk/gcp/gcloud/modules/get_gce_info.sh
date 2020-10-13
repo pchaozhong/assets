@@ -3,26 +3,31 @@
 PROJECT=$1
 OUTPUTDIR=$2
 OUTPUT=gce
-SERVICE=compute.googleapis.com
+CSVHEADER="name,project,zone"
 
-echo "get gce"
+SERVICES=(
+    compute.googleapis.com
+)
 
-grep $SERVICE $OUTPUTDIR/json/service_list/$PROJECT.txt
+out_modules=(
+    ./common/make_output_dir.sh \
+        ./common/check_enable_service.sh \
+        ./common/make_output_header.sh
+)
 
-if [ $? != 0 ]; then
-    exit 0
-fi
+for module in ${out_modules[@]}; do
+    source $module
+done
 
-if [ ! -d $OUTPUTDIR/json/$OUTPUT ]; then
-    mkdir $OUTPUTDIR/json/$OUTPUT
-fi
+for sv in ${SERVICES[@]}; do
+    check_enable_service $sv $OUTPUTDIR $PROJECT
+done
+
+make_raw_log_dir $OUTPUTDIR $OUTPUT
+make_header $CSVHEADER $OUTPUTDIR $OUTPUT
 
 declare -a gces=($(gcloud compute instances list --project $PROJECT | awk 'NR>1{print $1}'))
 declare -a zones=($(gcloud compute instances list --project $PROJECT | awk 'NR>1{print $2}'))
-
-if [ ! -e $OUTPUTDIR/csv/$OUTPUT.csv ]; then
-    echo "name,project,zone" > $OUTPUTDIR/csv/$OUTPUT.csv
-fi
 
 count=0
 while [ $count -lt ${#gces[@]} ]; do

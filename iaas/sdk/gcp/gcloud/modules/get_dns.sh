@@ -3,25 +3,29 @@
 PROJECT=$1
 OUTPUTDIR=$2
 OUTPUT=dns_record
-SERVICE=dns.googleapis.com
+CSVHEADER="name,project,dnsName,visibility,nameServers"
+SERVICES=(
+    dns.googleapis.com
+)
 
-echo "get dns record"
+out_modules=(
+    ./common/make_output_dir.sh \
+        ./common/check_enable_service.sh \
+        ./common/make_output_header.sh
+)
 
-grep $SERVICE $OUTPUTDIR/json/service_list/$PROJECT.txt
+for module in ${out_modules[@]}; do
+    source $module
+done
 
-if [ $? != 0 ]; then
-    exit 0
-fi
+for sv in ${SERVICES[@]}; do
+    check_enable_service $sv $OUTPUTDIR $PROJECT
+done
 
-if [ ! -d $OUTPUTDIR/json/$OUTPUT ]; then
-    mkdir $OUTPUTDIR/json/$OUTPUT
-fi
-
-if [ ! -e $OUTPUTDIR/csv/$OUTPUT.csv ]; then
-    echo "name,project,dnsName,visibility, nameServers" > $OUTPUTDIR/csv/$OUTPUT.csv
-fi
-
+make_raw_log_dir $OUTPUTDIR $OUTPUT
+make_header $CSVHEADER $OUTPUTDIR $OUTPUT
 records=$(gcloud dns managed-zones list --project $PROJECT | awk 'NR>1{print $1}')
+
 for rc in ${records[@]}; do
     gcloud dns managed-zones describe --project $PROJECT --format=json $rc |\
         tee $OUTPUTDIR/json/$OUTPUT/$$rc-$PROJECT.json | \

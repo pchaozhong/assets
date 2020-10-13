@@ -57,7 +57,7 @@ logs
 │   ├── ssl_certificate.csv
 │   ├── subnet.csv
 │   ├── url_map.csv
-│   ├── vpc-network.csv
+│   ├── vpc_network.csv
 │   ├── vpn_gateway.csv
 │   └── vpn_tunnel.csv
 └── json

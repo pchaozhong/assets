@@ -4,19 +4,20 @@ PROJECT=$1
 OUTPUTDIR=$2
 OUTPUT=gce_disk
 CSVHEADER="name,project,zone,size,sourceImage"
+MODULEPATH="./common/"
 
 SERVICES=(
     cloudbuild.googleapis.com
 )
 
 out_modules=(
-    ./common/make_output_dir.sh \
-        ./common/check_enable_service.sh \
-        ./common/make_output_header.sh
+    make_output_dir.sh \
+        check_enable_service.sh \
+        make_output_header.sh
 )
 
 for module in ${out_modules[@]}; do
-    source $module
+    source $MODULEPATH$module
 done
 
 for sv in ${SERVICES[@]}; do

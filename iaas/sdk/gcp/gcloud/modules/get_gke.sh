@@ -6,19 +6,20 @@ OUTPUTCL=gke_cluster
 OUTPUTND=gke_node
 CSVHEADERCL="name,project,network,subnetwork,endpoint,clusterIpv4Cidr,currentMasterVersion,currentNodeCount,currentNodeVersion,databaseEncryption.state,defaultMaxPodsConstraint.maxPodsPerNode,nodeConfig.diskSizeGb,nodeConfig.diskType,nodeConfig.imageType,nodeConfig.machineType,locations"
 CSVHEADERND="name,project,imageType,diskSizeGb,diskType,machineType,serviceAccount,podIpv4CidrSize,maxSurge,version"
+MODULEPATH="./common/"
 
 SERVICES=(
     container.googleapis.com
 )
 
 out_modules=(
-    ./common/make_output_dir.sh \
-        ./common/check_enable_service.sh \
-        ./common/make_output_header.sh
+    make_output_dir.sh \
+        check_enable_service.sh \
+        make_output_header.sh
 )
 
 for module in ${out_modules[@]}; do
-    source $module
+    source $MODULEPATH$module
 done
 
 for sv in ${SERVICES[@]}; do

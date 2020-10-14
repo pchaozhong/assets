@@ -6,6 +6,7 @@ OUTPUTRING=kmsrings
 OUTPUTKEY=keys
 CSVHEADERRING="name,project,createTime"
 CSVHEADERKEY="name,project,algorithm,generateTime,protectionLevel,primary.state,purpose,versionTemplate.algorithm,primary.protectionalLevel"
+MODULEPATH="./common/"
 
 LOCATION=(
     global
@@ -13,16 +14,17 @@ LOCATION=(
 )
 SERVICES=(
     cloudkms.googleapis.com \
-)
+        )
+
 MODULES=(
-    ./common/make_file_name.sh \
-        ./common/make_output_dir.sh \
-        ./common/check_enable_service.sh \
-        ./common/make_output_header.sh
+    make_file_name.sh \
+        make_output_dir.sh \
+        check_enable_service.sh \
+        make_output_header.sh
 )
 
 for module in ${MODULES[@]}; do
-    source $module
+    source $MODULEPATH$module
 done
 
 for sv in ${SERVICES[@]}; do

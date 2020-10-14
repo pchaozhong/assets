@@ -6,19 +6,20 @@ OUTPUTSUB=pubsub_subscription
 OUTPUTTOP=pubsub_topics
 CSVHEADERTOP="name,project"
 CSVHEADERSUB="name,project,topic,ackDeadlineSeconds,messageRetentionDuration"
+MODULEPATH="./common/"
 
 SERVICES=(
     pubsub.googleapis.com
 )
 
 out_modules=(
-    ./common/make_output_dir.sh \
-        ./common/check_enable_service.sh \
-        ./common/make_output_header.sh
+    make_output_dir.sh \
+        check_enable_service.sh \
+        make_output_header.sh
 )
 
 for module in ${out_modules[@]}; do
-    source $module
+    source $MODULEPATH$module
 done
 
 for sv in ${SERVICES[@]}; do

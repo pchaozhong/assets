@@ -12,7 +12,8 @@ SERVICES=(
 out_modules=(
     ./common/make_output_dir.sh \
         ./common/check_enable_service.sh \
-        ./common/make_output_header.sh
+        ./common/make_output_header.sh \
+        ./common/make_file_name.sh
 )
 
 for module in ${out_modules[@]}; do
@@ -29,10 +30,7 @@ make_header $CSVHEADER $OUTPUTDIR $OUTPUT
 containers=$(gcloud container images list --project $PROJECT | awk 'NR>1{print $1}')
 
 for container in ${containers[@]}; do
-    tmp=$(echo $container | tr '/' ' ')
-    declare -a tmparray=($tmp)
-    filename=${tmparray[$((${#tmparray[@]} - 1))]}
-
+    filename=$(make_file_name $container)
     gcloud container images describe --project $PROJECT --format json $container |\
         tee $OUTPUTDIR/json/$OUTPUT/$filename-$PROJECT.json |\
         jq -r -c '["'$filename'","'$PROJECT'",.image_summary.registry,.image_summary.repository]|@csv' |\

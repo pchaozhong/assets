@@ -1,42 +1,32 @@
-variable "gke_conf" {
-  type = list(object({
-    cluster_enable   = bool
-    node_pool_enable = bool
+variable "cluster" {
+  type = object({
+    name                      = string
+    location                  = string
+    cluster_ipv4_cidr         = string
+    default_max_pods_per_node = number
+    initial_node_count        = number
+    networking_mode           = string
+    network                   = string
+    service_account           = string
+    cluster_ipv4_cidr_block   = string
+    services_ipv4_cidr_block  = string
 
-    cluster_name = string
+    cluster_autoscaling = object({
+      enabled = bool
+      resource_limits = list(object({
+        resource_type = string
+        minimum       = number
+        maximum       = number
+      }))
+      min_cpu_platform = string
+    })
 
-    cluster = list(object({
-      network                   = string
-      location                  = string
-      subnetwork                = string
-      initial_node_count        = number
-      remove_default_node_pool  = bool
-      default_max_pods_per_node = number
-
-      ip_allocation_policy = object({
-        cluster_ipv4_cidr_block  = string
-        services_ipv4_cidr_block = string
-      })
-
-      node_config = object({
-        oauth_scopes = list(string)
-      })
-    }))
-
-    node_pool = list(object({
-      name       = string
-      location   = string
-      node_count = number
-      node_config = object({
-        machine_type = string
-        oauth_scopes = list(string)
-      })
-    }))
-
-  }))
-}
-
-variable "preemptible_enable" {
-  type    = bool
-  default = false
+    node_config = object({
+      disk_size_gb = number
+      disk_type    = string
+      image_type   = string
+      machine_type = string
+      oauth_scopes = list(string)
+    })
+  })
 }

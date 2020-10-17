@@ -1,39 +1,51 @@
-locals {
-  _cluster_conf = flatten([
-    for _conf in var.gke_conf : [
-      for _cluster in _conf.cluster : {
-        name                      = _conf.cluster_name
-        network                   = _cluster.network
-        location                  = _cluster.location
-        subnetwork                = _cluster.subnetwork
-        node_config               = _cluster.node_config
-        initial_node_count        = _cluster.initial_node_count
-        ip_allocation_policy      = _cluster.ip_allocation_policy
-        remove_default_node_pool  = _cluster.remove_default_node_pool
-        default_max_pods_per_node = _cluster.default_max_pods_per_node
-      }
-    ] if _conf.cluster_enable
-  ])
-}
-
 resource "google_container_cluster" "main" {
-  for_each = { for v in local._cluster_conf : v.name => v }
+  provider                  = "google-beta"
+  name                      = var.cluster.name
+  location                  = var.cluster.location
+  cluster_ipv4_cidr         = var.cluster.networking_mode == "ROUTES" ? var.cluster.cluster_ipv4_cidr : null
+  default_max_pods_per_node = var.cluster.networking_mode == "VPC_NATIVE" ? var.cluster.default_max_pods_per_node : null
+  initial_node_count        = var.cluster.initial_node_count
+  networking_mode           = var.cluster.networking_mode
+  network                   = var.cluster.network
 
-  name                      = each.value.name
-  network                   = data.google_compute_network.main[each.value.network].self_link
-  location                  = each.value.location
-  subnetwork                = data.google_compute_subnetwork.main[each.value.subnetwork].self_link
-  initial_node_count        = each.value.initial_node_count
-  remove_default_node_pool  = each.value.remove_default_node_pool
-  default_max_pods_per_node = each.value.default_max_pods_per_node
+  cluster_autoscaling {
+    enabled = var.cluster.cluster_autoscaling.enabled
 
-  ip_allocation_policy {
-    cluster_ipv4_cidr_block  = each.value.ip_allocation_policy.cluster_ipv4_cidr_block
-    services_ipv4_cidr_block = each.value.ip_allocation_policy.services_ipv4_cidr_block
+    dynamic "resource_limits" {
+      for_each = var.cluster.cluster_autoscaling.resource_limits
+      iterator = resource
+
+      content {
+        resource_type = resource.value.resource_type
+        minimum       = resource.value.minimum
+        maximum       = resource.value.maximum
+      }
+    }
+
+    auto_provisioning_defaults {
+      min_cpu_platform = var.cluster.cluster_autoscaling.min_cpu_platform
+      service_account  = var.cluster.service_account
+    }
   }
 
   node_config {
-    oauth_scopes = each.value.node_config.oauth_scopes
-    preemptible  = var.preemptible_enable
+    disk_size_gb    = var.cluster.node_config.disk_size_gb
+    disk_type       = var.cluster.node_config.disk_type
+    image_type      = var.cluster.node_config.image_type
+    machine_type    = var.cluster.node_config.machine_type
+    oauth_scopes    = var.cluster.node_config.oauth_scopes
+    service_account = var.cluster.service_account
+  }
+
+  dynamic "ip_allocation_policy" {
+    iterator = policy
+    for_each = var.cluster.networking_mode == "VPC_NATIVE" ? [{
+      cluster_ipv4_cidr_block  = var.cluster.cluster_ipv4_cidr_block
+      services_ipv4_cidr_block = var.cluster.services_ipv4_cidr_block
+    }] : []
+    content {
+      cluster_ipv4_cidr_block  = policy.value.cluster_ipv4_cidr_block
+      services_ipv4_cidr_block = policy.value.services_ipv4_cidr_block
+    }
   }
 }

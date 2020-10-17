@@ -1,22 +1,48 @@
 locals {
-  gke = {
-    node_count   = 1
-    oauth_scopes = ["https://www.googleapis.com/auth/cloud-platform"]
-    cluster = {
-      cluster_ip  = "172.16.0.0/16"
-      services_ip = "10.10.0.0/16"
-    }
-    node_pool = {
-      machine_type = "n1-standard-1"
-      name         = "demo"
-    }
-  }
+  gke_sample_enable = false
+
+  _gke_sample_config = local.gke_sample_enable ? [{ name = "sample" }] : []
 }
 
 module "gke" {
-  depends_on = [ module.network ]
-  source = "../modules/gke"
+  for_each = { for v in local._gke_sample_config : v.name => v }
+  source   = "../modules/compute/gke"
 
-  preemptible_enable = true
-  gke_conf = yamldecode(file("./files/gke.yaml"))
+  cluster = {
+    name                      = "sample"
+    location                  = "asia-northeast1"
+    cluster_ipv4_cidr         = "10.0.0.0/9"
+    default_max_pods_per_node = 110
+    initial_node_count        = 1
+    networking_mode           = "VPC_NATIVE"
+    network                   = "default"
+    service_account           = null
+    cluster_ipv4_cidr_block   = null
+    services_ipv4_cidr_block  = null
+
+    cluster_autoscaling = {
+      enabled = true
+      resource_limits = [
+        {
+          resource_type = "cpu"
+          minimum       = 1
+          maximum       = 3
+        },
+        {
+          resource_type = "memory"
+          minimum       = 4
+          maximum       = 10
+        },
+      ]
+      min_cpu_platform = "Intel Haswell"
+    }
+
+    node_config = {
+      disk_size_gb = 20
+      disk_type    = "pd-standard"
+      image_type   = "COS_CONTAINERD"
+      machine_type = "n1-standard-1"
+      oauth_scopes = []
+    }
+  }
 }

@@ -4,7 +4,6 @@ variable "cluster" {
     location                  = string
     cluster_ipv4_cidr         = string
     default_max_pods_per_node = number
-    initial_node_count        = number
     networking_mode           = string
     network                   = string
     service_account           = string
@@ -20,13 +19,38 @@ variable "cluster" {
       }))
       min_cpu_platform = string
     })
-
-    node_config = object({
-      disk_size_gb = number
-      disk_type    = string
-      image_type   = string
-      machine_type = string
-      oauth_scopes = list(string)
-    })
   })
+}
+
+variable "node_pool" {
+  type = object({
+    name               = string
+    location           = string
+    initial_node_count = number
+    node_locations     = list(string)
+    version            = string
+    autoscaling = list(object({
+      min_node_count = number
+      max_node_count = number
+    }))
+    upgrade = list(object({
+      max_surge       = number
+      max_unavailable = number
+    }))
+  })
+}
+
+variable "node_count" {
+  type    = number
+  default = null
+}
+
+variable "node_pool_max_pods" {
+  type    = number
+  default = null
+}
+
+variable "name_prefix" {
+  type    = string
+  default = null
 }

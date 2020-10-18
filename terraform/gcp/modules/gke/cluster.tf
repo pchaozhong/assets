@@ -1,12 +1,12 @@
 resource "google_container_cluster" "main" {
-  provider                  = "google-beta"
-  name                      = var.cluster.name
-  location                  = var.cluster.location
-  cluster_ipv4_cidr         = var.cluster.networking_mode == "ROUTES" ? var.cluster.cluster_ipv4_cidr : null
-  default_max_pods_per_node = var.cluster.networking_mode == "VPC_NATIVE" ? var.cluster.default_max_pods_per_node : null
-  initial_node_count        = var.cluster.initial_node_count
-  networking_mode           = var.cluster.networking_mode
-  network                   = var.cluster.network
+  provider                 = "google-beta"
+  name                     = var.cluster.name
+  location                 = var.cluster.location
+  cluster_ipv4_cidr        = var.cluster.networking_mode == "ROUTES" ? var.cluster.cluster_ipv4_cidr : null
+  networking_mode          = var.cluster.networking_mode
+  network                  = var.cluster.network
+  remove_default_node_pool = true
+  initial_node_count       = 1
 
   cluster_autoscaling {
     enabled = var.cluster.cluster_autoscaling.enabled
@@ -26,15 +26,6 @@ resource "google_container_cluster" "main" {
       min_cpu_platform = var.cluster.cluster_autoscaling.min_cpu_platform
       service_account  = var.cluster.service_account
     }
-  }
-
-  node_config {
-    disk_size_gb    = var.cluster.node_config.disk_size_gb
-    disk_type       = var.cluster.node_config.disk_type
-    image_type      = var.cluster.node_config.image_type
-    machine_type    = var.cluster.node_config.machine_type
-    oauth_scopes    = var.cluster.node_config.oauth_scopes
-    service_account = var.cluster.service_account
   }
 
   dynamic "ip_allocation_policy" {

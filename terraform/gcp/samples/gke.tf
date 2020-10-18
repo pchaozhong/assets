@@ -1,5 +1,5 @@
 locals {
-  gke_sample_enable = true
+  gke_sample_enable = false
 
   _gke_sample_config = local.gke_sample_enable ? [{ name = "sample" }] : []
 }

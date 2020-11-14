@@ -1,4 +1,4 @@
-resource "google_compute_firewall" "allow_main" {
+resource "google_compute_firewall" "main" {
   for_each = { for v in var.firewall : v.name => v }
 
   name        = each.value.name

@@ -1,77 +1,48 @@
-locals {
-  _network_conf = flatten([
-    for _conf in var.network_conf : {
-      name                            = _conf.vpc_network_conf.name
-      auto_create_subnetworks         = lookup(_conf.vpc_network_conf.opt_conf, "auto_create_subnetworks", false)
-      delete_default_routes_on_create = lookup(_conf.vpc_network_conf.opt_conf, "delete_default_routes_on_create", null)
-      routing_mode                    = lookup(_conf.vpc_network_conf.opt_conf, "routing_mode", "REGIONAL")
-      description                     = lookup(_conf.vpc_network_conf.opt_conf, "description", null)
-    } if _conf.vpc_network_enable
-  ])
-
-  _subnet_conf = flatten([
-    for _conf in var.network_conf : [
-      for _subnet in _conf.subnetwork : {
-        name                 = _subnet.name
-        cidr                 = _subnet.cidr
-        region               = _subnet.region
-        network              = _conf.vpc_network_conf.name
-        purpose              = lookup(_subnet.opt_conf, "purpose", null)
-        metadata             = lookup(_subnet.opt_conf, "metadata", null)
-        log_config           = lookup(_subnet.opt_conf, "log_config", false)
-        range_name           = lookup(_subnet.opt_conf, "range_name", null)
-        description          = lookup(_subnet.opt_conf, "description", null)
-        flow_sampling        = lookup(_subnet.opt_conf, "flow_sampling", null)
-        ip_cidr_range        = lookup(_subnet.opt_conf, "ip_cidr_range", null)
-        secondary_ip_range   = lookup(_subnet.opt_conf, "secondary_ip_range", false)
-        aggregation_interval = lookup(_subnet.opt_conf, "aggregation_interval", null)
-      }
-    ] if _conf.subnetwork_enable && _conf.vpc_network_enable
-  ])
-}
-
 resource "google_compute_network" "main" {
-  for_each = { for v in local._network_conf : v.name => v }
+  name                    = var.vpc_network.name
+  auto_create_subnetworks = false
+  routing_mode            = var.vpc_network_routing
 
-  name                            = each.value.name
-  auto_create_subnetworks         = each.value.auto_create_subnetworks
-  description                     = each.value.description
-  delete_default_routes_on_create = each.value.delete_default_routes_on_create
-  routing_mode                    = each.value.routing_mode
+  mtu                             = var.vpc_network_mtu
+  project                         = var.project
+  delete_default_routes_on_create = var.vpc_network_delete_default_routes_on_create
 }
 
 resource "google_compute_subnetwork" "main" {
-  for_each = { for v in local._subnet_conf : v.name => v }
-  provider = "google-beta"
+  for_each = { for v in var.subnetworks : v.name => v }
+  provider = google-beta
 
   name          = each.value.name
-  network       = google_compute_network.main[each.value.network].self_link
   ip_cidr_range = each.value.cidr
+  network       = google_compute_network.main.self_link
   region        = each.value.region
-  description   = each.value.description
-  purpose       = each.value.purpose
+
+
+  # option config
+  project                  = var.project
+  private_ip_google_access = var.subnet_private_google_access
+  purpose                  = var.subnet_purpose != null ? lookup(var.subnet_purpose, each.value.name, null) : null
+
 
   dynamic "secondary_ip_range" {
-    for_each = each.value.secondary_ip_range ? [{
-      range_name    = each.value.range_name
-      ip_cidr_range = each.value.ip_cidr_range
-    }] : []
+    for_each = var.subnet_secondary_ip_range != null ? lookup(var.subnet_secondary_ip_range, each.value.name, []) : []
+    iterator = _conf
+
     content {
-      range_name    = secondary_ip_range.value.range_name
-      ip_cidr_range = secondary_ip_range.value.ip_cidr_range
+      range_name    = _conf.value.range_name
+      ip_cidr_range = _conf.value.ip_cidr_rang
     }
   }
 
   dynamic "log_config" {
-    for_each = each.value.log_config ? [{
-      aggregation_interval = each.value.aggregation_interval
-      flow_sampling        = each.value.flow_sampling
-      metadata             = each.value.metadata
-    }] : []
+    for_each = var.subnet_log_config != null ? lookup(var.subnet_log_config, each.value.name, []) : []
+    iterator = _conf
+
     content {
-      aggregation_interval = log_config.value.aggregation_interval
-      flow_sampling        = log_config.value.flow_sampling
-      metadata             = log_config.value.metadata
+      aggregation_interval = _conf.value.aggregation_interval
+      flow_sampling        = _conf.value.flow_sampling
+      metadata             = _conf.value.metadata
+      filter_expr          = _conf.value.filter_expr
     }
   }
 }

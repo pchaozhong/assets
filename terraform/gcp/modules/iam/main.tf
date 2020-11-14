@@ -1,28 +1,26 @@
 locals {
-  _iam_member_conf = flatten([
-    for _conf in var.iam_member_conf : [
-      for _role in _conf.role : {
-        id     = join("-", [split("@", _conf.member)[0], split("/", _role)[1]])
-        member = _conf.member_type != "serviceAccount" ? join(":", [_conf.member_type, _conf.member]) : join(":", [_conf.member_type, data.google_service_account.main[_conf.member].email])
-        role   = _role
-      }
-    ] if _conf.enable
-  ])
-}
-
-variable "iam_member_conf" {
-  type = list(object({
-    enable = bool
-
-    member      = string
-    member_type = string
-    role        = list(string)
-  }))
+  _iam_infos = [
+    for v in var.iam_conf.roles : {
+      member = join(":", [var.iam_conf.member_type, var.iam_conf.email])
+      role   = join("/", ["roles", v])
+    }
+  ]
 }
 
 resource "google_project_iam_member" "main" {
-  for_each = { for v in local._iam_member_conf : v.id => v }
+  for_each = { for v in local._iam_infos : join("_", [v.member, v.role]) => v }
 
-  role   = each.value.role
-  member = each.value.member
+  role    = each.value.role
+  member  = each.value.member
+  project = var.project
+
+  dynamic "condition" {
+    for_each = var.condition != null ? [var.condition] : []
+    iterator = _conf
+
+    content {
+      expression = _conf.value.expression
+      title      = _conf.value.title
+    }
+  }
 }

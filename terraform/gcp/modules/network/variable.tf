@@ -34,6 +34,17 @@ Option Configurations
 
 */
 
+variable "serverless_vpc" {
+  type = list(object({
+    name           = string
+    region         = string
+    ip_cidr_range  = string
+    min_throughput = number
+    max_throughput = number
+  }))
+  default = []
+}
+
 variable "route" {
   type = list(object({
     name             = string

@@ -1,8 +1,6 @@
 resource "google_kms_key_ring" "main" {
-  for_each = { for v in local._key_ring_conf : v.name => v }
-
-  name     = each.value.name
-  location = each.value.location
+  name     = var.key_ring.name
+  location = var.key_ring.location
 }
 
 resource "google_kms_crypto_key" "main" {

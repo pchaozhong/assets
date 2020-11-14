@@ -8,12 +8,12 @@ output "id" {
 
 output "key_self_link" {
   value = {
-    for v in var.keys : v.name => googke_kme_crypto_key.main[v.name].self_link
+    for v in var.keys : v.name => google_kms_crypto_key.main[v.name].self_link
   }
 }
 
 output "key_id" {
   value = {
-    for v in var.keys : v.name => googke_kme_crypto_key.main[v.name].id
+    for v in var.keys : v.name => google_kms_crypto_key.main[v.name].id
   }
 }

@@ -1,25 +1,33 @@
 locals {
-  _service_account_conf = flatten([
-    for _conf in var.service_account_conf : {
-      account_id = _conf.account_id
-    } if _conf.enable
-  ])
-}
-
-variable "service_account_conf" {
-  type = list(object({
-    enable = bool
-
-    account_id = string
-  }))
-}
-
-output "service_accout_email" {
-  value = { for v in google_service_account.main : v.account_id => v.email }
+  _service_account_iam = [
+    for v in var.service_account.roles : {
+      name = var.service_account.name
+      role = join("/", ["roles", v])
+    }
+  ]
 }
 
 resource "google_service_account" "main" {
-  for_each = { for v in local._service_account_conf : v.account_id => v }
+  account_id   = var.service_account.name
+  display_name = var.display_name
+  description  = var.description
+  project      = var.project
+}
 
-  account_id = each.value.account_id
+resource "google_project_iam_member" "main" {
+  for_each = { for v in local._service_account_iam : join("_", [v.name, v.role]) => v }
+
+  member  = join(":", ["serviceAccount", google_service_account.main.email])
+  role    = each.value.role
+  project = var.project
+
+  dynamic "condition" {
+    for_each = var.condition != null ? [var.condition] : []
+    iterator = _conf
+
+    content {
+      expression = _conf.value.expression
+      title      = _conf.value.title
+    }
+  }
 }

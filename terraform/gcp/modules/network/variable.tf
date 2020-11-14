@@ -34,6 +34,47 @@ Option Configurations
 
 */
 
+variable "route" {
+  type = list(object({
+    name             = string
+    dest_range       = string
+    priority         = number
+    tags             = list(string)
+    next_hop_gateway = string
+  }))
+  default = []
+}
+
+variable "route_next_hop_ip" {
+  type    = map(string)
+  default = null
+}
+
+variable "route_next_hop_gw" {
+  type    = map(string)
+  default = null
+}
+
+variable "route_next_hop_gce" {
+  type    = map(string)
+  default = null
+}
+
+variable "route_next_hop_vpn_tunnel" {
+  type    = map(string)
+  default = null
+}
+
+variable "route_next_hop_ilb" {
+  type    = map(string)
+  default = null
+}
+
+variable "route_next_hop_instance_zone" {
+  type    = map(string)
+  default = null
+}
+
 variable "project" {
   type    = string
   default = null
@@ -86,4 +127,9 @@ variable "subnet_log_config" {
 variable "fw_disabled" {
   type    = bool
   default = null
+}
+
+variable "auto_create_subnetworks" {
+  type    = bool
+  default = false
 }

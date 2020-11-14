@@ -1,6 +1,6 @@
 resource "google_compute_network" "main" {
   name                    = var.vpc_network.name
-  auto_create_subnetworks = false
+  auto_create_subnetworks = var.auto_create_subnetworks
   routing_mode            = var.vpc_network_routing
 
   mtu                             = var.vpc_network_mtu

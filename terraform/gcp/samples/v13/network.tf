@@ -73,6 +73,6 @@ module "network_sample" {
   ]
 }
 
-# output "network_sample" {
-#   value = module.network_sample
-# }
+output "network_sample" {
+  value = module.network_sample
+}

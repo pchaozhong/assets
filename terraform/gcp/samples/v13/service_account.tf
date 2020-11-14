@@ -15,3 +15,7 @@ module "service_account_sample" {
     ]
   }
 }
+
+output "service_account_sample" {
+  value = module.service_account_sample
+}

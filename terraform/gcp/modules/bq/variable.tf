@@ -1,30 +1,51 @@
-variable "bq_conf" {
+variable "dataset" {
+  type = object({
+    dataset_id                  = string
+    location                    = string
+    default_table_expiration_ms = number
+  })
+}
+
+variable "table" {
   type = list(object({
-    enable = bool
-
-    dataset_conf = object({
-      dataset_id = string
-      location   = string
-      opt_conf   = map(string)
-    })
-
-    table_conf = list(object({
-      enable = bool
-
-      table_id = string
-      opt_conf = map(string)
-    }))
-
-    query_job_conf = list(object({
-      enable = bool
-
-      job_id              = string
-      query               = string
-      table_id            = string
-      create_disposition  = string
-      write_disposition   = string
-      allow_large_results = bool
-      flatten_results     = bool
-    }))
+    name = string
   }))
+  default = []
+}
+
+variable "project" {
+  type    = string
+  default = null
+}
+
+variable "default_partition_expiration_ms" {
+  type    = number
+  default = null
+}
+
+variable "friendly_name" {
+  type    = string
+  default = null
+}
+
+variable "delete_contents_on_destroy" {
+  type    = bool
+  default = true
+}
+
+variable "access" {
+  type = list(object({
+    domain         = string
+    group_by_email = string
+    role           = string
+    special_group  = string
+    user_by_email  = string
+
+    view = object({
+      dataset_id = string
+      project_id = string
+      table_id   = string
+    })
+  }))
+  default = []
 }

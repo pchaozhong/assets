@@ -1,74 +1,65 @@
 locals {
-  _build_conf = flatten([
-    for _conf in var.build_conf : _conf if _conf.build_enable
-  ])
+  _repo_name = var.repo_name != null ? [var.repo_name] : []
 }
 
 resource "google_cloudbuild_trigger" "main" {
-  for_each = { for v in local._build_conf : v.name => v }
-  provider = "google-beta"
+  provider = google-beta
 
-  name           = each.value.name
-  disabled       = each.value.disabled
-  substitutions  = each.value.substitutions
-  filename       = each.value.filename
-  ignored_files  = each.value.ignored_files
-  included_files = each.value.included_files
+  name          = var.trigger.name
+  filename      = var.trigger.filename
+  substitutions = var.trigger.substitutions
 
   dynamic "trigger_template" {
-    for_each = each.value.trigger_template
+    for_each = var.trigger_template != null && var.github == null ? [var.trigger_template] : []
+    iterator = _conf
+
     content {
-      repo_name   = trigger_template.value.repo_name
-      branch_name = trigger_template.value.branch_name
-      tag_name    = trigger_template.value.tag_name
-      commit_sha  = trigger_template.value.commit_sha
+      repo_name    = google_sourcerepo_repository.main.name
+      project_id   = var.project
+      dir          = _conf.value.dir
+      branch_name  = _conf.value.branch_name
+      tag_name     = _conf.value.tag_name
+      commit_sha   = _conf.value.commit_sha
+      invert_regex = _conf.value.invert_regex
     }
   }
 
   dynamic "github" {
-    for_each = each.value.github
+    for_each = var.trigger_template == null && var.github != null ? [var.github] : []
+    iterator = _conf
+
     content {
-      owner = github.value.owner
-      name  = github.value.name
+      owner = _conf.value.owner
+      name  = _conf.value.name
 
       dynamic "pull_request" {
-        for_each = github.value.pull_request
+        for_each = var.github_pr != null ? [var.github_pr] : []
+        iterator = _var
+
         content {
-          branch          = pull_request.value.branch
-          comment_control = pull_request.value.comment_control
-          invert_regex    = pull_request.value.invert_regex
+          branch          = _var.value.branch
+          comment_control = _var.value.comment_control
+          invert_regex    = _var.value.invert_regex
         }
       }
 
       dynamic "push" {
-        for_each = github.value.push
+        for_each = _conf.value.push != null ? [_conf.value.push] : []
+        iterator = _var
+
         content {
-          invert_regex = push.value.invert_regex
-          branch       = push.value.branch
-          tag          = push.value.tag
+          invert_regex = _var.value.invert_regex
+          branch       = _var.value.branch
+          tag          = _var.value.tag
         }
       }
     }
   }
+}
 
-  dynamic "build" {
-    for_each = each.value.build
-    content {
-      tags    = build.value.tags
-      images  = build.value.images
-      timeout = build.value.timeout
+resource "google_sourcerepo_repository" "main" {
+  for_each = toset(local._repo_name)
 
-      step {
-        name       = build.value.step.name
-        args       = build.value.step.args
-        env        = build.value.step.env
-        id         = build.value.step.id
-        entrypoint = build.value.step.entrypoint
-        dir        = build.value.step.dir
-        secret_env = build.value.step.secret_env
-        timeout    = build.value.step.timeout
-        timing     = build.value.step.timing
-      }
-    }
-  }
+  name    = each.value
+  project = var.project
 }

@@ -1,52 +1,59 @@
-variable "build_conf" {
-  type = list(object({
-    build_enable = bool
+variable "trigger" {
+  type = object({
+    name          = string
+    filename      = string
+    substitutions = map(string)
+  })
+}
 
-    name     = string
-    disabled = bool
+variable "trigger_template" {
+  type = object({
+    dir          = string
+    branch_name  = string
+    tag_name     = string
+    commit_sha   = string
+    invert_regex = string
+  })
+}
 
-    filename       = string
-    ignored_files  = list(string)
-    included_files = list(string)
-    substitutions  = map(string)
+variable "github" {
+  type = object({
+    owner = string
+    name  = string
+    push = object({
+      invert_regex = string
+      branch       = string
+      tag          = string
+    })
+  })
+  default = null
+}
 
-    trigger_template = list(object({
-      repo_name   = string
-      branch_name = string
-      tag_name    = string
-      commit_sha  = string
-    }))
+variable "github_pr" {
+  type = object({
+    branch          = string
+    comment_control = string
+    invert_regex    = string
+  })
+  default = null
+}
 
-    github = list(object({
-      owner = string
-      name  = string
-      pull_request = list(object({
-        branch          = string
-        comment_control = string
-        invert_regex    = string
-      }))
-      push = list(object({
-        invert_regex = string
-        branch       = string
-        tag          = string
-      }))
-    }))
+variable "ignored_files" {
+  type    = list(string)
+  default = []
+}
 
-    build = list(object({
-      tags    = list(string)
-      images  = list(string)
-      timeout = number
-      step = object({
-        name       = string
-        args       = list(string)
-        env        = string
-        id         = string
-        entrypoint = string
-        dir        = string
-        secret_env = string
-        timeout    = number
-        timing     = string
-      })
-    }))
-  }))
+variable "included_files" {
+  type    = list(string)
+  default = []
+}
+
+variable "repo_name" {
+  type    = string
+  default = null
+}
+
+variable "project" {
+  type    = string
+  default = null
 }

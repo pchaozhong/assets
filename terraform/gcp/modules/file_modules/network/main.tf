@@ -29,9 +29,9 @@ locals {
             direction = w.direction
             rules = [
               {
-                type     = w.rules1_type
-                protocol = w.rules1_protocol
-                ports    = split(" ", w.rules1_ports)
+                type     = w.rule_type
+                protocol = w.rule_protocol
+                ports    = split(" ", w.rule_ports)
               }
             ]
             tags = compact(split(" ", w.tags))

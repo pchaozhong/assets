@@ -14,7 +14,9 @@ module "network" {
   for_each = { for v in local._insple_test : v.name => v }
   source   = "../../"
 
-  vpc_network = each.value.name
+  vpc_network = {
+    name = each.value.name
+  }
 
   subnetworks = [
     {

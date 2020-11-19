@@ -1,12 +1,16 @@
-module "iam" {
-  depends_on = [ module.service_account ]
-  source = "../modules/iam"
+locals {
+  iam_enable = false
 
-  iam_member_conf = yamldecode(file("./files/iam.yaml"))
+  _iam_enable = local.iam_enable ? ["enable"] : []
 }
 
-module "service_account" {
-  source = "../modules/service_account"
+module "iam_sample" {
+  for_each = toset(local._iam_enable)
+  source   = "../../modules/iam"
 
-  service_account_conf = yamldecode(file("./files/service_account.yaml"))
+  iam_conf = {
+    email       = ""
+    member_type = "user"
+    roles       = ["editor"]
+  }
 }

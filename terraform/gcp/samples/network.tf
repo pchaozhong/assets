@@ -1,116 +1,78 @@
-module "network" {
-  source = "../modules/network"
+locals {
+  vpc_network_sample_enable = false
 
-  network_conf = [
+  _vpc_nw_enable = local.vpc_network_sample_enable ? ["enable"] : []
+}
+
+module "network_sample" {
+  for_each = toset(local._vpc_nw_enable)
+  source   = "../../modules/network"
+
+  project = terraform.workspace
+
+  vpc_network = {
+    name = "sample"
+  }
+  subnetworks = [
     {
-      vpc_network_enable      = false
-      subnetwork_enable       = true
-      firewall_ingress_enable = true
-      firewall_egress_enable  = true
-      route_enable            = true
-
-      vpc_network_conf = {
-        name                    = local.network
-        opt_conf = {}
-      }
-      subnetwork = [
-        {
-          name        = local.subnetwork.name
-          cidr        = local.subnetwork.cidr
-          description = "test"
-          region      = local.region
-          opt_conf = {
-            log_config           = false
-            aggregation_interval = "INTERVAL_10_MIN"
-            flow_sampling        = 0.5
-            metadata             = "INCLUDE_ALL_METADATA"
-
-            secondary_ip_range = false
-            ip_cidr_range      = "192.168.10.0/24"
-            range_name         = "test-module-sec-range"
-          }
-        }
-      ]
-      firewall_ingress_conf = [
-        {
-          name          = "test-nw"
-          priority      = 1000
-          source_ranges = ["0.0.0.0/0"]
-          target_tags   = []
-          allow_rules = [
-            {
-              protocol = "tcp"
-              ports    = ["22"]
-            }
-          ]
-          deny_rules = []
-          opt_conf = {
-            log_config = false
-            metadata = "EXCLUDE_ALL_METADATA"
-          }
-        }
-      ]
-      firewall_egress_conf = [
-        {
-          name          = "test-nw-deny"
-          priority      = 1000
-          destination_ranges = ["0.0.0.0/0"]
-          target_tags   = []
-          allow_rules = [
-          ]
-          deny_rules = [
-            {
-              protocol = "all"
-              ports = null
-            }
-          ]
-          opt_conf = {
-            log_config = false
-            metadata = "EXCLUDE_ALL_METADATA"
-          }
-        }
-      ]
-      route_conf = [
-        {
-          name             = "test-dg"
-          dest_range       = "0.0.0.0/0"
-          tags             = []
-          opt_conf = {
-            next_hop_gateway = "default-internet-gateway"
-            priority         = "1000"
-          }
-        }
-      ]
+      name   = "sample"
+      cidr   = "192.168.10.0/24"
+      region = "asia-northeast1"
     },
-
     {
-      vpc_network_enable      = false
-      subnetwork_enable       = true
-      firewall_ingress_enable = false
-      firewall_egress_enable  = false
-      route_enable            = false
+      name   = "sample2"
+      cidr   = "192.168.20.0/24"
+      region = "asia-northeast1"
+    }
+  ]
 
-      vpc_network_conf = {
-        name                    = "reserved-address-test"
-        opt_conf = {}
+  subnet_log_config = {
+    sample = [
+      {
+        aggregation_interval = "INTERVAL_5_SEC"
+        flow_sampling        = 0.7
+        metadata             = "INCLUDE_ALL_METADATA"
+        metadata_fields      = null
+        filter_expr          = null
       }
-      subnetwork = [
+    ]
+  }
+
+  firewall = [
+    {
+      direction = "INGRESS"
+      name      = "ingress-sample"
+      tags      = []
+      ranges    = ["0.0.0.0/0"]
+      priority  = 1000
+      rules = [
         {
-          name        = "reserved-address-test"
-          cidr        = "192.168.0.0/24"
-          description = "reserved-address"
-          region      = "us-central1"
-          opt_conf = {
-          }
+          type     = "allow"
+          protocol = "tcp"
+          ports    = ["22"]
         }
       ]
-      firewall_ingress_conf = [
+      log_config_metadata = null
+    },
+    {
+      direction = "EGRESS"
+      name      = "deny-sample"
+      tags      = []
+      ranges    = ["0.0.0.0/0"]
+      priority  = 65535
+      rules = [
+        {
+          type     = "deny"
+          protocol = "all"
+          ports    = []
+        }
       ]
-      firewall_egress_conf = [
-      ]
-      route_conf = [
-      ]
+      log_config_metadata = null
     }
 
   ]
+}
+
+output "network_sample" {
+  value = module.network_sample
 }

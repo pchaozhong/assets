@@ -1,43 +1,92 @@
 locals {
   gke_sample_enable = false
 
-  _gke_sample_config = local.gke_sample_enable ? [{ name = "sample" }] : []
+  _gke_enable = local.gke_sample_enable ? ["enable"] : []
 }
 
-module "gke" {
-  for_each = { for v in local._gke_sample_config : v.name => v }
-  source   = "../modules/gke"
+module "gke_sample" {
+  for_each = toset(local._gke_enable)
+  source   = "../../modules/gke"
 
   cluster = {
     name                      = "sample"
     location                  = "asia-northeast1"
     cluster_ipv4_cidr         = "10.0.0.0/9"
     default_max_pods_per_node = 110
-    networking_mode           = "VPC_NATIVE"
-    network                   = "default"
-    service_account           = null
-    cluster_ipv4_cidr_block   = null
-    services_ipv4_cidr_block  = null
+    networking_mode           = null
+    network                   = module.gke_network_sample["enable"].self_link
+    subnetwork                = module.gke_network_sample["enable"].subnetwork_self_link["sample"]
+    master_ipv4_cidr_block    = null
+  }
 
-    cluster_autoscaling = {
-      enabled = false
-      resource_limits = [
+  node_pool = [
+    {
+      name               = "sample"
+      location           = "asia-northeast1"
+      initial_node_count = 1
+      node_locations = [
+        "asia-northeast1-b"
       ]
-      min_cpu_platform = "Intel Haswell"
+      disk_size_gb = 10
+      disk_type    = "pd-standard"
+      image_type   = null
+      machine_type = "n1-standard-2"
+      tags         = []
     }
-  }
+  ]
+  service_account = module.gke_sa_sample["enable"].email
+  node_count      = 2
 
-  node_pool = {
-    name               = "sample"
-    location           = "asia-northeast1"
-    initial_node_count = 1
-    node_locations = [
-      "asia-northeast1-b"
+  preemptible = {
+    sample = true
+  }
+}
+
+module "gke_network_sample" {
+  for_each = toset(local._gke_enable)
+  source   = "../../modules/network"
+
+  project = terraform.workspace
+
+  vpc_network = {
+    name = "sample"
+  }
+  subnetworks = [
+    {
+      name   = "sample"
+      cidr   = "192.168.10.0/24"
+      region = "asia-northeast1"
+    },
+  ]
+
+  firewall = [
+    {
+      direction = "INGRESS"
+      name      = "ingress-sample"
+      tags      = []
+      ranges    = ["0.0.0.0/0"]
+      priority  = 1000
+      rules = [
+        {
+          type     = "allow"
+          protocol = "tcp"
+          ports    = ["22"]
+        }
+      ]
+      log_config_metadata = null
+    },
+  ]
+}
+
+module "gke_sa_sample" {
+  for_each = toset(local._gke_enable)
+
+  source = "../../modules/service_account"
+
+  service_account = {
+    name = "sample"
+    roles = [
+      "editor"
     ]
-    version     = null
-    autoscaling = []
-    upgrade     = []
   }
-
-  node_count = 2
 }

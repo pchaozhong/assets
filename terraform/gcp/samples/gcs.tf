@@ -1,33 +1,19 @@
-module "gcs" {
-  source = "../modules/gcs"
+locals {
+  gcs_sample_enable = false
 
-  gcs_conf = {
-    enable = false
+  _gcs_enable = local.gcs_sample_enable ? ["enable"] : []
+}
 
-    storage_conf = [
-      {
-        enable = true
+module "gcs_sample" {
+  for_each = toset(local._gcs_enable)
+  source   = "../../modules/gcs"
 
-        name               = join("-", [terraform.workspace, "terraform-module-sample"])
-        location           = "US"
-        force_destroy      = true
-        bucket_policy_only = true
-        lifecycle_rule = {
-          enable = false
-          age    = null
-          type   = null
-        }
-
-        object_conf = [
-          {
-            enable = true
-
-            name     = "object_test.txt"
-            source   = "./files/object_test.txt"
-            opt_conf = {}
-          }
-        ]
-      }
-    ]
+  bucket = {
+    name     = join("-", [terraform.workspace, "sample-module"])
+    location = "asia-northeast1"
   }
+}
+
+output "gcs_sample" {
+  value = module.gcs_sample
 }

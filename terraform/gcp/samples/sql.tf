@@ -1,26 +1,17 @@
-module "sql" {
-  source = "../modules/sql"
+locals {
+  sql_sample_enable = false
 
-  sql_conf = [
-    # {
-    #   database_instance_name = "demo-psgre-proxy"
+  _sql_enable = local.sql_sample_enable ? ["enable"] : []
+}
 
-    #   db_conf = [
-    #     {
-    #       name = "test-db"
-    #     }
-    #   ]
+module "sql_sample" {
+  for_each = toset(local._sql_enable)
+  source   = "../../modules/sql"
 
-    #   db_instance_conf = [
-    #     {
-    #       db_version = "POSTGRES_11"
-    #       settings = {
-    #         tier              = "db-f1-micro"
-    #         availability_type = "ZONAL"
-    #         disk_type         = "PD_HDD"
-    #       }
-    #     }
-    #   ]
-    # }
-  ]
+  sql_instance = {
+    name             = "sample"
+    database_version = "POSTGRES_11"
+    region           = "asia-northeast1"
+    tier             = "db-f1-micro"
+  }
 }

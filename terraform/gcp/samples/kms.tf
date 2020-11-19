@@ -1,22 +1,25 @@
-module "kms" {
-  source = "../modules/kms"
+locals {
+  kms_sample_enable = false
 
-  kms_conf = [
-    {
-      kms_enable    = false
-      crypto_enable = false
+  keys = [
+    "sample"
+  ]
 
-      key_ring_conf = {
-        name     = "test"
-        location = "global"
-      }
+  _kms_sample = local.kms_sample_enable ? ["enable"] : []
+}
 
-      crypto_key = [
-        {
-          name            = "test"
-          prevent_destroy = false
-        }
-      ]
+module "kms_sample" {
+  for_each = toset(local._kms_sample)
+  source   = "../../modules/kms"
+
+  key_ring = {
+    name     = "sample"
+    location = "asia-northeast1"
+  }
+
+  keys = [
+    for key in local.keys : {
+      name = key
     }
   ]
 }

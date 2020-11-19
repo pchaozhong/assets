@@ -1,42 +1,79 @@
-# module "gce" {
-#   depends_on = [
-#     module.network,
-#     module.iam,
-#     module.service_account
-#   ]
-#   source = "../modules/gce"
+locals {
+  gce_sample_enable = false
 
-#   gce_conf = [
-#     {
-#       gce_enable = false
+  _gce_sample_enable = local.gce_sample_enable ? ["enable"] : []
+}
 
-#       name         = "test"
-#       machine_type = "f1-micro"
-#       zone         = local.zone
-#       region       = local.region
-#       tags         = ["test"]
-#       subnetwork   = local.subnetwork.name
-#       opt_conf = {
-#         access_config           = true
-#         preemptible             = true
-#         metadata_startup_script = "set_vsftpd_conf"
-#       }
-#       service_account = {
-#         enable = true
+module "gce_sample" {
+  for_each = toset(local._gce_sample_enable)
+  source   = "../../modules/gce"
 
-#         email = "module-sample"
-#         scopes = [
-#           "https://www.googleapis.com/auth/cloud-platform"
-#         ]
-#       }
-#       boot_disk = {
-#         size = 20
-#         type = "pd-ssd"
-#         opt_conf = {
-#           image = "test-ftp-server"
-#         }
-#       }
-#     }
-#   ]
-# }
+  gce_instance = {
+    name         = "sample"
+    machine_type = "f1-micro"
+    zone         = "asia-northeast1-b"
+    subnetwork   = module.gce_nw_sample["enable"].subnetwork_self_link["sample"]
+    tags         = []
+  }
 
+  boot_disk = {
+    name      = "sample"
+    size      = 20
+    interface = null
+    image     = "ubuntu-os-cloud/ubuntu-2004-lts"
+  }
+
+  service_account = module.gce_sa_sample["enable"].email
+}
+
+module "gce_nw_sample" {
+  for_each = toset(local._gce_sample_enable)
+  source   = "../../modules/network"
+
+  project = terraform.workspace
+
+  vpc_network = {
+    name = "sample"
+  }
+  subnetworks = [
+    {
+      name   = "sample"
+      cidr   = "192.168.10.0/24"
+      region = "asia-northeast1"
+    },
+  ]
+
+  firewall = [
+    {
+      direction = "INGRESS"
+      name      = "ingress-sample"
+      tags      = []
+      ranges    = ["0.0.0.0/0"]
+      priority  = 1000
+      rules = [
+        {
+          type     = "allow"
+          protocol = "tcp"
+          ports    = ["22"]
+        }
+      ]
+      log_config_metadata = null
+    },
+  ]
+}
+
+module "gce_sa_sample" {
+  for_each = toset(local._gce_sample_enable)
+  source   = "../../modules/service_account"
+
+  service_account = {
+    name = "sample"
+    roles = [
+      "editor"
+    ]
+  }
+}
+
+output "gce_sample" {
+  value = module.gce_sample
+}

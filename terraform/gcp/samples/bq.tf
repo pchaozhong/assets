@@ -1,38 +1,20 @@
-module "bq" {
-  source = "../modules/bq"
+locals {
+  bq_sample_enable = false
 
-  bq_conf = [
-    {
-      enable = false
+  _bq_enable = local.bq_sample_enable ? ["enable"] : []
+}
 
-      dataset_conf = {
-        dataset_id = "github_source_data"
-        location   = "asia-northeast1"
-        opt_conf   = {}
-      }
+module "bq_sample" {
+  for_each = toset(local._bq_enable)
+  source   = "../../modules/bq"
 
-      table_conf = [
-        {
-          enable = true
+  dataset = {
+    dataset_id                  = "sample"
+    location                    = "asia-northeast1"
+    default_table_expiration_ms = 36000000
+  }
+}
 
-          table_id = "git_sample"
-          opt_conf = {}
-        }
-      ]
-
-      query_job_conf = [
-        {
-          enable = false
-
-          job_id              = "github_repos_commit_query"
-          query               = file("./files/query_job.sql")
-          table_id            = "git_sample"
-          create_disposition  = null
-          write_disposition   = null
-          allow_large_results = true
-          flatten_results     = true
-        }
-      ]
-    }
-  ]
+output "bq_sample_output" {
+  value = module.bq_sample
 }

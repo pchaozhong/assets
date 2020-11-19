@@ -1,38 +1,28 @@
 locals {
-  region = "asia-northeast1"
-  zone = "asia-northeast1-b"
-  network = "test"
-  subnetwork = {
-    name = "test"
-    cidr = "192.168.0.0/29"
-  }
+  inspec_test_infra_enable = true
+
+  _insple_test = local.inspec_test_infra_enable ? [
+    {
+      name   = "test"
+      cidr   = "192.168.0.0/29"
+      region = "asia-northeast1"
+    }
+  ] : []
 }
 
 module "network" {
-  source = "../../"
+  for_each = { for v in local._insple_test : v.name => v }
+  source   = "../../"
 
-  network_conf = [
+  vpc_network = each.value.name
+
+  subnetworks = [
     {
-      vpc_network_enable      = true
-      subnetwork_enable       = true
-      firewall_ingress_enable = true
-      firewall_egress_enable  = true
-      route_enable            = true
-
-      vpc_network_conf = {
-        name             = local.network
-        auto_create_subnetworks = false
-      }
-      subnetwork = [
-        {
-          name   = local.subnetwork.name
-          cidr   = local.subnetwork.cidr
-          region = local.region
-        }
-      ]
-      firewall_ingress_conf = []
-      firewall_egress_conf = []
-      route_conf = []
+      name   = each.value.name
+      cidr   = each.value.cidr
+      region = each.value.region
     }
   ]
+
+  firewall = []
 }

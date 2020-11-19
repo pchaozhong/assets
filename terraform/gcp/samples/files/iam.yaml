@@ -1,5 +1,0 @@
-- enable: false
-  member: module-sample
-  member_type: serviceAccount
-  role:
-    - roles/owner

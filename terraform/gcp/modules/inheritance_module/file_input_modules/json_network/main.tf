@@ -4,7 +4,7 @@ locals {
 
 module "network_file" {
   for_each = { for v in local.config : v.name => v }
-  source   = "../../network"
+  source   = "../../../network/vpc_network"
 
   project = each.value.project
 

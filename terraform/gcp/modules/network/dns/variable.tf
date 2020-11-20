@@ -1,33 +1,71 @@
-variable "dns_conf" {
-  type = list(object({
-    dns_zone_enable   = bool
-    record_set_enable = bool
-
-    zone_name = string
-    mng_zone = list(object({
-      dns_name   = string
-      visibility = string
-
-      private_visibility_config = list(object({
-        network = string
-      }))
-
-      forwarding_config = list(object({
-        ipv4_address = string
-      }))
-    }))
-
-    record_set = list(object({
-      id      = string
-      name    = string
-      type    = string
-      ttl     = number
-      rrdatas = list(string)
-    }))
-  }))
+variable "zone" {
+  type = object({
+    dns_name   = string
+    name       = string
+    visibility = string
+  })
 }
 
-variable "api_enable" {
+variable "private_visibility" {
+  type = object({
+    networks = list(string)
+  })
+  default = null
+}
+
+variable "dnssec" {
+  type = object({
+    kind          = string
+    non_existence = string
+    state         = string
+    key_scopes = {
+      algorithm  = string
+      key_length = number
+      key_type   = string
+      kind       = string
+    }
+  })
+  default = null
+}
+
+variable "zone_discreption" {
+  type    = string
+  default = null
+}
+
+variable "forwarding" {
+  type = object({
+    target_servers = list(object({
+      ip_address = string
+      path       = string
+    }))
+  })
+  default = null
+}
+
+variable "peering" {
+  type = object({
+    networks = list(string)
+  })
+  default = null
+}
+
+variable "project" {
+  type    = string
+  default = null
+}
+
+variable "force_destroy" {
   type    = bool
-  default = false
+  default = null
+}
+
+
+variable "records" {
+  type = list(object({
+    name    = string
+    rrdatas = list(string)
+    ttl     = number
+    type    = string
+  }))
 }

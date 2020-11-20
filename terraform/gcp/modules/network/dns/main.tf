@@ -1,4 +1,4 @@
-resource "google_dns_manaed_zone" "main" {
+resource "google_dns_managed_zone" "main" {
   dns_name      = var.zone.dns_name
   name          = var.zone.name
   description   = var.zone_discreption
@@ -15,7 +15,7 @@ resource "google_dns_manaed_zone" "main" {
         iterator = _conf
 
         content {
-          networks = _conf.value
+          network_url = _conf.value
         }
       }
     }
@@ -30,8 +30,8 @@ resource "google_dns_manaed_zone" "main" {
       non_existence = _conf.value.non_existence
       state         = _conf.value.state
 
-      dynamic "default_key_scopes" {
-        for_each = _conf.value.key_scopes != null ? [_conf.value.key_scopes] : []
+      dynamic "default_key_specs" {
+        for_each = _conf.value.key_specs != null ? [_conf.value.key_specs] : []
         iterator = _var
 
         content {
@@ -77,7 +77,7 @@ resource "google_dns_manaed_zone" "main" {
 }
 
 resource "google_dns_record_set" "main" {
-  for_each = { for v in records : join("_", [replace(v.name, ".", "_"), v.type, v.ttl]) => v }
+  for_each = { for v in var.records : join("_", [replace(v.name, ".", "_"), v.type, v.ttl]) => v }
 
   managed_zone = google_dns_managed_zone.main.name
   name         = each.value.name

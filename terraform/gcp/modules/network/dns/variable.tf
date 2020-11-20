@@ -18,12 +18,12 @@ variable "dnssec" {
     kind          = string
     non_existence = string
     state         = string
-    key_scopes = {
+    key_specs = object({
       algorithm  = string
       key_length = number
       key_type   = string
       kind       = string
-    }
+    })
   })
   default = null
 }

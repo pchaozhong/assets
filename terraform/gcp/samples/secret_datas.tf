@@ -6,7 +6,7 @@ locals {
 
 module "secret_data_sample" {
   for_each = toset(local._secret_datas)
-  source   = "../../modules/secret/secret_datas"
+  source   = "../modules/secret/secret_datas"
 
   secret_datas = {
     sample = "CiQAipVp7YFaMPK3cOUH0bklg4ad33qPCPckisFPZ4QfUcxvbX0SLwCnBefe2e4jnaqUa+1GPiiGDrSE3PztKlPAUdYW5EB+hSrvKXKDNWPaLpjeYqN4"

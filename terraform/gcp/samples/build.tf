@@ -6,7 +6,7 @@ locals {
 
 module "build_sample" {
   for_each = toset(local._build_sample)
-  source   = "../../modules/build"
+  source   = "../modules/build"
 
   trigger = {
     name          = "sample"

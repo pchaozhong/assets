@@ -10,7 +10,7 @@ locals {
 
 module "kms_sample" {
   for_each = toset(local._kms_sample)
-  source   = "../../modules/kms"
+  source   = "../modules/kms"
 
   key_ring = {
     name     = "sample"

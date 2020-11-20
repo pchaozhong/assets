@@ -6,7 +6,7 @@ locals {
 
 module "gcs_sample" {
   for_each = toset(local._gcs_enable)
-  source   = "../../modules/gcs"
+  source   = "../modules/gcs"
 
   bucket = {
     name     = join("-", [terraform.workspace, "sample-module"])

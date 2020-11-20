@@ -6,7 +6,7 @@ locals {
 
 module "iam_sample" {
   for_each = toset(local._iam_enable)
-  source   = "../../modules/iam"
+  source   = "../modules/iam"
 
   iam_conf = {
     email       = ""

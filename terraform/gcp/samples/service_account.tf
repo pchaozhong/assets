@@ -6,7 +6,7 @@ locals {
 
 module "service_account_sample" {
   for_each = toset(local._sa_enable)
-  source   = "../../modules/service_account"
+  source   = "../modules/service_account"
 
   service_account = {
     name = "sample"

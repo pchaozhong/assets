@@ -6,7 +6,7 @@ locals {
 
 module "gce_sample" {
   for_each = toset(local._gce_sample_enable)
-  source   = "../../modules/gce"
+  source   = "../modules/gce"
 
   gce_instance = {
     name         = "sample"
@@ -28,7 +28,7 @@ module "gce_sample" {
 
 module "gce_nw_sample" {
   for_each = toset(local._gce_sample_enable)
-  source   = "../../modules/network"
+  source   = "../modules/network"
 
   project = terraform.workspace
 
@@ -64,7 +64,7 @@ module "gce_nw_sample" {
 
 module "gce_sa_sample" {
   for_each = toset(local._gce_sample_enable)
-  source   = "../../modules/service_account"
+  source   = "../modules/service_account"
 
   service_account = {
     name = "sample"

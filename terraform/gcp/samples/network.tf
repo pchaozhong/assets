@@ -6,7 +6,7 @@ locals {
 
 module "network_sample" {
   for_each = toset(local._vpc_nw_enable)
-  source   = "../../modules/network"
+  source   = "../modules/network"
 
   project = terraform.workspace
 

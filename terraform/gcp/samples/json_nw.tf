@@ -1,5 +1,5 @@
 locals {
-  json_network_sample_enable = true
+  json_network_sample_enable = false
 
   _json_network_enable = local.json_network_sample_enable ? ["enable"] : []
 }

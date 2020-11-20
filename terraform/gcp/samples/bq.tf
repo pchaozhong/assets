@@ -6,7 +6,7 @@ locals {
 
 module "bq_sample" {
   for_each = toset(local._bq_enable)
-  source   = "../modules/bq"
+  source   = "../modules/bigdata/bq"
 
   dataset = {
     dataset_id                  = "sample"

@@ -6,7 +6,7 @@ locals {
 
 module "sql_sample" {
   for_each = toset(local._sql_enable)
-  source   = "../modules/sql"
+  source   = "../modules/data/sql"
 
   sql_instance = {
     name             = "sample"

@@ -1,5 +1,5 @@
 module "armor" {
-  source = "../modules/armor"
+  source = "../modules/task_module/armor"
 
   files_rule = {
     action         = "allow"

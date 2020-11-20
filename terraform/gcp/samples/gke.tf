@@ -6,7 +6,7 @@ locals {
 
 module "gke_sample" {
   for_each = toset(local._gke_enable)
-  source   = "../modules/gke"
+  source   = "../modules/compute/gke"
 
   cluster = {
     name                      = "sample"
@@ -44,7 +44,7 @@ module "gke_sample" {
 
 module "gke_network_sample" {
   for_each = toset(local._gke_enable)
-  source   = "../modules/network"
+  source   = "../modules/network/vpc_network"
 
   project = terraform.workspace
 
@@ -81,7 +81,7 @@ module "gke_network_sample" {
 module "gke_sa_sample" {
   for_each = toset(local._gke_enable)
 
-  source = "../modules/service_account"
+  source = "../modules/iam/service_account"
 
   service_account = {
     name = "sample"

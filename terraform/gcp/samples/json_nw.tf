@@ -5,7 +5,8 @@ locals {
 }
 
 module "json_network_sample" {
-  source = "../modules/file_modules/json_network"
+  for_each = toset(local._json_network_enable)
+  source   = "../modules/inheritance_module/file_input_modules/json_network"
 
   file_path = "./files/network_object.json"
 }

@@ -45,6 +45,37 @@ module "instance_groupe_sample" {
     cooldown_period = 60
     mode            = null
   }
+
+  auto_healing_policies = {
+    health_check      = module.instance_group_sample_health_check["enable"].id
+    initial_delay_sec = 300
+  }
+}
+
+module "instance_group_sample_health_check" {
+  for_each = toset(local._instance_group_sample)
+  source   = "../modules/compute/health_check"
+
+  single_zone = false
+
+  health_check = {
+    name                = "sample"
+    check_interval_sec  = 5
+    timeout_sec         = 5
+    healthy_threshold   = 2
+    unhealthy_threshold = 10
+  }
+
+  http_health_check = {
+    request_path = "/healthz"
+    port         = "8080"
+
+    host               = null
+    response           = null
+    port_name          = null
+    proxy_header       = null
+    port_specification = null
+  }
 }
 
 module "instance_group_sample_network" {

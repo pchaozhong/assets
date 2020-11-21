@@ -1,6 +1,6 @@
-variable "single_zone" {
+variable "global" {
   type    = bool
-  default = false
+  default = true
 }
 
 variable "health_check" {

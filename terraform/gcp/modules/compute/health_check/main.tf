@@ -1,11 +1,11 @@
 locals {
-  single_region_hc = var.single_zone ? [var.health_check] : []
-  multi_region_hc  = ! var.single_zone ? [var.health_check] : []
+  global_hc   = var.global ? [var.health_check] : []
+  regional_hc = ! var.global ? [var.health_check] : []
 }
 
 resource "google_compute_health_check" "main" {
   provider = google-beta
-  for_each = { for v in local.single_region_hc : v.name => v }
+  for_each = { for v in local.global_hc : v.name => v }
 
   name    = each.value.name
   project = var.project
@@ -112,7 +112,7 @@ resource "google_compute_health_check" "main" {
 
 resource "google_compute_region_health_check" "main" {
   provider = google-beta
-  for_each = { for v in local.multi_region_hc : v.name => v }
+  for_each = { for v in local.regional_hc : v.name => v }
 
   name    = each.value.name
   project = var.project

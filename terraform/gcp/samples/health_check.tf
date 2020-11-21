@@ -1,5 +1,5 @@
 locals {
-  health_check_sample_enable = true
+  health_check_sample_enable = false
 
   _health_check_sample = local.health_check_sample_enable ? ["enable"] : []
 }
@@ -8,7 +8,7 @@ module "health_check_sample" {
   for_each = toset(local._health_check_sample)
   source   = "../modules/compute/health_check"
 
-  single_zone = false
+  global = false
 
   health_check = {
     name                = "sample"

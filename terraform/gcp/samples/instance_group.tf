@@ -56,7 +56,7 @@ module "instance_group_sample_health_check" {
   for_each = toset(local._instance_group_sample)
   source   = "../modules/compute/health_check"
 
-  single_zone = false
+  global = true
 
   health_check = {
     name                = "sample"

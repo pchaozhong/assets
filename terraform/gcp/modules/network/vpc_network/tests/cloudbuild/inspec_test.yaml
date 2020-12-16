@@ -54,8 +54,8 @@ steps:
     args: ["apply", "--auto-approve"]
 
   - id: "inspec exec"
-    name: 'chef/inspec'
-    args: ["exec", '$_FILE_PATH/inspec' , "-t", "gcp://", "--input-file", 'attributes.yaml', "--chef-license", "accept"]
+    name: 'gcr.io/$PROJECT_ID/cinc'
+    args: ["exec", '$_FILE_PATH/inspec' , "-t", "gcp://", "--input-file", 'attributes.yaml']
 
   - id: 'terraform destroy'
     name: 'hashicorp/terraform:$_TERRAFORM_VERSION'

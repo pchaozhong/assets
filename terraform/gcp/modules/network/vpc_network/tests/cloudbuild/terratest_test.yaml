@@ -67,7 +67,7 @@ steps:
 timeout: 3600s
 substitutions:
   _IMG_VER: 2.1.6
-  _TERRAFORM_VERSION: 0.13.0
+  _TERRAFORM_VERSION: 0.14.0
   _MODULE_PREFIX: network
   _TERRAFORM_MODULE_PATH: ./terraform/gcp/modules
-  _FILE_PATH: ./terraform/gcp/modules/network/tests
+  _FILE_PATH: ./terraform/gcp/modules/network/vpc_network/tests

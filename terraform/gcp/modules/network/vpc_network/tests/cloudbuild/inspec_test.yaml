@@ -66,5 +66,5 @@ substitutions:
   _TERRAFORM_VERSION: 0.14.0
   _MODULE_PREFIX: network
   _TERRAFORM_MODULE_PATH: ./terraform/gcp/modules
-  _FILE_PATH: ./terraform/gcp/modules/network/vpc_network/tests  
+  _FILE_PATH: ./terraform/gcp/modules/network/vpc_network/tests
   

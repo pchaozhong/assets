@@ -1,15 +1,21 @@
 title 'network module test'
 
 gcp_project_id = attribute('gcp_project_id')
+networks = yaml(content: inspec.profile.file('vpc_network.yaml')).params
+subnetworks = yaml(content: inspec.profile.file('subnetwork.yaml')).params
 
-control 'test' do
-  describe google_compute_network(project: gcp_project_id, name: 'test') do
-    it {should exist}
-    its ('auto_create_subnetworks'){ should be false}
+control 'network' do
+  networks.each do |nw|
+    describe google_compute_network(project: gcp_project_id, name: nw["name"]) do
+      it {should exist}
+      its ('auto_create_subnetworks'){ should be nw["auto_create_subnetworks"]}
+    end
   end
-  describe google_compute_subnetwork(project: gcp_project_id, region: 'asia-northeast1', name: 'test') do
-    it { should exist }
-    its('ip_cidr_range') { should eq '192.168.0.0/29' }
-    its('log_config.enable') { should be false}
+  subnetworks.each do |subnet|
+    describe google_compute_subnetwork(project: gcp_project_id, region: subnet["region"], name: subnet["name"]) do
+      it {should exist}
+      its('ip_cidr_range') { should eq subnet["cidr"]}
+      its('log_config.enable'){ should be subnet["log"]}
+    end
   end
 end

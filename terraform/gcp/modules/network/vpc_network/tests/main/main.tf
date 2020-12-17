@@ -29,11 +29,7 @@ module "network" {
   }
 
   subnetworks = [
-    for v in each.value.subnetworks : {
-      name   = v.name
-      cidr   = v.cidr
-      region = v.cidr
-    }
+    for v in each.value.subnets : v
   ]
 
   firewall = []

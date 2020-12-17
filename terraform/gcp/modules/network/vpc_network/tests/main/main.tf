@@ -12,7 +12,7 @@ locals {
 
 module "network" {
   for_each = { for v in local._insple_test : v.name => v }
-  source   = "../../"
+  source   = "./terraform/gcp/modules/network/vpc_network"
 
   vpc_network = {
     name = each.value.name

@@ -4,14 +4,10 @@ steps:
     volumes:
       - name: 'test'
         path: '/tests'
-    args: ["go", "test", '$_FILE_PATH/terratest', '-v']
+    args: ["go", "test",'-v', '$_FILE_PATH/terratest/network_test.go']
     env:
       - GCP_PROJECT: $PROJECT_ID
 
 timeout: 3600s
 substitutions:
-  _IMG_VER: 2.1.6
-  _TERRAFORM_VERSION: 0.14.0
-  _MODULE_PREFIX: network
-  _TERRAFORM_MODULE_PATH: ./terraform/gcp/modules
   _FILE_PATH: ./terraform/gcp/modules/network/vpc_network/tests

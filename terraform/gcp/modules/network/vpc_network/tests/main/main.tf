@@ -1,7 +1,7 @@
 locals {
   inspec_test_infra_enable = true
 
-  _insple_test = local.inspec_test_infra_enable ? [
+  _inspec_test = local.inspec_test_infra_enable ? [
     {
       network = "test"
       subnets = [
@@ -21,7 +21,7 @@ locals {
 }
 
 module "network" {
-  for_each = { for v in local._insple_test : v.network => v }
+  for_each = { for v in local._inspec_test : v.network => v }
   source   = "./terraform/gcp/modules/network/vpc_network"
 
   vpc_network = {

@@ -34,6 +34,12 @@ output "subnetwork_gateway_address" {
   }
 }
 
+output "subnetwork_name" {
+  value = [
+    for v in var.subnetworks : v.name
+  ]
+}
+
 output "self_link" {
   value = google_compute_network.main.self_link
 }
@@ -44,4 +50,12 @@ output "id" {
 
 output "gateway_ipv4" {
   value = google_compute_network.main.gateway_ipv4
+}
+
+output "name" {
+  value = google_compute_network.main.name
+}
+
+output "firewall" {
+  value = google_compute_firewall.main
 }

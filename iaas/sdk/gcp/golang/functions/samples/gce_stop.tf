@@ -1,5 +1,6 @@
 locals {
   region = "asia-northeast1"
+  enable = true
 }
 
 module "stop_gce" {
@@ -7,7 +8,7 @@ module "stop_gce" {
 
   glue_conf = [
     {
-      enable = false
+      enable = local.enable
 
       gcf_conf = {
         name    = "stop-all-gce"
@@ -38,7 +39,7 @@ module "stop_gce" {
 
       pubsub_conf = [
         {
-          enable = true
+          enable = local.enable
 
           name     = "stopgce"
           opt_conf = {}

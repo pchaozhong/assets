@@ -2,6 +2,7 @@ locals {
   vpc_network_sample_enable = false
 
   _vpc_nw_enable = local.vpc_network_sample_enable ? ["enable"] : []
+
 }
 
 module "network_sample" {

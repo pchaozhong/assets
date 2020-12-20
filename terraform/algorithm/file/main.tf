@@ -1,33 +1,46 @@
 locals {
-  ips_map = jsondecode(file("./monitoring_ip_list.json"))
+  firewall_config = csvdecode(file("./firewall.csv"))
+  network_config  = csvdecode(file("./vpc_network.csv"))
 
-  _ips_list = chunklist(flatten([
-    for v in local.ips_map : v.ipAddress
-  ]),10)
-
-  ids = [
-    for v in local._ips_list : index(local._ips_list,v)
-  ]
-
-  _req_list = flatten([
-    for _ele in local._ips_list : {
-      ips = _ele
-      type = var.files_rule.type
-      priority = 1000 + index(local._ips_list,_ele)
+  _vpc_nws = distinct([
+    for v in local.network_config : {
+      name    = v.vpc_network
+      project = v.project
     }
   ])
+
+  network_info = [
+    for v in local._vpc_nws : {
+      name    = v.name
+      project = v.project
+      subnets = flatten(concat([
+        for w in local.network_config : v.name == w.vpc_network && v.project == w.project ? [{
+          name   = w.subnetwork
+          cidr   = w.cidr
+          region = w.region
+        }] : []
+      ]))
+      firewalls = flatten(concat([
+        for w in local.firewall_config : v.name == w.network ? [
+          {
+            name     = w.name
+            priority = tonumber(w.priority)
+            ranges   = split(" ", w.ranges)
+            rules = [
+              {
+                type     = w.rules1_type
+                protocol = w.rules1_protocol
+                ports    = split(" ", w.rules1_ports)
+              }
+            ]
+            tags = compact(split(" ", w.tags))
+          }
+        ] : []
+      ]))
+    }
+  ]
 }
 
-variable "files_rule" {
-  type = object({
-    type = string
-  })
-  default = {
-    type = "allow"
-    versioned_expr = "SRC_IPS_V1"
-  }
-}
-
-output "file" {
-  value = local._req_list
+output "nw_info" {
+  value = local.network_info
 }

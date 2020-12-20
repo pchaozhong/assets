@@ -1,6 +1,15 @@
 #!/bin/sh
 
 PROJECTS=( \
+           nomura-market-app-dev \
+               nomura-market-cmn \
+               nomura-market-cmn-network-dev \
+               nomura-market-data-dev \
+               nomura-market-dev \
+               nomura-market-open-data-dev \
+               nomura-market-prod \
+               nomura-market-remote-access \
+               nomura-market-secure-data-dev
     )
 
 OUTPATH=$1

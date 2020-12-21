@@ -9,11 +9,12 @@ control 'gce' do
       it {should exist}
       its('source_image') { should match gce["image"] }
       its('type') { should math 'pd-ssd' }
-      its('size_gb') { should match gce["size"] }
     end
     describe google_compute_instance(project: gcp_project_id, zone: gce["zone"], name: gce["name"]) do
       it { should exist }
       its('machine_type') { should match gce["machine_type"] }
+      its('tag_count') { should cmp 1 }
+      its('tags.items') { should include gce["tag"] }
     end
   end
 end

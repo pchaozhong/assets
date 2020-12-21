@@ -8,7 +8,7 @@ control 'gce' do
     describe google_compute_disk(project: gcp_project_id, name: gce["name"], zone: gce["zone"]) do
       it {should exist}
       its('source_image') { should match gce["image"] }
-      its('type') { should math 'pd-ssd' }
+      its('type') { should math 'pd-standard' }
     end
     describe google_compute_instance(project: gcp_project_id, zone: gce["zone"], name: gce["name"]) do
       it { should exist }

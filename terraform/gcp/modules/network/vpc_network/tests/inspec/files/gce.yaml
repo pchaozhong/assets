@@ -1,0 +1,12 @@
+- name: test-tokyo
+  machine_type: f1-micro
+  zone: asia-northeast1-b
+  subnetwork: test-tokyo
+  size: 20
+  image: ubuntu-os-cloud/ubuntu-2004-lts
+- name: test-osaka
+  machine_type: f1-micro
+  zone: asia-northeast2-b
+  subnetwork: test-osaka
+  size: 20
+  image: ubuntu-os-cloud/ubuntu-2004-lts

@@ -1,7 +1,7 @@
 locals {
   inspec_test_infra_enable = true
 
-  _inspec_test = local.inspec_test_infra_enable ? [
+  _inspec_test_network = local.inspec_test_infra_enable ? [
     {
       network = "test"
       subnets = [
@@ -18,10 +18,31 @@ locals {
       ]
     }
   ] : []
+
+  _inspec_test_gce = local.inspec_test_infra_enable ? [
+    {
+      name         = "test-tokyo"
+      machine_type = "f1-micro"
+      zone         = "asia-northeast1-b"
+      subnetwork   = "test-tokyo"
+      tags         = ["test"]
+      size         = 20
+      image        = "ubuntu-os-cloud/ubuntu-2004-lts"
+    },
+    {
+      name         = "test-osaka"
+      machine_type = "f1-micro"
+      zone         = "asia-northeast2-b"
+      subnetwork   = "test-osaka"
+      tags         = ["test"]
+      size         = 20
+      image        = "ubuntu-os-cloud/ubuntu-2004-lts"
+    }
+  ] : []
 }
 
 module "network" {
-  for_each = { for v in local._inspec_test : v.network => v }
+  for_each = { for v in local._inspec_test_network : v.network => v }
   source   = "./terraform/gcp/modules/network/vpc_network"
 
   vpc_network = {
@@ -33,4 +54,28 @@ module "network" {
   ]
 
   firewall = []
+}
+
+module "gce" {
+  for_each = { for v in local._inspec_test_gce : v.name => v }
+  source   = "./terraform/gcp/modules/compute/gce"
+
+  gce_instance = {
+    name = each.value.name
+    machine_type = each.value.machine_type
+    zone = each.value.zone
+    subnetwork = module.network["test"].subnetwork_self_link[each.value.subnetwork]
+    tags = each.value.tags
+  }
+
+  boot_disk = {
+    name = each.value.name
+    size = each.value.size
+    interface = null
+    image = each.value.image
+  }
+
+  boot_disk = {
+
+  }
 }

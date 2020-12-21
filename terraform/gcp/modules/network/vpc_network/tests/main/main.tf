@@ -61,21 +61,17 @@ module "gce" {
   source   = "./terraform/gcp/modules/compute/gce"
 
   gce_instance = {
-    name = each.value.name
+    name         = each.value.name
     machine_type = each.value.machine_type
-    zone = each.value.zone
-    subnetwork = module.network["test"].subnetwork_self_link[each.value.subnetwork]
-    tags = each.value.tags
+    zone         = each.value.zone
+    subnetwork   = module.network["test"].subnetwork_self_link[each.value.subnetwork]
+    tags         = each.value.tags
   }
 
   boot_disk = {
-    name = each.value.name
-    size = each.value.size
+    name      = each.value.name
+    size      = each.value.size
     interface = null
-    image = each.value.image
-  }
-
-  boot_disk = {
-
+    image     = each.value.image
   }
 }

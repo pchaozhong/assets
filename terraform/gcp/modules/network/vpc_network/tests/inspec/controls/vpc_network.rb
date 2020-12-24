@@ -6,7 +6,8 @@ subnetworks = yaml(content: inspec.profile.file('subnetwork.yaml')).params
 
 control 'network' do
   networks.each do |nw|
-    describe google_compute_network(project: gcp_project_id, name: nw["name"]) do
+    network_name = nw["name"] + "st"
+    describe google_compute_network(project: gcp_project_id, name: network_name) do
       it {should exist}
       its ('auto_create_subnetworks'){ should be nw["auto_create_subnetworks"]}
     end
